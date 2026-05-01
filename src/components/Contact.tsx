@@ -114,7 +114,7 @@ export default function Contact() {
             <div className="pt-4">
               <button
                 type="submit"
-                className="rounded-full bg-white px-12 py-4 text-[13px] font-medium text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400"
+                className="rounded-full bg-white px-14 py-5 text-[15px] font-medium text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]"
               >
                 {t.contact.form.send}
               </button>

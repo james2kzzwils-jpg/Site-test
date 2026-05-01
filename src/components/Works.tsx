@@ -79,7 +79,7 @@ function ProjectCard({
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-white/[0.08] px-4 py-1.5 text-[11px] tracking-wide text-white/50 backdrop-blur-sm"
+                className="rounded-full bg-white/[0.08] px-5 py-2.5 text-[13px] tracking-wide text-white/50 backdrop-blur-sm"
               >
                 {tag}
               </span>
@@ -144,7 +144,7 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-full px-6 py-3 text-[13px] transition-all duration-300 ${
+              className={`rounded-full px-8 py-4 text-[14px] font-medium transition-all duration-300 ${
                 activeFilter === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'

@@ -48,7 +48,7 @@ export default function Shop() {
             <button
               key={key}
               onClick={() => setActiveCategory(key)}
-              className={`rounded-full px-6 py-3 text-[13px] transition-all duration-300 ${
+              className={`rounded-full px-8 py-4 text-[14px] font-medium transition-all duration-300 ${
                 activeCategory === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
@@ -88,7 +88,7 @@ export default function Shop() {
                   <span className="text-[20px] font-medium text-white">
                     {product.price}
                   </span>
-                  <button className="rounded-full bg-white/[0.06] px-5 py-2 text-[11px] text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60">
+                  <button className="rounded-full bg-white/[0.06] px-6 py-3 text-[13px] text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60">
                     {t.shop.coming_soon}
                   </button>
                 </div>

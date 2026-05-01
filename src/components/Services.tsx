@@ -51,7 +51,7 @@ function ServiceBlock({
             {service.tools.map((tool) => (
               <span
                 key={tool}
-                className="rounded-full bg-white/[0.04] px-4 py-2 text-[12px] text-white/30"
+                className="rounded-full bg-white/[0.04] px-5 py-2.5 text-[13px] text-white/30"
               >
                 {tool}
               </span>

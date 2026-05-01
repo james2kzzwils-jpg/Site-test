@@ -24,42 +24,42 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative flex min-h-screen items-end overflow-hidden pb-[12vh]">
+    <section className="relative flex min-h-screen items-end overflow-hidden pb-[14vh]">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/[0.03] via-transparent to-violet-500/[0.03]" />
         <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#0a0a0a] to-transparent" />
       </div>
 
       <div ref={containerRef} className="relative z-10 mx-auto w-full max-w-[1400px] px-8 lg:px-16">
-        <p data-reveal className="mb-8 font-mono text-[11px] tracking-[0.4em] text-white/25 uppercase">
+        <p data-reveal className="mb-10 text-[12px] tracking-[0.3em] text-white/20 uppercase">
           James Creative Labs
         </p>
 
-        <h1 data-reveal className="mb-12 max-w-[900px]">
-          <span className="block text-[clamp(3rem,8vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white">
+        <h1 data-reveal className="mb-14 max-w-[900px]">
+          <span className="block text-[clamp(2.8rem,7.5vw,7rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white">
             {t.hero.title_line1}
           </span>
-          <span className="block text-[clamp(3rem,8vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white/20">
+          <span className="block text-[clamp(2.8rem,7.5vw,7rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white/20">
             {t.hero.title_line2}
           </span>
         </h1>
 
-        <p data-reveal className="mb-16 max-w-md text-[16px] leading-[1.7] text-white/30">
+        <p data-reveal className="mb-16 max-w-lg text-[16px] leading-[1.8] text-white/30">
           {t.hero.subtitle}
         </p>
 
-        <div data-reveal className="flex items-center gap-8">
+        <div data-reveal className="flex flex-wrap items-center gap-6">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-full bg-white px-10 py-4 text-[13px] font-medium tracking-[-0.01em] text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400"
+            className="rounded-full bg-white px-12 py-5 text-[15px] font-medium text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]"
           >
             {t.hero.cta_works}
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="text-[13px] font-medium tracking-[-0.01em] text-white/40 transition-colors duration-500 hover:text-white"
+            className="rounded-full border border-white/[0.12] px-12 py-5 text-[15px] font-medium text-white/50 transition-all duration-500 hover:border-white/30 hover:text-white"
           >
-            {t.hero.cta_contact} →
+            {t.hero.cta_contact}
           </button>
         </div>
       </div>
