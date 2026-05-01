@@ -6,48 +6,33 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="border-t border-white/5 py-12">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+    <footer className="border-t border-white/[0.04] py-16">
+      <div className="mx-auto max-w-[1400px] px-8 lg:px-12">
+        <div className="flex flex-col items-start justify-between gap-10 sm:flex-row sm:items-center">
           <div>
-            <p className="font-mono text-sm tracking-widest text-white/60 uppercase">
+            <p className="font-mono text-[13px] tracking-[0.2em] text-white/60 uppercase">
               {t.footer.brand}
             </p>
-            <p className="mt-1 font-mono text-xs text-white/30">
+            <p className="mt-2 text-[13px] text-white/20">
               {t.footer.tagline}
             </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Behance
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Vimeo
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Telegram
-            </a>
+          <div className="flex items-center gap-8">
+            {['Behance', 'Vimeo', 'LinkedIn', 'Telegram'].map((social) => (
+              <a
+                key={social}
+                href="#"
+                className="font-mono text-[11px] tracking-[0.1em] text-white/20 uppercase transition-colors duration-300 hover:text-white/60"
+              >
+                {social}
+              </a>
+            ))}
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/5 pt-8 text-center">
-          <p className="font-mono text-xs text-white/20">
+        <div className="mt-12 border-t border-white/[0.04] pt-8">
+          <p className="font-mono text-[11px] tracking-[0.1em] text-white/15">
             &copy; {new Date().getFullYear()} {t.footer.brand}. {t.footer.rights}
           </p>
         </div>

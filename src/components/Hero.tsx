@@ -10,18 +10,19 @@ export default function Hero() {
   const { t } = useLanguage();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const els = [titleRef.current, subtitleRef.current];
+    const els = [titleRef.current, subtitleRef.current, ctaRef.current];
     els.forEach((el, i) => {
       if (!el) return;
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
       setTimeout(() => {
-        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        el.style.transition = 'opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1)';
         el.style.opacity = '1';
         el.style.transform = 'translateY(0)';
-      }, 300 + i * 200);
+      }, 400 + i * 200);
     });
   }, []);
 
@@ -29,50 +30,52 @@ export default function Hero() {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <Scene3D />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-        <div className="mb-6 inline-block rounded-full border border-cyan-400/20 bg-cyan-400/5 px-4 py-1.5">
-          <span className="font-mono text-xs tracking-widest text-cyan-400 uppercase">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/40 via-transparent to-[#0a0a0a]" />
+
+      <div className="relative z-10 mx-auto max-w-[1400px] px-8 text-center lg:px-12">
+        <div className="mb-10 inline-block">
+          <span className="font-mono text-[11px] tracking-[0.3em] text-cyan-400/60 uppercase">
             James Creative Labs
           </span>
         </div>
 
-        <h1 ref={titleRef} className="mb-6">
-          <span className="block font-mono text-5xl font-bold tracking-tight text-white sm:text-7xl lg:text-8xl">
+        <h1 ref={titleRef} className="mb-8">
+          <span className="block font-mono text-[clamp(2.5rem,7vw,6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-white">
             {t.hero.title_line1}
           </span>
-          <span className="block font-mono text-5xl font-bold tracking-tight text-cyan-400 sm:text-7xl lg:text-8xl">
+          <span className="block font-mono text-[clamp(2.5rem,7vw,6rem)] font-bold leading-[1.05] tracking-[-0.02em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">
             {t.hero.title_line2}
           </span>
         </h1>
 
         <p
           ref={subtitleRef}
-          className="mx-auto mb-10 max-w-2xl font-mono text-sm leading-relaxed text-white/40 sm:text-base"
+          className="mx-auto mb-14 max-w-xl text-[15px] leading-[1.8] text-white/35"
         >
           {t.hero.subtitle}
         </p>
 
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div ref={ctaRef} className="flex flex-col items-center justify-center gap-5 sm:flex-row">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative overflow-hidden rounded-full bg-cyan-400 px-8 py-3 font-mono text-sm font-medium text-black transition-all hover:bg-cyan-300"
+            className="group relative overflow-hidden rounded-full bg-white px-10 py-4 font-mono text-[12px] font-semibold uppercase tracking-[0.15em] text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400"
           >
-            <span className="relative z-10">{t.hero.cta_works}</span>
+            {t.hero.cta_works}
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-full border border-white/10 px-8 py-3 font-mono text-sm text-white/70 transition-all hover:border-cyan-400/30 hover:text-cyan-400"
+            className="rounded-full border border-white/[0.12] px-10 py-4 font-mono text-[12px] uppercase tracking-[0.15em] text-white/50 transition-all duration-500 hover:border-cyan-400/30 hover:text-cyan-400"
           >
             {t.hero.cta_contact}
           </button>
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
-        <span className="font-mono text-[10px] tracking-widest text-white/20 uppercase">
+      <div className="absolute bottom-12 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3">
+        <span className="font-mono text-[10px] tracking-[0.3em] text-white/15 uppercase">
           {t.hero.scroll}
         </span>
-        <div className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan-400/50 to-transparent" />
+        <div className="h-10 w-px animate-pulse bg-gradient-to-b from-white/20 to-transparent" />
       </div>
     </section>
   );

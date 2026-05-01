@@ -11,6 +11,14 @@ import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
+function SectionDivider() {
+  return (
+    <div className="mx-auto max-w-[1400px] px-8 lg:px-12">
+      <div className="h-px bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <LanguageProvider>
@@ -18,25 +26,15 @@ export default function Home() {
         <Navigation />
         <main className="bg-[#0a0a0a]">
           <Hero />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent" />
-          </div>
+          <SectionDivider />
           <Works />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionDivider />
           <Services />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionDivider />
           <Shop />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-          </div>
+          <SectionDivider />
           <About />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionDivider />
           <Contact />
           <Footer />
         </main>
