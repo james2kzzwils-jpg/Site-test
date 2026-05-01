@@ -1,0 +1,204 @@
+{
+  "nav": {
+    "works": "Works",
+    "services": "Services",
+    "shop": "Shop",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title_line1": "Motion Design",
+    "title_line2": "& CG Solutions",
+    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process.",
+    "cta_works": "Explore Works",
+    "cta_contact": "Get in Touch",
+    "scroll": "Scroll to explore"
+  },
+  "works": {
+    "title": "Selected Works",
+    "subtitle": "A curated selection of projects spanning procedural animation, product visualization, and technical solutions.",
+    "filters": {
+      "all": "All",
+      "animation": "Animation",
+      "product_viz": "Product Viz",
+      "simulations": "Simulations",
+      "tools": "Tools"
+    },
+    "view_project": "View Project",
+    "projects": [
+      {
+        "id": "houdini-vellum",
+        "title": "Fabric Dynamics",
+        "category": "simulations",
+        "tags": ["Houdini", "Vellum", "Simulation"],
+        "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign."
+      },
+      {
+        "id": "product-render",
+        "title": "Tech Product Launch",
+        "category": "product_viz",
+        "tags": ["Blender", "After Effects", "Compositing"],
+        "description": "High-end product visualization for a consumer electronics brand. Full pipeline from modeling to final composite."
+      },
+      {
+        "id": "particle-systems",
+        "title": "Particle Universe",
+        "category": "animation",
+        "tags": ["Houdini", "Particles", "Motion Design"],
+        "description": "Procedural particle system creating organic, data-driven motion graphics for a fintech company's brand film."
+      },
+      {
+        "id": "fluid-sim",
+        "title": "Liquid Metal",
+        "category": "simulations",
+        "tags": ["Houdini", "FLIP", "Rendering"],
+        "description": "Metallic fluid simulation with custom shader development for automotive brand commercial."
+      },
+      {
+        "id": "trim-tool",
+        "title": "Trim Texture Assembler",
+        "category": "tools",
+        "tags": ["Python", "Pipeline", "Automation"],
+        "description": "Custom pipeline tool for automated trim texture assembly, reducing manual work by 80%."
+      },
+      {
+        "id": "motion-reel",
+        "title": "Annual Motion Reel",
+        "category": "animation",
+        "tags": ["Blender", "3ds Max", "After Effects"],
+        "description": "Compilation of motion design projects demonstrating full production cycle capabilities."
+      }
+    ]
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "End-to-end creative and technical solutions for brands, studios, and direct clients.",
+    "items": [
+      {
+        "number": "01",
+        "title": "Procedural Animation & Simulations",
+        "description": "Complex simulations in Houdini — Vellum cloth, FLIP fluids, particle systems. Every effect is art-directable and technically optimized for production.",
+        "tools": ["Houdini", "Vellum", "FLIP", "Particles"]
+      },
+      {
+        "number": "02",
+        "title": "Full Production Cycle",
+        "description": "From concept and shading in Blender/3ds Max to final compositing in After Effects. Complete video production with seamless integration at every stage.",
+        "tools": ["Blender", "3ds Max", "After Effects", "Compositing"]
+      },
+      {
+        "number": "03",
+        "title": "Product Visualization",
+        "description": "High-tech content creation for brands. Photorealistic renders and dynamic product reveals that communicate value through visual precision.",
+        "tools": ["Blender", "Octane", "Redshift", "Lighting"]
+      },
+      {
+        "number": "04",
+        "title": "Technical Solutions & Automation",
+        "description": "Custom pipeline tools, HDA development, and automation scripts that streamline workflows and reduce repetitive tasks in 3D production.",
+        "tools": ["Python", "HDAs", "Pipeline", "Scripting"]
+      }
+    ]
+  },
+  "shop": {
+    "title": "Digital Products",
+    "subtitle": "Production-tested tools, assets, and scripts to accelerate your 3D workflow.",
+    "categories": {
+      "all": "All",
+      "hda": "HDA Tools",
+      "scripts": "Scripts",
+      "assets": "3D Assets"
+    },
+    "products": [
+      {
+        "id": "trim-assembler",
+        "title": "Trim Texture Assembler",
+        "category": "scripts",
+        "price": "$49",
+        "description": "Automated trim texture assembly tool. Supports multiple input formats and batch processing."
+      },
+      {
+        "id": "scatter-hda",
+        "title": "Procedural Scatter HDA",
+        "category": "hda",
+        "price": "$79",
+        "description": "Advanced scattering system for Houdini with biome-based distribution and instancing support."
+      },
+      {
+        "id": "cable-generator",
+        "title": "Cable Generator HDA",
+        "category": "hda",
+        "price": "$59",
+        "description": "Procedural cable and wire generation tool with physics-based draping and material presets."
+      },
+      {
+        "id": "base-meshes",
+        "title": "Hard Surface Kit",
+        "category": "assets",
+        "price": "$39",
+        "description": "Collection of 50+ production-ready hard surface base meshes optimized for subdivision workflows."
+      }
+    ],
+    "buy_now": "Buy Now",
+    "coming_soon": "Coming Soon"
+  },
+  "about": {
+    "title": "About",
+    "philosophy_label": "Philosophy",
+    "philosophy_title": "Stage of Zero Value",
+    "philosophy_text": "When aesthetics is not the goal, but the natural result of a competent technical process. Every project starts with engineering precision — the beauty emerges on its own.",
+    "approach_label": "Approach",
+    "approach_title": "How I Work",
+    "approach_steps": [
+      {
+        "number": "01",
+        "title": "Analysis & Concept",
+        "description": "Understanding the business task behind the visual. What problem are we solving?"
+      },
+      {
+        "number": "02",
+        "title": "Technical Design",
+        "description": "Choosing the right tools and building the pipeline before touching a single pixel."
+      },
+      {
+        "number": "03",
+        "title": "Production",
+        "description": "Execution with full control over every stage — from geometry to final composite."
+      },
+      {
+        "number": "04",
+        "title": "Delivery & Optimization",
+        "description": "Final output optimized for the target platform with documented project files."
+      }
+    ],
+    "toolkit_label": "Toolkit",
+    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "Nuke", "Python", "Redshift", "Octane"]
+  },
+  "contact": {
+    "title": "Let's Work Together",
+    "subtitle": "Have a project in mind? Let's discuss how we can solve your creative and technical challenges.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "project_type": "Project Type",
+      "project_types": {
+        "services": "Project Services",
+        "strategic": "Strategic Design",
+        "consultation": "Consultation",
+        "other": "Other"
+      },
+      "message": "Tell me about your project",
+      "send": "Send Message"
+    },
+    "info": {
+      "email": "hello@jamescreativelabs.com",
+      "telegram": "@jamescreativelabs",
+      "location": "Available Worldwide"
+    }
+  },
+  "footer": {
+    "brand": "James Creative Labs",
+    "tagline": "Motion Design & CG Solutions",
+    "rights": "All rights reserved."
+  }
+}
