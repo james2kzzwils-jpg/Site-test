@@ -51,13 +51,14 @@ export default function Hero() {
         <div data-reveal className="flex flex-wrap items-center gap-6">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-full bg-white px-12 py-5 text-[15px] font-medium text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]"
+            className="group relative overflow-hidden rounded-xl bg-white px-14 py-6 text-[16px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
           >
-            {t.hero.cta_works}
+            <span className="relative z-10">{t.hero.cta_works}</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-full border border-white/[0.12] px-12 py-5 text-[15px] font-medium text-white/50 transition-all duration-500 hover:border-white/30 hover:text-white"
+            className="rounded-xl border border-white/[0.15] px-14 py-6 text-[16px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white"
           >
             {t.hero.cta_contact}
           </button>

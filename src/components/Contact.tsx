@@ -22,7 +22,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-32 lg:py-48">
+    <section id="contact" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
           className={`mb-24 transition-all duration-1000 ${
@@ -61,7 +61,7 @@ export default function Contact() {
 
           <form
             onSubmit={handleSubmit}
-            className={`space-y-8 transition-all duration-1000 delay-300 ${
+            className={`space-y-10 transition-all duration-1000 delay-300 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
@@ -111,12 +111,13 @@ export default function Contact() {
               />
             </div>
 
-            <div className="pt-4">
+            <div className="pt-6">
               <button
                 type="submit"
-                className="rounded-full bg-white px-14 py-5 text-[15px] font-medium text-[#0a0a0a] transition-all duration-500 hover:bg-cyan-400 hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]"
+                className="group relative overflow-hidden rounded-xl bg-white px-14 py-6 text-[16px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
               >
-                {t.contact.form.send}
+                <span className="relative z-10">{t.contact.form.send}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </button>
             </div>
           </form>

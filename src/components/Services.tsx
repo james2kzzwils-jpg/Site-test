@@ -23,7 +23,7 @@ function ServiceBlock({
     >
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center gap-8 border-t border-white/[0.06] py-12 text-left lg:gap-16 lg:py-16"
+        className="flex w-full items-center gap-8 border-t border-white/[0.06] py-14 text-left lg:gap-16 lg:py-16"
       >
         <span className="shrink-0 text-[clamp(2rem,5vw,4rem)] font-light leading-none text-white/[0.08] transition-colors duration-500 group-hover:text-white/20">
           {service.number}
@@ -33,7 +33,7 @@ function ServiceBlock({
           {service.title}
         </h3>
 
-        <span className={`shrink-0 text-[20px] text-white/15 transition-transform duration-500 ${isExpanded ? 'rotate-45' : ''}`}>
+        <span className={`shrink-0 text-[24px] text-white/15 transition-transform duration-500 ${isExpanded ? 'rotate-45' : ''}`}>
           +
         </span>
       </button>
@@ -43,7 +43,7 @@ function ServiceBlock({
           isExpanded ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="pb-12 pl-0 lg:pl-[calc(clamp(2rem,5vw,4rem)+4rem)]">
+        <div className="pb-14 pl-0 lg:pl-[calc(clamp(2rem,5vw,4rem)+4rem)]">
           <p className="mb-8 max-w-xl text-[15px] leading-[1.8] text-white/25">
             {service.description}
           </p>
@@ -51,7 +51,7 @@ function ServiceBlock({
             {service.tools.map((tool) => (
               <span
                 key={tool}
-                className="rounded-full bg-white/[0.04] px-5 py-2.5 text-[13px] text-white/30"
+                className="rounded-xl bg-white/[0.04] px-6 py-3 text-[14px] text-white/30 transition-colors duration-300 hover:bg-white/[0.08] hover:text-white/50"
               >
                 {tool}
               </span>
@@ -78,7 +78,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section id="services" ref={sectionRef} className="py-32 lg:py-48">
+    <section id="services" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
           className={`mb-20 max-w-2xl transition-all duration-1000 ${

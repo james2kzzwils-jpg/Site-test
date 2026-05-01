@@ -24,7 +24,7 @@ export default function Shop() {
   );
 
   return (
-    <section id="shop" ref={sectionRef} className="py-32 lg:py-48">
+    <section id="shop" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
           className={`mb-24 max-w-2xl transition-all duration-1000 ${
@@ -40,7 +40,7 @@ export default function Shop() {
         </div>
 
         <div
-          className={`mb-16 flex flex-wrap gap-3 transition-all duration-1000 delay-200 ${
+          className={`mb-16 flex flex-wrap gap-4 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -48,7 +48,7 @@ export default function Shop() {
             <button
               key={key}
               onClick={() => setActiveCategory(key)}
-              className={`rounded-full px-8 py-4 text-[14px] font-medium transition-all duration-300 ${
+              className={`rounded-xl px-8 py-4 text-[15px] font-medium transition-all duration-300 hover:scale-[1.03] ${
                 activeCategory === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
@@ -59,11 +59,11 @@ export default function Shop() {
           ))}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product, i) => (
             <div
               key={product.id}
-              className={`group overflow-hidden rounded-3xl bg-white/[0.02] transition-all duration-700 hover:bg-white/[0.05] ${
+              className={`group overflow-hidden rounded-2xl bg-white/[0.02] transition-all duration-700 hover:bg-white/[0.05] hover:scale-[1.02] ${
                 isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
               style={{ transitionDelay: `${300 + i * 100}ms` }}
@@ -75,20 +75,20 @@ export default function Shop() {
               </div>
 
               <div className="p-8 pt-0">
-                <span className="text-[11px] tracking-wide text-white/20">
+                <span className="text-[12px] tracking-wide text-white/20">
                   {t.shop.categories[product.category as keyof typeof t.shop.categories]}
                 </span>
                 <h3 className="mt-3 text-[16px] font-medium tracking-[-0.01em] text-white/80 transition-colors duration-300 group-hover:text-white">
                   {product.title}
                 </h3>
-                <p className="mt-2 text-[13px] leading-[1.7] text-white/20">
+                <p className="mt-2 text-[14px] leading-[1.7] text-white/20">
                   {product.description}
                 </p>
                 <div className="mt-8 flex items-center justify-between">
                   <span className="text-[20px] font-medium text-white">
                     {product.price}
                   </span>
-                  <button className="rounded-full bg-white/[0.06] px-6 py-3 text-[13px] text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60">
+                  <button className="rounded-xl bg-white/[0.06] px-6 py-3.5 text-[14px] font-medium text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60 hover:scale-[1.05]">
                     {t.shop.coming_soon}
                   </button>
                 </div>

@@ -18,7 +18,7 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="py-32 lg:py-48">
+    <section id="about" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
 
         <div
@@ -47,7 +47,7 @@ export default function About() {
             {t.about.approach_steps.map((step, i) => (
               <div
                 key={step.number}
-                className={`bg-[#0a0a0a] p-10 transition-all duration-1000 ${
+                className={`bg-[#0a0a0a] p-10 transition-all duration-1000 hover:bg-white/[0.02] ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
                 style={{ transitionDelay: `${400 + i * 100}ms` }}
@@ -58,7 +58,7 @@ export default function About() {
                 <h4 className="mb-3 text-[15px] font-medium text-white/70">
                   {step.title}
                 </h4>
-                <p className="text-[13px] leading-[1.7] text-white/20">
+                <p className="text-[14px] leading-[1.7] text-white/20">
                   {step.description}
                 </p>
               </div>
@@ -74,11 +74,11 @@ export default function About() {
           >
             {t.about.toolkit_label}
           </h3>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
             {t.about.tools.map((tool, i) => (
               <div
                 key={tool}
-                className={`rounded-full bg-white/[0.04] px-6 py-3 text-[14px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 ${
+                className={`rounded-xl bg-white/[0.04] px-7 py-3.5 text-[14px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 hover:scale-[1.05] ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
                 style={{ transitionDelay: `${600 + i * 50}ms` }}

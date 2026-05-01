@@ -52,14 +52,14 @@ function ProjectCard({
   return (
     <div
       ref={cardRef}
-      className={`group relative cursor-pointer overflow-hidden rounded-3xl transition-all duration-1000 ${
+      className={`group relative cursor-pointer overflow-hidden rounded-3xl transition-all duration-1000 hover:scale-[1.01] ${
         isHero ? 'col-span-full' : ''
       } ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div
         className="relative overflow-hidden"
-        style={{ height: isHero ? '520px' : '440px' }}
+        style={{ height: isHero ? '560px' : '480px' }}
       >
         <div
           className={`absolute inset-x-0 h-[130%] bg-gradient-to-br ${gradient}`}
@@ -75,11 +75,11 @@ function ProjectCard({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/20 to-transparent" />
 
         <div className="absolute bottom-0 left-0 right-0 p-10 lg:p-12">
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="mb-4 flex flex-wrap gap-3">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-white/[0.08] px-5 py-2.5 text-[13px] tracking-wide text-white/50 backdrop-blur-sm"
+                className="rounded-xl bg-white/[0.08] px-5 py-2.5 text-[13px] tracking-wide text-white/50 backdrop-blur-sm transition-colors duration-300 group-hover:bg-white/[0.12]"
               >
                 {tag}
               </span>
@@ -120,7 +120,7 @@ export default function Works() {
   );
 
   return (
-    <section id="works" ref={sectionRef} className="py-32 lg:py-48">
+    <section id="works" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
           className={`mb-24 transition-all duration-1000 ${
@@ -136,7 +136,7 @@ export default function Works() {
         </div>
 
         <div
-          className={`mb-16 flex flex-wrap gap-3 transition-all duration-1000 delay-200 ${
+          className={`mb-16 flex flex-wrap gap-4 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -144,7 +144,7 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-full px-8 py-4 text-[14px] font-medium transition-all duration-300 ${
+              className={`rounded-xl px-8 py-4 text-[15px] font-medium transition-all duration-300 hover:scale-[1.03] ${
                 activeFilter === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
@@ -155,7 +155,7 @@ export default function Works() {
           ))}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-2">
           {projects.map((project, i) => (
             <ProjectCard
               key={project.id}
