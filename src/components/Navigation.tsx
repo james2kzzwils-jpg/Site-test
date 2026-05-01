@@ -34,41 +34,41 @@ export default function Navigation() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
         isScrolled
-          ? 'bg-[#0a0a0a]/80 backdrop-blur-2xl border-b border-white/[0.04]'
+          ? 'bg-[#0a0a0a]/70 backdrop-blur-2xl'
           : 'bg-transparent'
       }`}
     >
-      <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-8 py-5 lg:px-12">
+      <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-8 py-6 lg:px-16">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="font-mono text-[13px] tracking-[0.2em] text-white/80 uppercase transition-colors duration-300 hover:text-white"
+          className="text-[14px] font-medium tracking-[-0.01em] text-white/70 transition-colors duration-300 hover:text-white"
         >
-          JCL<span className="text-cyan-400">_</span>
+          JCL
         </button>
 
-        <div className="hidden items-center gap-10 md:flex">
+        <div className="hidden items-center gap-12 md:flex">
           {navItems.map((item) => (
             <button
               key={item.key}
               onClick={() => scrollTo(item.href)}
-              className="font-mono text-[11px] tracking-[0.15em] text-white/35 uppercase transition-colors duration-300 hover:text-white/80"
+              className="text-[13px] text-white/25 transition-colors duration-300 hover:text-white/60"
             >
               {t.nav[item.key]}
             </button>
           ))}
 
-          <div className="ml-2 flex items-center gap-0.5 rounded-full border border-white/[0.06] p-1">
+          <div className="flex items-center gap-1">
             {(['en', 'ru'] as const).map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLocale(lang as Locale)}
-                className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-all duration-300 ${
+                className={`rounded-full px-3 py-1.5 text-[12px] transition-all duration-300 ${
                   locale === lang
-                    ? 'bg-white/[0.08] text-white/80'
-                    : 'text-white/25 hover:text-white/50'
+                    ? 'bg-white/[0.08] text-white/70'
+                    : 'text-white/20 hover:text-white/40'
                 }`}
               >
-                {lang}
+                {lang.toUpperCase()}
               </button>
             ))}
           </div>
@@ -80,12 +80,12 @@ export default function Navigation() {
           aria-label="Toggle menu"
         >
           <span
-            className={`block h-px w-6 bg-white/70 transition-all duration-300 ${
+            className={`block h-px w-5 bg-white/60 transition-all duration-300 ${
               isMobileOpen ? 'translate-y-[3.5px] rotate-45' : ''
             }`}
           />
           <span
-            className={`block h-px w-6 bg-white/70 transition-all duration-300 ${
+            className={`block h-px w-5 bg-white/60 transition-all duration-300 ${
               isMobileOpen ? '-translate-y-[3.5px] -rotate-45' : ''
             }`}
           />
@@ -93,32 +93,32 @@ export default function Navigation() {
       </nav>
 
       <div
-        className={`absolute inset-x-0 top-full overflow-hidden border-b border-white/[0.04] bg-[#0a0a0a]/95 backdrop-blur-2xl transition-all duration-500 md:hidden ${
-          isMobileOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0 border-transparent'
+        className={`absolute inset-x-0 top-full overflow-hidden bg-[#0a0a0a]/95 backdrop-blur-2xl transition-all duration-500 md:hidden ${
+          isMobileOpen ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="flex flex-col gap-1 px-8 py-6">
+        <div className="flex flex-col px-8 py-8">
           {navItems.map((item) => (
             <button
               key={item.key}
               onClick={() => scrollTo(item.href)}
-              className="py-3 text-left font-mono text-[13px] tracking-[0.1em] text-white/50 uppercase transition-colors duration-300 hover:text-white"
+              className="py-4 text-left text-[15px] text-white/40 transition-colors duration-300 hover:text-white"
             >
               {t.nav[item.key]}
             </button>
           ))}
-          <div className="mt-4 flex items-center gap-2 border-t border-white/[0.04] pt-5">
+          <div className="mt-6 flex items-center gap-3 border-t border-white/[0.04] pt-6">
             {(['en', 'ru'] as const).map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLocale(lang as Locale)}
-                className={`rounded-full border px-5 py-2 font-mono text-[11px] uppercase tracking-[0.1em] transition-all duration-300 ${
+                className={`rounded-full px-5 py-2.5 text-[13px] transition-all duration-300 ${
                   locale === lang
-                    ? 'border-white/15 bg-white/[0.06] text-white/70'
-                    : 'border-white/[0.06] text-white/25'
+                    ? 'bg-white/[0.08] text-white/60'
+                    : 'text-white/20'
                 }`}
               >
-                {lang}
+                {lang.toUpperCase()}
               </button>
             ))}
           </div>

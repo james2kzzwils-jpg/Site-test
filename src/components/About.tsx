@@ -11,66 +11,54 @@ export default function About() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.05 }
+      { threshold: 0.02 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="relative py-40">
-      <div className="mx-auto max-w-[1400px] px-8 lg:px-12">
+    <section id="about" ref={sectionRef} className="py-32 lg:py-48">
+      <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
 
         <div
-          className={`mb-32 grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-24 transition-all duration-1000 ${
+          className={`mb-40 transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          <div>
-            <span className="mb-6 inline-block font-mono text-[11px] tracking-[0.2em] text-cyan-400/70 uppercase">
-              {'// '}{t.about.philosophy_label}
-            </span>
-            <h2 className="font-mono text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-white">
-              {t.about.philosophy_title}
-            </h2>
-          </div>
-          <div className="flex items-end">
-            <p className="text-[15px] leading-[1.9] text-white/40">
-              {t.about.philosophy_text}
-            </p>
-          </div>
+          <h2 className="mb-12 max-w-[700px] text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
+            {t.about.philosophy_title}
+          </h2>
+          <p className="max-w-2xl text-[17px] leading-[1.8] text-white/25">
+            {t.about.philosophy_text}
+          </p>
         </div>
 
-        <div className="mb-32">
-          <div
-            className={`mb-16 transition-all duration-1000 ${
+        <div className="mb-40">
+          <h3
+            className={`mb-20 text-[clamp(1.5rem,3vw,2.25rem)] font-medium leading-[1.2] tracking-[-0.02em] text-white/60 transition-all duration-1000 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
-            <span className="mb-6 inline-block font-mono text-[11px] tracking-[0.2em] text-cyan-400/70 uppercase">
-              {'// '}{t.about.approach_label}
-            </span>
-            <h3 className="font-mono text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-[1.15] tracking-tight text-white">
-              {t.about.approach_title}
-            </h3>
-          </div>
+            {t.about.approach_title}
+          </h3>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-px bg-white/[0.04] sm:grid-cols-2 lg:grid-cols-4">
             {t.about.approach_steps.map((step, i) => (
               <div
                 key={step.number}
-                className={`group relative rounded-2xl border border-white/[0.04] bg-[#0f0f0f] p-8 transition-all duration-700 hover:border-cyan-400/15 ${
+                className={`bg-[#0a0a0a] p-10 transition-all duration-1000 ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
-                style={{ transitionDelay: `${300 + i * 150}ms` }}
+                style={{ transitionDelay: `${400 + i * 100}ms` }}
               >
-                <span className="mb-6 block font-mono text-[clamp(2rem,4vw,3rem)] font-black leading-none text-white/[0.06] transition-colors duration-500 group-hover:text-cyan-400/20">
+                <span className="mb-8 block text-[clamp(2rem,4vw,3rem)] font-light leading-none text-white/[0.06]">
                   {step.number}
                 </span>
-                <h4 className="mb-3 font-mono text-[14px] font-semibold tracking-tight text-white">
+                <h4 className="mb-3 text-[15px] font-medium text-white/70">
                   {step.title}
                 </h4>
-                <p className="text-[13px] leading-[1.7] text-white/35">
+                <p className="text-[13px] leading-[1.7] text-white/20">
                   {step.description}
                 </p>
               </div>
@@ -79,21 +67,21 @@ export default function About() {
         </div>
 
         <div>
-          <span
-            className={`mb-8 inline-block font-mono text-[11px] tracking-[0.2em] text-cyan-400/70 uppercase transition-all duration-1000 ${
+          <h3
+            className={`mb-12 text-[18px] font-medium text-white/40 transition-all duration-1000 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
-            {'// '}{t.about.toolkit_label}
-          </span>
+            {t.about.toolkit_label}
+          </h3>
           <div className="flex flex-wrap gap-3">
             {t.about.tools.map((tool, i) => (
               <div
                 key={tool}
-                className={`rounded-xl border border-white/[0.04] bg-[#0f0f0f] px-6 py-3.5 font-mono text-[13px] text-white/45 transition-all duration-500 hover:border-cyan-400/15 hover:text-cyan-400/80 ${
+                className={`rounded-full bg-white/[0.04] px-6 py-3 text-[14px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
-                style={{ transitionDelay: `${600 + i * 60}ms` }}
+                style={{ transitionDelay: `${600 + i * 50}ms` }}
               >
                 {tool}
               </div>

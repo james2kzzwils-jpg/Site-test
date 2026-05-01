@@ -4,34 +4,33 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 const gradients = [
-  'from-cyan-500/30 via-blue-600/20 to-violet-600/30',
-  'from-violet-600/30 via-purple-500/20 to-pink-500/30',
-  'from-emerald-500/30 via-teal-500/20 to-cyan-500/30',
-  'from-amber-500/30 via-orange-500/20 to-red-500/30',
-  'from-blue-500/30 via-indigo-500/20 to-purple-500/30',
-  'from-rose-500/30 via-pink-500/20 to-violet-500/30',
+  'from-cyan-400/20 via-blue-500/10 to-violet-500/20',
+  'from-violet-500/20 via-purple-400/10 to-pink-400/20',
+  'from-emerald-400/20 via-teal-400/10 to-cyan-400/20',
+  'from-amber-400/20 via-orange-400/10 to-red-400/20',
+  'from-blue-400/20 via-indigo-400/10 to-purple-400/20',
+  'from-rose-400/20 via-pink-400/10 to-violet-400/20',
 ];
 
-function ParallaxCard({
+function ProjectCard({
   project,
   index,
   gradient,
-  viewLabel,
 }: {
   project: { id: string; title: string; category: string; tags: string[]; description: string };
   index: number;
   gradient: string;
-  viewLabel: string;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleScroll = useCallback(() => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
     const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
-    setOffset((progress - 0.5) * 60);
+    setOffset((progress - 0.5) * 50);
   }, []);
 
   useEffect(() => {
@@ -39,54 +38,62 @@ function ParallaxCard({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  const isWide = index % 3 === 0;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.1 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const isHero = index === 0;
 
   return (
     <div
       ref={cardRef}
-      className={`group relative overflow-hidden rounded-2xl border border-white/[0.04] bg-[#0f0f0f] transition-all duration-700 hover:border-cyan-400/15 ${
-        isWide ? 'md:col-span-2' : ''
-      }`}
+      className={`group relative cursor-pointer overflow-hidden rounded-3xl transition-all duration-1000 ${
+        isHero ? 'col-span-full' : ''
+      } ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
+      style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <div className="relative overflow-hidden" style={{ height: isWide ? '420px' : '360px' }}>
+      <div
+        className="relative overflow-hidden"
+        style={{ height: isHero ? '520px' : '440px' }}
+      >
         <div
-          className={`absolute inset-x-0 h-[130%] bg-gradient-to-br ${gradient} transition-transform duration-100`}
+          className={`absolute inset-x-0 h-[130%] bg-gradient-to-br ${gradient}`}
           style={{ transform: `translateY(${offset}px)`, top: '-15%' }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="select-none font-mono text-[140px] font-black leading-none text-white/[0.04] transition-all duration-700 group-hover:text-white/[0.08] group-hover:scale-110">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-          </div>
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="select-none text-[clamp(6rem,15vw,12rem)] font-bold leading-none text-white/[0.03] transition-all duration-700 group-hover:text-white/[0.06]">
+            {String(index + 1).padStart(2, '0')}
+          </span>
         </div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/20 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 p-8">
+        <div className="absolute bottom-0 left-0 right-0 p-10 lg:p-12">
           <div className="mb-4 flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 font-mono text-[11px] tracking-wide text-white/60 backdrop-blur-sm"
+                className="rounded-full bg-white/[0.08] px-4 py-1.5 text-[11px] tracking-wide text-white/50 backdrop-blur-sm"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <h3 className="font-mono text-2xl font-bold tracking-tight text-white transition-colors duration-300 group-hover:text-cyan-400 lg:text-3xl">
+          <h3 className="text-[clamp(1.5rem,3vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.02em] text-white transition-colors duration-500 group-hover:text-cyan-400">
             {project.title}
           </h3>
+          {isHero && (
+            <p className="mt-4 max-w-lg text-[14px] leading-[1.7] text-white/30">
+              {project.description}
+            </p>
+          )}
         </div>
-      </div>
-
-      <div className="p-8 pt-5">
-        <p className="mb-6 max-w-xl text-[14px] leading-[1.7] text-white/40">
-          {project.description}
-        </p>
-        <button className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.15em] text-cyan-400/80 transition-all duration-300 hover:text-cyan-400 hover:gap-3">
-          {viewLabel}
-          <span className="text-lg leading-none">→</span>
-        </button>
       </div>
     </div>
   );
@@ -101,7 +108,7 @@ export default function Works() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.05 }
+      { threshold: 0.02 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -113,26 +120,23 @@ export default function Works() {
   );
 
   return (
-    <section id="works" ref={sectionRef} className="relative py-40">
-      <div className="mx-auto max-w-[1400px] px-8 lg:px-12">
+    <section id="works" ref={sectionRef} className="py-32 lg:py-48">
+      <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
-          className={`mb-20 max-w-3xl transition-all duration-1000 ${
+          className={`mb-24 transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          <span className="mb-6 inline-block font-mono text-[11px] tracking-[0.2em] text-cyan-400/70 uppercase">
-            {'// '}{t.works.title}
-          </span>
-          <h2 className="mb-6 font-mono text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-white">
+          <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
             {t.works.title}
           </h2>
-          <p className="max-w-2xl text-[15px] leading-[1.8] text-white/35">
+          <p className="mt-6 max-w-lg text-[16px] leading-[1.7] text-white/25">
             {t.works.subtitle}
           </p>
         </div>
 
         <div
-          className={`mb-14 flex flex-wrap gap-3 transition-all duration-1000 delay-200 ${
+          className={`mb-16 flex flex-wrap gap-3 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -140,10 +144,10 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-full border px-6 py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] transition-all duration-300 ${
+              className={`rounded-full px-6 py-3 text-[13px] transition-all duration-300 ${
                 activeFilter === key
-                  ? 'border-cyan-400/30 bg-cyan-400/[0.08] text-cyan-400'
-                  : 'border-white/[0.06] text-white/35 hover:border-white/15 hover:text-white/60'
+                  ? 'bg-white text-[#0a0a0a]'
+                  : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
               }`}
             >
               {t.works.filters[key]}
@@ -151,14 +155,13 @@ export default function Works() {
           ))}
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           {projects.map((project, i) => (
-            <ParallaxCard
+            <ProjectCard
               key={project.id}
               project={project}
               index={i}
               gradient={gradients[i % gradients.length]}
-              viewLabel={t.works.view_project}
             />
           ))}
         </div>
