@@ -1,28 +1,34 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
-const inter = Inter({
-  variable: "--font-geist-sans",
+const interSans = Inter({
+  variable: "--font-display",
   subsets: ["latin", "cyrillic"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "James Creative Labs — Motion Design & CG Solutions",
+  title: "James — 3D Motion Designer & CG Generalist",
   description:
-    "Motion Design & CG Generalist. Procedural animation, product visualization, and technical solutions for brands and studios.",
+    "James Creative Labs — 3D Motion Designer and CG Generalist. Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
   keywords: [
+    "3d motion designer",
     "motion design",
-    "CG generalist",
-    "3D animation",
-    "Houdini",
+    "cg generalist",
+    "houdini",
+    "blender",
     "product visualization",
-    "VFX",
+    "vfx",
+    "fluid simulation",
+    "vellum cloth",
   ],
 };
 
@@ -32,8 +38,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable} antialiased`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${interSans.variable} ${jetbrainsMono.variable} antialiased`}
+    >
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

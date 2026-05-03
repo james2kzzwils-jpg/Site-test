@@ -1,16 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #e8e8e8;
+  --background: #050505;
+  --foreground: #f5f3ee;
+  --foreground-muted: #6b6b66;
+  --hairline: rgba(245, 243, 238, 0.08);
+  --hairline-strong: rgba(245, 243, 238, 0.18);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-cyan-400: #00f0ff;
-  --color-violet-500: #8B5CF6;
-  --font-sans: var(--font-geist-sans);
+  --color-cream: #f5f3ee;
+  --color-cream-dim: #c2bfb5;
+  --font-sans: var(--font-display), var(--font-geist-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -21,36 +25,153 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  background: var(--background);
+  color-scheme: dark;
+  scroll-behavior: auto;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), 'Inter', -apple-system, sans-serif;
+  font-family: var(--font-sans), 'Inter Tight', 'Inter', -apple-system, sans-serif;
+  font-feature-settings: 'ss01', 'ss02', 'cv11';
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+}
+
+a, button {
+  cursor: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  a, button {
+    cursor: pointer;
+  }
 }
 
 ::selection {
-  background: rgba(0, 240, 255, 0.15);
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 ::-webkit-scrollbar {
-  width: 3px;
+  width: 0;
+  height: 0;
 }
 
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
+.font-display {
+  font-family: var(--font-display), 'Inter Tight', sans-serif;
+  font-feature-settings: 'ss01';
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
+.font-mono {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+.hairline {
+  border-color: var(--hairline);
+}
+
+.hairline-strong {
+  border-color: var(--hairline-strong);
+}
+
+/* Marquee */
+@keyframes pv-marquee {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.marquee-track {
+  animation: pv-marquee 40s linear infinite;
+  will-change: transform;
+}
+
+/* Loader letter pulse */
+@keyframes pv-loader-o {
+  0%, 100% { letter-spacing: -0.02em; opacity: 1; }
+  50%      { letter-spacing: 0.18em;  opacity: 0.6; }
+}
+
+.loader-stretch {
+  animation: pv-loader-o 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  display: inline-block;
+}
+
+/* Hover line — used on works rows */
+.hover-line {
+  position: relative;
+}
+.hover-line::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-line:hover::after {
+  transform: scaleX(1);
+}
+
+/* Reveal on scroll helper */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CSS-only mount-time reveal (no JS state required) */
+@keyframes reveal-fade {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal-auto {
+  animation: reveal-fade 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Custom cursor */
+.pv-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+/* Letter J + chips logo positioning */
+.monogram {
+  font-family: var(--font-display), 'Inter Tight', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+/* Disable smooth-scroll on prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .loader-stretch {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

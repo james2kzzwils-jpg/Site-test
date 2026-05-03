@@ -6,59 +6,76 @@ import { useLanguage } from '@/i18n/LanguageContext';
 export default function About() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.02 }
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShown(true);
+      },
+      { threshold: 0.04 }
     );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    if (sectionRef.current) obs.observe(sectionRef.current);
+    return () => obs.disconnect();
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="py-40 lg:py-56">
-      <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
-
-        <div
-          className={`mb-40 transition-all duration-1000 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+    <section id="about" ref={sectionRef} className="py-32 lg:py-44">
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+        <p
+          className={`mb-10 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45 ${
+            shown ? 'reveal is-in' : 'reveal'
           }`}
         >
-          <h2 className="mb-12 max-w-[700px] text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
-            {t.about.philosophy_title}
-          </h2>
-          <p className="max-w-2xl text-[17px] leading-[1.8] text-white/25">
+          ◆ {t.about.section_label}
+        </p>
+
+        {/* Philosophy */}
+        <div
+          className={`mb-32 grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-20 ${
+            shown ? 'reveal is-in' : 'reveal'
+          }`}
+        >
+          <div>
+            <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
+              ({t.about.philosophy_label})
+            </p>
+            <h3 className="max-w-[800px] font-display text-[clamp(2.2rem,5.4vw,4.5rem)] font-medium leading-[1] tracking-[-0.035em] text-[var(--foreground)]">
+              {t.about.philosophy_title}
+            </h3>
+          </div>
+          <p className="max-w-xl text-[16px] leading-[1.75] text-[var(--foreground)]/55">
             {t.about.philosophy_text}
           </p>
         </div>
 
-        <div className="mb-40">
-          <h3
-            className={`mb-20 text-[clamp(1.5rem,3vw,2.25rem)] font-medium leading-[1.2] tracking-[-0.02em] text-white/60 transition-all duration-1000 ${
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-            }`}
-          >
-            {t.about.approach_title}
-          </h3>
+        {/* Approach steps */}
+        <div className="mb-32">
+          <div className="mb-12 flex items-end justify-between">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
+              ({t.about.approach_label})
+            </p>
+            <h3 className="hidden max-w-md text-[clamp(1.1rem,2vw,1.5rem)] font-medium leading-[1.25] tracking-[-0.015em] text-[var(--foreground)]/55 sm:block">
+              {t.about.approach_title}
+            </h3>
+          </div>
 
-          <div className="grid gap-px bg-white/[0.04] sm:grid-cols-2 lg:grid-cols-2">
+          <div className="grid border-t border-[var(--hairline)] sm:grid-cols-2 lg:grid-cols-4">
             {t.about.approach_steps.map((step, i) => (
               <div
                 key={step.number}
-                className={`bg-[#0a0a0a] p-10 transition-all duration-1000 hover:bg-white/[0.02] ${
-                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                className={`group flex flex-col gap-6 border-b border-[var(--hairline)] p-8 transition-colors duration-500 hover:bg-[var(--foreground)]/[0.015] sm:p-10 lg:border-r lg:[&:nth-child(4n)]:border-r-0 ${
+                  shown ? 'reveal is-in' : 'reveal'
                 }`}
-                style={{ transitionDelay: `${400 + i * 100}ms` }}
+                style={{ transitionDelay: `${200 + i * 100}ms` }}
               >
-                <span className="mb-8 block text-[clamp(2rem,4vw,3rem)] font-light leading-none text-white/[0.06]">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
                   {step.number}
                 </span>
-                <h4 className="mb-3 text-[15px] font-medium text-white/70">
+                <h4 className="font-display text-[20px] font-medium leading-[1.2] tracking-[-0.015em] text-[var(--foreground)]">
                   {step.title}
                 </h4>
-                <p className="text-[14px] leading-[1.7] text-white/20">
+                <p className="text-[14px] leading-[1.65] text-[var(--foreground)]/45">
                   {step.description}
                 </p>
               </div>
@@ -66,25 +83,19 @@ export default function About() {
           </div>
         </div>
 
-        <div>
-          <h3
-            className={`mb-12 text-[18px] font-medium text-white/40 transition-all duration-1000 ${
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-            }`}
-          >
-            {t.about.toolkit_label}
+        {/* Toolkit */}
+        <div className={shown ? 'reveal is-in' : 'reveal'}>
+          <h3 className="mb-10 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
+            ({t.about.toolkit_label})
           </h3>
-          <div className="flex flex-wrap gap-4">
-            {t.about.tools.map((tool, i) => (
-              <div
+          <div className="flex flex-wrap gap-2">
+            {t.about.tools.map((tool) => (
+              <span
                 key={tool}
-                className={`rounded-xl bg-white/[0.04] px-8 py-4 text-[15px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 hover:scale-[1.05] ${
-                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-                }`}
-                style={{ transitionDelay: `${600 + i * 50}ms` }}
+                className="rounded-full border border-[var(--hairline)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--foreground)]/65 transition-colors duration-300 hover:border-[var(--hairline-strong)] hover:text-[var(--foreground)]"
               >
                 {tool}
-              </div>
+              </span>
             ))}
           </div>
         </div>

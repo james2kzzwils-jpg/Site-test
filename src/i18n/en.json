@@ -1,4 +1,9 @@
 {
+  "brand": {
+    "monogram": "J",
+    "name": "James Creative Labs",
+    "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
+  },
   "nav": {
     "works": "Works",
     "services": "Services",
@@ -6,17 +11,24 @@
     "about": "About",
     "contact": "Contact"
   },
+  "loader": {
+    "label": "Looooading"
+  },
   "hero": {
+    "kicker": "Portfolio — 2025",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process.",
-    "cta_works": "Explore Works",
-    "cta_contact": "Get in Touch",
-    "scroll": "Scroll to explore"
+    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender and Nuke.",
+    "cta_works": "Selected Works",
+    "cta_contact": "Start a Project",
+    "scroll": "Keep Scrolling",
+    "click_hold": "Click & Hold",
+    "discover": "Discover"
   },
   "works": {
+    "section_label": "Selected Works",
     "title": "Selected Works",
-    "subtitle": "A curated selection of projects spanning procedural animation, product visualization, and technical solutions.",
+    "subtitle": "A curated index of procedural animation, product visualization, fluid and cloth simulations, and pipeline tools.",
     "filters": {
       "all": "All",
       "animation": "Animation",
@@ -29,48 +41,110 @@
       {
         "id": "houdini-vellum",
         "title": "Fabric Dynamics",
+        "client": "Atelier Nord",
+        "year": "2024",
         "category": "simulations",
         "tags": ["Houdini", "Vellum", "Simulation"],
-        "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign."
+        "outputs": ["Direction", "Simulation", "Lookdev", "Compositing"],
+        "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign.",
+        "assignment": "Atelier Nord asked for a film that captured fabric in motion without cinematography on set. The brief was to translate the soul of their craft into a fully procedural language — touchable, but unmistakably digital.",
+        "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in Nuke with a single soft grade.",
+        "context": "Delivered as a 60-second hero film and ten 9:16 cutdowns for retail screens. Every shot is rendered from the same source — direction shifts only happen at the camera level.",
+        "collaborators": [
+          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Sound Design", "name": "Field Mute" },
+          { "role": "Producer", "name": "North Studio" }
+        ]
       },
       {
         "id": "product-render",
         "title": "Tech Product Launch",
+        "client": "Confidential — Consumer Tech",
+        "year": "2024",
         "category": "product_viz",
         "tags": ["Blender", "After Effects", "Compositing"],
-        "description": "High-end product visualization for a consumer electronics brand. Full pipeline from modeling to final composite."
+        "outputs": ["Modeling", "Lookdev", "Animation", "Compositing"],
+        "description": "High-end product visualization for a consumer electronics launch. Full pipeline from modeling to final composite.",
+        "assignment": "A consumer tech brand needed a launch film that would survive being intercut with live keynote footage. Build geometry tight enough for macro shots, light it without studio cliché, and finish in a comp pipeline a small team could maintain.",
+        "solution": "Modeling was authored in Blender with USD references kept identical to the engineering CAD. Lookdev used a thin-film and brushed-metal stack reused across the SKU family. Compositing in After Effects wrapped everything in a calm, broadcast-safe grade.",
+        "context": "Used in launch keynote, product page hero loop, and global retail signage. Eight SKUs delivered from a single shot graph.",
+        "collaborators": [
+          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Design", "name": "In-house Brand" },
+          { "role": "Producer", "name": "Studio Standard" }
+        ]
       },
       {
         "id": "particle-systems",
         "title": "Particle Universe",
+        "client": "Northwind Capital",
+        "year": "2023",
         "category": "animation",
         "tags": ["Houdini", "Particles", "Motion Design"],
-        "description": "Procedural particle system creating organic, data-driven motion graphics for a fintech company's brand film."
+        "outputs": ["Direction", "Simulation", "Motion Design"],
+        "description": "Procedural particle system creating organic, data-driven motion graphics for a fintech brand film.",
+        "assignment": "Northwind wanted abstract motion that felt like a living index — populated, calm, never random. The brief explicitly avoided any literal interpretation of trading or markets.",
+        "solution": "We built a single Houdini particle setup driven by attribute volumes and a hand-curated set of attractors. Each frame is the same simulation, time-shifted, so editing was done in the timeline instead of in solver space.",
+        "context": "Delivered as a 90-second master plus a library of loops for stage screens, social, and the brand site. The same scene file shipped four years of campaign assets.",
+        "collaborators": [
+          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Brand", "name": "North & Co." }
+        ]
       },
       {
         "id": "fluid-sim",
         "title": "Liquid Metal",
+        "client": "Marque Automotive",
+        "year": "2023",
         "category": "simulations",
         "tags": ["Houdini", "FLIP", "Rendering"],
-        "description": "Metallic fluid simulation with custom shader development for automotive brand commercial."
+        "outputs": ["Simulation", "Lookdev", "Lighting", "Rendering"],
+        "description": "Metallic fluid simulation with custom shader development for an automotive brand commercial.",
+        "assignment": "A new vehicle was inbound and the agency wanted the body to feel as if it cast itself out of mercury. The work had to read on a phone and on a 30-metre LED wall.",
+        "solution": "FLIP simulation was directed via collision proxies of the final geometry; surface tension and curvature drove a thin-film shader baked from a measured BRDF. Renders were composited with a single matte luminance pass.",
+        "context": "A 45-second hero spot and three brand idents. The simulation cache was reused as B-roll for the entire model line.",
+        "collaborators": [
+          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Agency", "name": "Studio M" }
+        ]
       },
       {
         "id": "trim-tool",
         "title": "Trim Texture Assembler",
+        "client": "Internal Tooling",
+        "year": "2024",
         "category": "tools",
         "tags": ["Python", "Pipeline", "Automation"],
-        "description": "Custom pipeline tool for automated trim texture assembly, reducing manual work by 80%."
+        "outputs": ["R&D", "Pipeline", "Tooling"],
+        "description": "Pipeline tool for automated trim texture assembly, reducing manual atlas work by 80%.",
+        "assignment": "Trim sheet authoring was the largest manual cost in a recurring archviz pipeline. The brief was to make it disappear.",
+        "solution": "A Python service ingests source artwork, normalises padding and resolution, and emits a texture set with metadata. Houdini and Blender both consume the same JSON, which means downstream artists never touch the assembler.",
+        "context": "Adopted across three studios. The current build assembles 64-channel atlases in under three minutes.",
+        "collaborators": [
+          { "role": "Tooling", "name": "James" }
+        ]
       },
       {
         "id": "motion-reel",
         "title": "Annual Motion Reel",
+        "client": "James Creative Labs",
+        "year": "2024",
         "category": "animation",
         "tags": ["Blender", "3ds Max", "After Effects"],
-        "description": "Compilation of motion design projects demonstrating full production cycle capabilities."
+        "outputs": ["Direction", "Editorial", "Sound Design"],
+        "description": "Compilation reel demonstrating a full production cycle across motion design and CG.",
+        "assignment": "Cut a year of work into 90 seconds without losing the technical signature of each project — the brief was less a reel and more a tasting menu.",
+        "solution": "Selections were graded into a single calm look. Sound design was built around a slow pulse that lets each shot read on its own. Edit was paced for muted playback.",
+        "context": "Lives at the top of the works page and is the only piece on the site that auto-plays. Updated annually.",
+        "collaborators": [
+          { "role": "Direction & Edit", "name": "James" },
+          { "role": "Sound Design", "name": "Field Mute" }
+        ]
       }
     ]
   },
   "services": {
+    "section_label": "Services",
     "title": "Services",
     "subtitle": "End-to-end creative and technical solutions for brands, studios, and direct clients.",
     "items": [
@@ -83,24 +157,25 @@
       {
         "number": "02",
         "title": "Full Production Cycle",
-        "description": "From concept and shading in Blender/3ds Max to final compositing in After Effects. Complete video production with seamless integration at every stage.",
-        "tools": ["Blender", "3ds Max", "After Effects", "Compositing"]
+        "description": "From concept and shading in Blender / 3ds Max to final compositing in After Effects and Nuke. End-to-end production with seamless integration at every stage.",
+        "tools": ["Blender", "3ds Max", "After Effects", "Nuke"]
       },
       {
         "number": "03",
         "title": "Product Visualization",
-        "description": "High-tech content creation for brands. Photorealistic renders and dynamic product reveals that communicate value through visual precision.",
+        "description": "High-end content for product, packaging, and tech brands. Photorealistic stills and dynamic reveals that communicate value through visual precision.",
         "tools": ["Blender", "Octane", "Redshift", "Lighting"]
       },
       {
         "number": "04",
         "title": "Technical Solutions & Automation",
-        "description": "Custom pipeline tools, HDA development, and automation scripts that streamline workflows and reduce repetitive tasks in 3D production.",
+        "description": "Custom pipeline tools, HDA development, and automation scripts that streamline workflows and remove repetitive work from 3D production.",
         "tools": ["Python", "HDAs", "Pipeline", "Scripting"]
       }
     ]
   },
   "shop": {
+    "section_label": "Shop",
     "title": "Digital Products",
     "subtitle": "Production-tested tools, assets, and scripts to accelerate your 3D workflow.",
     "categories": {
@@ -115,68 +190,54 @@
         "title": "Trim Texture Assembler",
         "category": "scripts",
         "price": "$49",
-        "description": "Automated trim texture assembly tool. Supports multiple input formats and batch processing."
+        "description": "Automated trim texture assembly tool. Multi-format input, batch processing."
       },
       {
         "id": "scatter-hda",
         "title": "Procedural Scatter HDA",
         "category": "hda",
         "price": "$79",
-        "description": "Advanced scattering system for Houdini with biome-based distribution and instancing support."
+        "description": "Advanced scattering for Houdini with biome distribution and instancing."
       },
       {
         "id": "cable-generator",
         "title": "Cable Generator HDA",
         "category": "hda",
         "price": "$59",
-        "description": "Procedural cable and wire generation tool with physics-based draping and material presets."
+        "description": "Procedural cable & wire generation with physics draping and presets."
       },
       {
         "id": "base-meshes",
         "title": "Hard Surface Kit",
         "category": "assets",
         "price": "$39",
-        "description": "Collection of 50+ production-ready hard surface base meshes optimized for subdivision workflows."
+        "description": "50+ production-ready hard surface base meshes for subdivision."
       }
     ],
     "buy_now": "Buy Now",
     "coming_soon": "Coming Soon"
   },
   "about": {
+    "section_label": "About",
     "title": "About",
     "philosophy_label": "Philosophy",
-    "philosophy_title": "Stage of Zero Value",
-    "philosophy_text": "When aesthetics is not the goal, but the natural result of a competent technical process. Every project starts with engineering precision — the beauty emerges on its own.",
+    "philosophy_title": "The Stage of Zero Value",
+    "philosophy_text": "When aesthetics is not the goal but the natural result of a competent technical process. Every project starts with engineering precision — the beauty arrives on its own.",
     "approach_label": "Approach",
     "approach_title": "How I Work",
     "approach_steps": [
-      {
-        "number": "01",
-        "title": "Analysis & Concept",
-        "description": "Understanding the business task behind the visual. What problem are we solving?"
-      },
-      {
-        "number": "02",
-        "title": "Technical Design",
-        "description": "Choosing the right tools and building the pipeline before touching a single pixel."
-      },
-      {
-        "number": "03",
-        "title": "Production",
-        "description": "Execution with full control over every stage — from geometry to final composite."
-      },
-      {
-        "number": "04",
-        "title": "Delivery & Optimization",
-        "description": "Final output optimized for the target platform with documented project files."
-      }
+      { "number": "01", "title": "Analysis & Concept", "description": "Understanding the business task behind the visual. What are we actually solving?" },
+      { "number": "02", "title": "Technical Design", "description": "Choosing the right tools and building the pipeline before touching a single pixel." },
+      { "number": "03", "title": "Production",       "description": "Execution with full control over every stage — from geometry to final composite." },
+      { "number": "04", "title": "Delivery & Optimization", "description": "Final output optimized for the target platform with documented project files." }
     ],
     "toolkit_label": "Toolkit",
     "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "Nuke", "Python", "Redshift", "Octane"]
   },
   "contact": {
+    "section_label": "Contact",
     "title": "Let's Work Together",
-    "subtitle": "Have a project in mind? Let's discuss how we can solve your creative and technical challenges.",
+    "subtitle": "Have a project in mind? Let's discuss how to solve it — creative direction, simulation, or full production.",
     "form": {
       "name": "Name",
       "email": "Email",
@@ -196,9 +257,19 @@
       "location": "Available Worldwide"
     }
   },
+  "project": {
+    "outputs_label": "Outputs",
+    "assignment_label": "Assignment",
+    "solution_label": "Solution & Process",
+    "context_label": "Context",
+    "collaborators_label": "Collaborators",
+    "back_to_works": "All Works",
+    "next_project": "Next Project"
+  },
   "footer": {
     "brand": "James Creative Labs",
-    "tagline": "Motion Design & CG Solutions",
-    "rights": "All rights reserved."
+    "tagline": "3D Motion Design & CG Solutions",
+    "rights": "All rights reserved.",
+    "available": "Available for selected projects, 2025"
   }
 }
