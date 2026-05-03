@@ -137,7 +137,7 @@ export default function Works() {
         </div>
 
         <div
-          className={`mb-20 flex flex-wrap gap-5 transition-all duration-1000 delay-200 ${
+          className={`mb-24 flex flex-wrap gap-4 sm:gap-5 lg:gap-6 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -145,10 +145,10 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-2xl px-10 py-5 text-[16px] font-medium transition-all duration-300 hover:scale-[1.03] sm:px-14 sm:py-6 sm:text-[18px] lg:px-16 lg:py-7 lg:text-[20px] ${
+              className={`relative rounded-full px-12 py-5 text-[16px] font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] sm:px-16 sm:py-7 sm:text-[20px] lg:px-20 lg:py-8 lg:text-[24px] ${
                 activeFilter === key
-                  ? 'bg-white text-[#0a0a0a]'
-                  : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
+                  ? 'bg-white text-[#0a0a0a] shadow-[0_4px_24px_rgba(255,255,255,0.15)] scale-100'
+                  : 'border border-white/15 bg-transparent text-white/40 hover:border-white/30 hover:text-white/70 hover:bg-white/[0.04] hover:shadow-[0_2px_16px_rgba(255,255,255,0.06)]'
               }`}
             >
               <span className="whitespace-nowrap">{t.works.filters[key]}</span>
