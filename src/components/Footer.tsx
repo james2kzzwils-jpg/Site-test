@@ -22,7 +22,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 gap-12">
             <div>
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
-                ◆ Sitemap
+                <span className="accent-diamond">◆</span> Sitemap
               </p>
               <div className="flex flex-col gap-3">
                 {(['works', 'services', 'shop', 'about', 'contact'] as const).map((item) => (
@@ -40,7 +40,7 @@ export default function Footer() {
 
             <div>
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
-                ◆ Social
+                <span className="accent-diamond">◆</span> Social
               </p>
               <div className="flex flex-col gap-3">
                 {['Behance', 'Vimeo', 'LinkedIn', 'Telegram'].map((s) => (
@@ -50,7 +50,7 @@ export default function Footer() {
                     className="hover-line inline-block w-fit pb-[3px] font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 hover:text-[var(--foreground)]"
                     data-cursor="hover"
                   >
-                    {s} ↗
+                    {s} <span className="text-[var(--accent)]">↗</span>
                   </a>
                 ))}
               </div>

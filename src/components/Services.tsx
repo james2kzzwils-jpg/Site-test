@@ -27,7 +27,7 @@ function ServiceRow({
         data-cursor="hover"
       >
         <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
-          ({service.number})
+          <span className="text-[var(--accent)]">({service.number})</span>
         </span>
 
         <h3 className="flex-1 font-display text-[clamp(1.3rem,2.6vw,2rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 group-hover:text-[var(--foreground)]">
@@ -36,8 +36,8 @@ function ServiceRow({
 
         <span
           aria-hidden="true"
-          className={`shrink-0 font-mono text-[18px] text-[var(--foreground)]/35 transition-transform duration-500 ${
-            open ? 'rotate-45' : ''
+          className={`shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
+            open ? 'rotate-45 text-[var(--accent)]' : 'text-[var(--foreground)]/35'
           }`}
         >
           +
@@ -95,7 +95,7 @@ export default function Services() {
         >
           <div className="max-w-2xl">
             <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-              ◆ {t.services.section_label}
+              <span className="accent-diamond">◆</span> {t.services.section_label}
             </p>
             <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
               {t.services.title}

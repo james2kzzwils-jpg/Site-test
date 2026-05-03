@@ -47,7 +47,7 @@ export default function Shop() {
         >
           <div className="max-w-2xl">
             <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-              ◆ {t.shop.section_label}
+              <span className="accent-diamond">◆</span> {t.shop.section_label}
             </p>
             <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
               {t.shop.title}
@@ -63,23 +63,30 @@ export default function Shop() {
             shown ? 'reveal is-in' : 'reveal'
           }`}
         >
-          {categoryKeys.map((key) => (
-            <button
-              key={key}
-              onClick={() => setActiveCategory(key)}
-              className={`hover-line inline-flex items-baseline gap-1.5 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
-                activeCategory === key
-                  ? 'text-[var(--foreground)]'
-                  : 'text-[var(--foreground)]/40 hover:text-[var(--foreground)]/70'
-              }`}
-              data-cursor="hover"
-            >
-              {t.shop.categories[key]}
-              <span className="text-[10px] text-[var(--foreground)]/40">
-                ({counts[key] ?? 0})
-              </span>
-            </button>
-          ))}
+          {categoryKeys.map((key) => {
+            const isActive = activeCategory === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveCategory(key)}
+                className={`hover-line inline-flex items-baseline gap-1.5 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
+                  isActive
+                    ? 'is-active text-[var(--foreground)]'
+                    : 'text-[var(--foreground)]/40 hover:text-[var(--foreground)]/70'
+                }`}
+                data-cursor="hover"
+              >
+                {t.shop.categories[key]}
+                <span
+                  className={`text-[10px] transition-colors duration-300 ${
+                    isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground)]/40'
+                  }`}
+                >
+                  ({counts[key] ?? 0})
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="grid border-t border-[var(--hairline)] sm:grid-cols-2 lg:grid-cols-4">
@@ -111,7 +118,7 @@ export default function Shop() {
                   className="hover-line pb-1 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 hover:text-[var(--foreground)]"
                   data-cursor="hover"
                 >
-                  {t.shop.coming_soon} →
+                  {t.shop.coming_soon} <span className="text-[var(--accent)]">→</span>
                 </button>
               </div>
             </div>

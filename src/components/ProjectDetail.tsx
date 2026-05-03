@@ -46,7 +46,8 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                 ← {t.project.back_to_works}
               </Link>
               <span>
-                ({idx}/{tot}) ◆ {project.client}
+                <span className="text-[var(--accent)]">({idx}/{tot})</span>{' '}
+                <span className="accent-diamond">◆</span> {project.client}
               </span>
             </div>
 
@@ -102,11 +103,12 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                   backgroundSize: '64px 64px',
                 }}
               />
-              <span className="font-display text-[clamp(6rem,18vw,16rem)] font-medium leading-none tracking-[-0.05em] text-[var(--foreground)]/[0.06]">
+              <span className="font-display text-[clamp(6rem,18vw,16rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.12]">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <span className="absolute bottom-6 left-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
-                ◆ Reel placeholder — drop video here
+                <span className="accent-diamond">◆</span> Reel placeholder —
+                drop video here
               </span>
               <span className="absolute right-6 top-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
                 {project.year}
@@ -125,7 +127,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
               <div className="flex flex-wrap gap-y-3 gap-x-10 font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]">
                 {project.outputs.map((o) => (
                   <span key={o} className="flex items-baseline gap-3">
-                    <span aria-hidden="true" className="text-[var(--foreground)]/30">
+                    <span aria-hidden="true" className="text-[var(--accent)]">
                       +
                     </span>
                     {o}
@@ -150,7 +152,10 @@ export default function ProjectDetail({ slug }: { slug: string }) {
               >
                 <div>
                   <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-                    ({String(i + 1).padStart(2, '0')}) {block.label}
+                    <span className="text-[var(--accent)]">
+                      ({String(i + 1).padStart(2, '0')})
+                    </span>{' '}
+                    {block.label}
                   </p>
                 </div>
                 <p className="max-w-3xl text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.55] text-[var(--foreground)]/80">
@@ -216,7 +221,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                   {next.title}
                 </h2>
                 <span className="font-mono text-[clamp(1rem,1.6vw,1.4rem)] text-[var(--foreground)]/55">
-                  {next.year} ↗
+                  {next.year} <span className="text-[var(--accent)]">↗</span>
                 </span>
               </div>
             </Link>

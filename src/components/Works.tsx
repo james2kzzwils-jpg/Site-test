@@ -39,13 +39,19 @@ function FilterPill({
       onClick={onClick}
       className={`hover-line inline-flex items-baseline gap-1.5 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
         active
-          ? 'text-[var(--foreground)]'
+          ? 'is-active text-[var(--foreground)]'
           : 'text-[var(--foreground)]/40 hover:text-[var(--foreground)]/70'
       }`}
       data-cursor="hover"
     >
       {label}
-      <span className="text-[10px] text-[var(--foreground)]/40">({count})</span>
+      <span
+        className={`text-[10px] transition-colors duration-300 ${
+          active ? 'text-[var(--accent)]' : 'text-[var(--foreground)]/40'
+        }`}
+      >
+        ({count})
+      </span>
     </button>
   );
 }
@@ -89,7 +95,7 @@ export default function Works() {
         >
           <div className="max-w-2xl">
             <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-              ◆ {t.works.section_label}
+              <span className="accent-diamond">◆</span> {t.works.section_label}
             </p>
             <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
               {t.works.title}
@@ -138,7 +144,7 @@ export default function Works() {
               >
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-6 py-7 sm:gap-10 sm:py-9 lg:gap-14 lg:py-10">
                   {/* Number */}
-                  <span className="font-mono text-[11px] tabular-nums tracking-[0.16em] text-[var(--foreground)]/35">
+                  <span className="font-mono text-[11px] tabular-nums tracking-[0.16em] text-[var(--foreground)]/35 transition-colors duration-500 group-hover:text-[var(--accent)]">
                     {idx}
                     <span className="text-[var(--foreground)]/20">/{tot}</span>
                   </span>
@@ -170,7 +176,7 @@ export default function Works() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className="text-[18px] text-[var(--foreground)]/40 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-[var(--foreground)]"
+                      className="text-[18px] text-[var(--foreground)]/40 transition-[transform,color] duration-500 group-hover:translate-x-1 group-hover:text-[var(--accent)]"
                     >
                       →
                     </span>
@@ -184,7 +190,10 @@ export default function Works() {
         {/* Bottom meta */}
         <div className="mt-10 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/35">
           <span>
-            ({String(filtered.length).padStart(2, '0')}) {t.works.section_label}
+            <span className="text-[var(--accent)]">
+              ({String(filtered.length).padStart(2, '0')})
+            </span>{' '}
+            {t.works.section_label}
           </span>
           <span>↑ index</span>
         </div>

@@ -46,12 +46,13 @@ export default function Loader() {
       aria-hidden={hidden}
     >
       <div className="flex w-full items-center justify-between px-8 lg:px-16">
-        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#f5f3ee]/40">
+        <span className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-[#f5f3ee]/40">
+          <span aria-hidden="true" className="h-[6px] w-[6px] rounded-full bg-[var(--accent)]" />
           {t.brand.name}
         </span>
         <span className="font-display text-[clamp(2rem,7vw,5rem)] font-medium tracking-[-0.04em]">
           {head}
-          <span className="loader-stretch">{stretched}</span>
+          <span className="loader-stretch text-[var(--accent)]">{stretched}</span>
           {tail}
         </span>
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#f5f3ee]/40">

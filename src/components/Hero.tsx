@@ -46,8 +46,12 @@ export default function Hero() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p
             data-reveal
-            className="reveal font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45"
+            className="reveal flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45"
           >
+            <span
+              aria-hidden="true"
+              className="h-[6px] w-[6px] rounded-full bg-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)]"
+            />
             {t.hero.kicker}
           </p>
           <div data-reveal className="reveal flex flex-wrap items-center gap-2">
@@ -91,7 +95,9 @@ export default function Hero() {
                 className="hover-line group inline-flex items-center gap-3 pb-2 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-colors duration-300 hover:text-[var(--foreground)]"
                 data-cursor="hover"
               >
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true" className="text-[var(--accent)]">
+                  →
+                </span>
                 {t.hero.cta_works}
               </a>
               <a
@@ -109,7 +115,9 @@ export default function Hero() {
         {/* Bottom row — scroll cue */}
         <div className="mt-16 flex items-center justify-between border-t border-[var(--hairline)] pt-6 font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">
           <span>{t.hero.scroll}</span>
-          <span className="hidden sm:inline">{`(06)`} ◆ Index</span>
+          <span className="hidden sm:inline">
+            {`(06)`} <span className="text-[var(--accent)]">◆</span> Index
+          </span>
           <span>2025</span>
         </div>
       </div>

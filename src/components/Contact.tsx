@@ -28,7 +28,7 @@ export default function Contact() {
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div className={shown ? 'reveal is-in' : 'reveal'}>
           <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-            ◆ {t.contact.section_label}
+            <span className="accent-diamond">◆</span> {t.contact.section_label}
           </p>
           <h2 className="max-w-[1100px] font-display text-[clamp(2.6rem,8vw,7rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
             {t.contact.title}
@@ -165,7 +165,7 @@ export default function Contact() {
               </span>
               <span
                 aria-hidden="true"
-                className="font-mono text-[clamp(1.4rem,2.6vw,2rem)] text-[var(--foreground)]/40 transition-[transform,color] duration-500 group-hover:translate-x-1 group-hover:text-[var(--foreground)]"
+                className="font-mono text-[clamp(1.4rem,2.6vw,2rem)] text-[var(--foreground)]/40 transition-[transform,color] duration-500 group-hover:translate-x-1 group-hover:text-[var(--accent)]"
               >
                 ↗
               </span>

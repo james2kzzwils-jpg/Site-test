@@ -88,23 +88,27 @@ export default function Cursor() {
       ? 'h-12 w-12'
       : 'h-9 w-9';
 
+  const isView = mode === 'view';
+
   return (
     <>
       <div
         ref={dotRef}
-        className="pv-cursor h-[6px] w-[6px] rounded-full bg-[#f5f3ee]"
+        className={`pv-cursor h-[6px] w-[6px] rounded-full ${
+          isView ? 'bg-[var(--accent)]' : 'is-blend bg-[#f5f3ee]'
+        }`}
         aria-hidden="true"
       />
       <div
         ref={ringRef}
-        className={`pv-cursor flex items-center justify-center rounded-full border border-[#f5f3ee]/60 backdrop-blur-[2px] transition-[width,height,background-color,color] duration-300 ease-out ${ringSize} ${
-          mode === 'view'
-            ? 'bg-[#f5f3ee] text-[#050505] border-[#f5f3ee]'
-            : 'bg-transparent text-transparent'
+        className={`pv-cursor flex items-center justify-center rounded-full backdrop-blur-[2px] transition-[width,height,background-color,color,border-color] duration-300 ease-out ${ringSize} ${
+          isView
+            ? 'border bg-[var(--accent)] text-[var(--background)] border-[var(--accent)]'
+            : 'is-blend border border-[#f5f3ee]/60 bg-transparent text-transparent'
         }`}
         aria-hidden="true"
       >
-        {mode === 'view' && (
+        {isView && (
           <span className="font-mono uppercase tracking-[0.18em]">
             {label || 'View'}
           </span>

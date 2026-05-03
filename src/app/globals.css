@@ -6,6 +6,11 @@
   --foreground-muted: #6b6b66;
   --hairline: rgba(245, 243, 238, 0.08);
   --hairline-strong: rgba(245, 243, 238, 0.18);
+  /* Acid-green accent — used selectively for active state, hover lines,
+     "+" markers, ◆ glyphs, custom cursor "View" mode, project number, etc. */
+  --accent: #d4ff00;
+  --accent-glow: rgba(212, 255, 0, 0.18);
+  --accent-soft: rgba(212, 255, 0, 0.55);
 }
 
 @theme inline {
@@ -13,6 +18,7 @@
   --color-foreground: var(--foreground);
   --color-cream: #f5f3ee;
   --color-cream-dim: #c2bfb5;
+  --color-accent: var(--accent);
   --font-sans: var(--font-display), var(--font-geist-sans);
   --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
@@ -58,7 +64,7 @@ a, button {
 }
 
 ::selection {
-  background: var(--foreground);
+  background: var(--accent);
   color: var(--background);
 }
 
@@ -115,13 +121,28 @@ a, button {
   position: absolute;
   inset: auto 0 -1px 0;
   height: 1px;
-  background: var(--foreground);
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.hover-line:hover::after {
+.hover-line:hover::after,
+.hover-line.is-active::after {
   transform: scaleX(1);
+}
+
+/* ◆ accent diamond used in section labels */
+.accent-diamond {
+  color: var(--accent);
+}
+
+/* Subtle accent text glow on hover for headlines */
+.accent-on-hover {
+  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .accent-on-hover,
+.accent-on-hover:hover {
+  color: var(--accent);
 }
 
 /* Reveal on scroll helper */
@@ -152,8 +173,10 @@ a, button {
   left: 0;
   pointer-events: none;
   z-index: 100;
-  mix-blend-mode: difference;
   will-change: transform;
+}
+.pv-cursor.is-blend {
+  mix-blend-mode: difference;
 }
 
 /* Letter J + chips logo positioning */

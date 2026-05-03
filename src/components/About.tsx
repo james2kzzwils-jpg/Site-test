@@ -27,7 +27,7 @@ export default function About() {
             shown ? 'reveal is-in' : 'reveal'
           }`}
         >
-          ◆ {t.about.section_label}
+          <span className="accent-diamond">◆</span> {t.about.section_label}
         </p>
 
         {/* Philosophy */}
@@ -69,7 +69,7 @@ export default function About() {
                 }`}
                 style={{ transitionDelay: `${200 + i * 100}ms` }}
               >
-                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--accent)]">
                   {step.number}
                 </span>
                 <h4 className="font-display text-[20px] font-medium leading-[1.2] tracking-[-0.015em] text-[var(--foreground)]">
