@@ -24,13 +24,17 @@ export default function Footer() {
             </p>
             <div className="flex flex-col gap-3">
               {['works', 'services', 'shop', 'about', 'contact'].map((item) => (
-                <button
+                <a
                   key={item}
-                  onClick={() => document.querySelector(`#${item}`)?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-left text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60"
+                  href={`#${item}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.querySelector(`#${item}`)?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60"
                 >
                   {t.nav[item as keyof typeof t.nav]}
-                </button>
+                </a>
               ))}
             </div>
           </div>

@@ -88,7 +88,7 @@ export default function Shop() {
                   <span className="text-[20px] font-medium text-white">
                     {product.price}
                   </span>
-                  <button className="rounded-2xl bg-white/[0.06] px-8 py-4 text-[15px] font-medium text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60 hover:scale-[1.05] sm:px-10 sm:py-5 sm:text-[16px]">
+                  <button className="rounded-2xl bg-white/[0.08] px-8 py-4 text-[15px] font-medium text-white/50 transition-all duration-300 hover:bg-white/[0.15] hover:text-white/70 hover:scale-[1.05] sm:px-10 sm:py-5 sm:text-[16px]">
                     {t.shop.coming_soon}
                   </button>
                 </div>

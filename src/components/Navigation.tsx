@@ -22,14 +22,6 @@ export default function Navigation() {
     { key: 'contact', href: '#contact' },
   ] as const;
 
-  const scrollTo = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileOpen(false);
-    }
-  };
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
@@ -39,22 +31,28 @@ export default function Navigation() {
       }`}
     >
       <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-8 py-7 lg:px-16 lg:py-8">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        <a
+          href="#"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           className="text-[18px] font-semibold tracking-[-0.02em] text-white transition-opacity duration-300 hover:opacity-70"
         >
           JAMES CREATIVE LABS
-        </button>
+        </a>
 
         <div className="hidden items-center gap-10 md:flex">
           {navItems.map((item) => (
-            <button
+            <a
               key={item.key}
-              onClick={() => scrollTo(item.href)}
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.querySelector(item.href);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white"
             >
               {t.nav[item.key]}
-            </button>
+            </a>
           ))}
 
           <div className="ml-4 flex items-center gap-1 rounded-full bg-white/[0.05] p-1">
@@ -99,13 +97,21 @@ export default function Navigation() {
       >
         <div className="flex flex-col gap-2 px-8 py-8">
           {navItems.map((item) => (
-            <button
+            <a
               key={item.key}
-              onClick={() => scrollTo(item.href)}
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.querySelector(item.href);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                  setIsMobileOpen(false);
+                }
+              }}
               className="py-4 text-left text-[18px] text-white/50 transition-colors duration-300 hover:text-white"
             >
               {t.nav[item.key]}
-            </button>
+            </a>
           ))}
           <div className="mt-6 flex items-center gap-3 border-t border-white/[0.06] pt-6">
             {(['en', 'ru'] as const).map((lang) => (

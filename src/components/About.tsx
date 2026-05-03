@@ -43,7 +43,7 @@ export default function About() {
             {t.about.approach_title}
           </h3>
 
-          <div className="grid gap-px bg-white/[0.04] sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-px bg-white/[0.04] sm:grid-cols-2 lg:grid-cols-2">
             {t.about.approach_steps.map((step, i) => (
               <div
                 key={step.number}

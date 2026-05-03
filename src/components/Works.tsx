@@ -4,12 +4,12 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 
 const gradients = [
-  'from-cyan-400/20 via-blue-500/10 to-violet-500/20',
-  'from-violet-500/20 via-purple-400/10 to-pink-400/20',
-  'from-emerald-400/20 via-teal-400/10 to-cyan-400/20',
-  'from-amber-400/20 via-orange-400/10 to-red-400/20',
-  'from-blue-400/20 via-indigo-400/10 to-purple-400/20',
-  'from-rose-400/20 via-pink-400/10 to-violet-400/20',
+  'from-slate-800/40 via-gray-900/30 to-zinc-800/40',
+  'from-zinc-800/40 via-neutral-900/30 to-stone-800/40',
+  'from-gray-800/40 via-slate-900/30 to-zinc-800/40',
+  'from-neutral-800/40 via-zinc-900/30 to-gray-800/40',
+  'from-stone-800/40 via-gray-900/30 to-slate-800/40',
+  'from-zinc-800/40 via-stone-900/30 to-neutral-800/40',
 ];
 
 function ProjectCard({
@@ -21,7 +21,7 @@ function ProjectCard({
   index: number;
   gradient: string;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLButtonElement>(null);
   const [offset, setOffset] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -50,9 +50,10 @@ function ProjectCard({
   const isHero = index === 0;
 
   return (
-    <div
+    <button
       ref={cardRef}
-      className={`group relative cursor-pointer overflow-hidden rounded-3xl transition-all duration-1000 hover:scale-[1.01] ${
+      type="button"
+      className={`group relative w-full overflow-hidden rounded-3xl text-left transition-all duration-1000 hover:scale-[1.01] ${
         isHero ? 'col-span-full' : ''
       } ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
       style={{ transitionDelay: `${index * 100}ms` }}
@@ -95,7 +96,7 @@ function ProjectCard({
           )}
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 

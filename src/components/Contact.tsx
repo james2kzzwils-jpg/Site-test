@@ -66,32 +66,37 @@ export default function Contact() {
             }`}
           >
             <div>
-              <label className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
+              <label htmlFor="contactName" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.name}
               </label>
               <input
+                id="contactName"
                 type="text"
-                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-white/20"
+                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.name}
               />
             </div>
 
             <div>
-              <label className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
+              <label htmlFor="contactEmail" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.email}
               </label>
               <input
+                id="contactEmail"
                 type="email"
-                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-white/20"
+                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.email}
               />
             </div>
 
             <div>
-              <label className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
+              <label htmlFor="contactProjectType" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.project_type}
               </label>
-              <select className="w-full appearance-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white/40 outline-none transition-colors duration-300 focus:border-white/20">
+              <select
+                id="contactProjectType"
+                className="w-full appearance-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white/40 outline-none transition-colors duration-300 focus:border-cyan-400/60 focus:text-cyan-50"
+              >
                 {Object.values(t.contact.form.project_types).map((type) => (
                   <option key={type} className="bg-[#0a0a0a] text-white">
                     {type}
@@ -101,12 +106,13 @@ export default function Contact() {
             </div>
 
             <div>
-              <label className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
+              <label htmlFor="contactMessage" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.message}
               </label>
               <textarea
+                id="contactMessage"
                 rows={4}
-                className="w-full resize-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-white/20"
+                className="w-full resize-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.message}
               />
             </div>
