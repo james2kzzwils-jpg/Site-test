@@ -44,23 +44,23 @@ export default function Hero() {
           </span>
         </h1>
 
-        <p data-reveal className="mb-16 max-w-lg text-[16px] leading-[1.8] text-white/30">
+        <p data-reveal className="mb-20 max-w-lg text-[16px] leading-[1.8] text-white/30">
           {t.hero.subtitle}
         </p>
 
-        <div data-reveal className="flex flex-wrap items-center gap-6">
+        <div data-reveal className="flex flex-wrap items-center gap-8">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative overflow-hidden rounded-2xl bg-white px-16 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
+            className="group relative overflow-hidden rounded-2xl bg-white px-20 py-8 text-[20px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
           >
-            <span className="relative z-10">{t.hero.cta_works}</span>
+            <span className="relative z-10 whitespace-nowrap">{t.hero.cta_works}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-2xl border border-white/[0.15] px-16 py-7 text-[18px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white"
+            className="rounded-2xl border-2 border-white/[0.15] px-20 py-8 text-[20px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white"
           >
-            {t.hero.cta_contact}
+            <span className="whitespace-nowrap">{t.hero.cta_contact}</span>
           </button>
         </div>
       </div>

@@ -27,11 +27,11 @@ export default function Shop() {
     <section id="shop" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
-          className={`mb-24 max-w-2xl transition-all duration-1000 ${
+          className={`mb-20 max-w-2xl transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          <h2 className="mb-6 text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
+          <h2 className="mb-8 text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
             {t.shop.title}
           </h2>
           <p className="max-w-lg text-[16px] leading-[1.7] text-white/25">
@@ -40,7 +40,7 @@ export default function Shop() {
         </div>
 
         <div
-          className={`mb-16 flex flex-wrap gap-4 transition-all duration-1000 delay-200 ${
+          className={`mb-20 flex flex-wrap gap-5 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -48,7 +48,7 @@ export default function Shop() {
             <button
               key={key}
               onClick={() => setActiveCategory(key)}
-              className={`rounded-2xl px-10 py-5 text-[16px] font-medium transition-all duration-300 hover:scale-[1.03] ${
+              className={`rounded-2xl px-12 py-6 text-[17px] font-medium transition-all duration-300 hover:scale-[1.03] ${
                 activeCategory === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
@@ -88,7 +88,7 @@ export default function Shop() {
                   <span className="text-[20px] font-medium text-white">
                     {product.price}
                   </span>
-                  <button className="rounded-2xl bg-white/[0.06] px-8 py-4 text-[15px] font-medium text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60 hover:scale-[1.05]">
+                  <button className="rounded-2xl bg-white/[0.06] px-10 py-5 text-[16px] font-medium text-white/35 transition-all duration-300 hover:bg-white/[0.12] hover:text-white/60 hover:scale-[1.05]">
                     {t.shop.coming_soon}
                   </button>
                 </div>

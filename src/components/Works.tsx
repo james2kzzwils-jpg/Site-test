@@ -123,20 +123,20 @@ export default function Works() {
     <section id="works" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
-          className={`mb-24 transition-all duration-1000 ${
+          className={`mb-20 transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
           <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
             {t.works.title}
           </h2>
-          <p className="mt-6 max-w-lg text-[16px] leading-[1.7] text-white/25">
+          <p className="mt-8 max-w-lg text-[16px] leading-[1.7] text-white/25">
             {t.works.subtitle}
           </p>
         </div>
 
         <div
-          className={`mb-16 flex flex-wrap gap-4 transition-all duration-1000 delay-200 ${
+          className={`mb-20 flex flex-wrap gap-5 transition-all duration-1000 delay-200 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -144,13 +144,13 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-2xl px-10 py-5 text-[16px] font-medium transition-all duration-300 hover:scale-[1.03] ${
+              className={`rounded-2xl px-12 py-6 text-[17px] font-medium transition-all duration-300 hover:scale-[1.03] ${
                 activeFilter === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'
               }`}
             >
-              {t.works.filters[key]}
+              <span className="whitespace-nowrap">{t.works.filters[key]}</span>
             </button>
           ))}
         </div>

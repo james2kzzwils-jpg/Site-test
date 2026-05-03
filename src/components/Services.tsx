@@ -51,7 +51,7 @@ function ServiceBlock({
             {service.tools.map((tool) => (
               <span
                 key={tool}
-                className="rounded-xl bg-white/[0.04] px-7 py-3.5 text-[15px] text-white/30 transition-colors duration-300 hover:bg-white/[0.08] hover:text-white/50"
+                className="rounded-xl bg-white/[0.04] px-8 py-4 text-[15px] text-white/30 transition-colors duration-300 hover:bg-white/[0.08] hover:text-white/50"
               >
                 {tool}
               </span>
@@ -81,11 +81,11 @@ export default function Services() {
     <section id="services" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
-          className={`mb-20 max-w-2xl transition-all duration-1000 ${
+          className={`mb-24 max-w-2xl transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          <h2 className="mb-6 text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
+          <h2 className="mb-8 text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
             {t.services.title}
           </h2>
           <p className="max-w-lg text-[16px] leading-[1.7] text-white/25">

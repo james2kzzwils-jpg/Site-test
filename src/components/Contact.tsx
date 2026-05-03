@@ -25,14 +25,14 @@ export default function Contact() {
     <section id="contact" ref={sectionRef} className="py-40 lg:py-56">
       <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
         <div
-          className={`mb-24 transition-all duration-1000 ${
+          className={`mb-20 transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
           <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
             {t.contact.title}
           </h2>
-          <p className="mt-6 max-w-md text-[16px] leading-[1.7] text-white/25">
+          <p className="mt-8 max-w-md text-[16px] leading-[1.7] text-white/25">
             {t.contact.subtitle}
           </p>
         </div>
@@ -114,7 +114,7 @@ export default function Contact() {
             <div className="pt-6">
               <button
                 type="submit"
-                className="group relative overflow-hidden rounded-2xl bg-white px-16 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
+                className="group relative overflow-hidden rounded-2xl bg-white px-20 py-8 text-[20px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
               >
                 <span className="relative z-10">{t.contact.form.send}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
