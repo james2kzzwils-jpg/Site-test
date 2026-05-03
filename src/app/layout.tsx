@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "James — 3D Motion Designer & CG Generalist",
   description:
-    "James Creative Labs — 3D Motion Designer and CG Generalist. Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
+    "James Creative Lab's — 3D Motion Designer and CG Generalist. Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
   keywords: [
     "3d motion designer",
     "motion design",

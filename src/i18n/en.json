@@ -1,7 +1,7 @@
 {
   "brand": {
     "monogram": "J",
-    "name": "James Creative Labs",
+    "name": "James Creative Lab's",
     "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
   },
   "nav": {
@@ -127,7 +127,7 @@
       {
         "id": "motion-reel",
         "title": "Annual Motion Reel",
-        "client": "James Creative Labs",
+        "client": "James Creative Lab's",
         "year": "2024",
         "category": "animation",
         "tags": ["Blender", "3ds Max", "After Effects"],
@@ -252,9 +252,9 @@
       "send": "Send Message"
     },
     "info": {
-      "email": "hello@jamescreativelabs.com",
-      "telegram": "@jamescreativelabs",
-      "location": "Available Worldwide"
+      "email": "placeholder@example.com",
+      "telegram": "@placeholder_handle",
+      "location": "Location TBA"
     }
   },
   "project": {
@@ -267,7 +267,7 @@
     "next_project": "Next Project"
   },
   "footer": {
-    "brand": "James Creative Labs",
+    "brand": "James Creative Lab's",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
     "available": "Available for selected projects, 2025"
