@@ -52,8 +52,9 @@ export default function Navigation({ rooted = false }: NavigationProps) {
           <span className="monogram text-[26px] leading-none text-[var(--foreground)]">
             {t.brand.monogram}
           </span>
-          <span className="hidden items-center gap-2 sm:flex">
-            {t.brand.roles.slice(0, 2).map((r) => (
+          {/* Brand chip-line — only on very wide screens to avoid colliding with nav links */}
+          <span className="hidden items-center gap-2 xl:flex">
+            {t.brand.roles.slice(0, 1).map((r) => (
               <span
                 key={r}
                 className="rounded-full border border-[var(--hairline)] px-3 py-[5px] font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55"
@@ -83,7 +84,7 @@ export default function Navigation({ rooted = false }: NavigationProps) {
                 onClick={() => setLocale(lang as Locale)}
                 className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
                   locale === lang
-                    ? 'bg-[var(--foreground)] text-[var(--background)]'
+                    ? 'bg-[var(--accent)] text-[var(--background)]'
                     : 'text-[var(--foreground)]/40 hover:text-[var(--foreground)]/70'
                 }`}
                 data-cursor="hover"

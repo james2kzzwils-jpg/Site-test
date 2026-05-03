@@ -79,7 +79,11 @@ export default function Contact() {
                 {t.contact.info.location}
               </p>
             </div>
-            <div className="mt-8 border-t border-[var(--hairline)] pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+            <div className="mt-8 flex items-center gap-3 border-t border-[var(--hairline)] pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+              <span
+                aria-hidden="true"
+                className="h-[6px] w-[6px] animate-pulse rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent-glow)]"
+              />
               {t.footer.available}
             </div>
           </div>

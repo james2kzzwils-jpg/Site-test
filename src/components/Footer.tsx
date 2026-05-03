@@ -64,7 +64,11 @@ export default function Footer() {
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
             © {new Date().getFullYear()} {t.footer.brand}. {t.footer.rights}
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
+          <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
+            <span
+              aria-hidden="true"
+              className="h-[6px] w-[6px] animate-pulse rounded-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent-glow)]"
+            />
             {t.footer.available}
           </p>
         </div>

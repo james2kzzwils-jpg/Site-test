@@ -151,7 +151,7 @@ export default function Works() {
 
                   {/* Title + tags */}
                   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-baseline sm:gap-8">
-                    <h3 className="font-display text-[clamp(1.8rem,4.6vw,3.2rem)] font-medium leading-[1] tracking-[-0.025em] text-[var(--foreground)]/85 transition-[transform,color] duration-500 group-hover:translate-x-2 group-hover:text-[var(--foreground)]">
+                    <h3 className="font-display text-[clamp(1.8rem,4.6vw,3.2rem)] font-medium leading-[1] tracking-[-0.025em] text-[var(--foreground)]/85 transition-[transform,color] duration-500 group-hover:translate-x-2 group-hover:text-[var(--accent)]">
                       {project.title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">

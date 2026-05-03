@@ -40,9 +40,9 @@ export default function Hero() {
 
       <div
         ref={containerRef}
-        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-between px-6 pb-14 pt-36 sm:px-10 lg:px-14 lg:pb-20 lg:pt-40"
+        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-between px-6 pb-14 pt-44 sm:px-10 lg:px-14 lg:pb-20 lg:pt-48"
       >
-        {/* Top row — kicker + role chips */}
+        {/* Top row — kicker + role chips. Chips only on xl to avoid nav collision */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p
             data-reveal
@@ -54,7 +54,10 @@ export default function Hero() {
             />
             {t.hero.kicker}
           </p>
-          <div data-reveal className="reveal flex flex-wrap items-center gap-2">
+          <div
+            data-reveal
+            className="reveal hidden items-center gap-2 xl:flex"
+          >
             {t.brand.roles.map((r) => (
               <span
                 key={r}
@@ -106,7 +109,9 @@ export default function Hero() {
                 data-cursor="hover"
               >
                 {t.hero.cta_contact}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true" className="text-[var(--accent)]">
+                  ↗
+                </span>
               </a>
             </div>
           </div>
