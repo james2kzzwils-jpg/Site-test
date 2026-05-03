@@ -11,6 +11,10 @@ import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
+function SectionSpacer() {
+  return <div className="h-24 lg:h-40" aria-hidden="true" />;
+}
+
 export default function Home() {
   return (
     <LanguageProvider>
@@ -18,11 +22,17 @@ export default function Home() {
         <Navigation />
         <main className="bg-[#0a0a0a]">
           <Hero />
+          <SectionSpacer />
           <Works />
+          <SectionSpacer />
           <Services />
+          <SectionSpacer />
           <Shop />
+          <SectionSpacer />
           <About />
+          <SectionSpacer />
           <Contact />
+          <SectionSpacer />
           <Footer />
         </main>
       </SmoothScroll>

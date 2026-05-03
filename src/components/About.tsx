@@ -78,7 +78,7 @@ export default function About() {
             {t.about.tools.map((tool, i) => (
               <div
                 key={tool}
-                className={`rounded-xl bg-white/[0.04] px-7 py-3.5 text-[14px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 hover:scale-[1.05] ${
+                className={`rounded-xl bg-white/[0.04] px-8 py-4 text-[15px] text-white/30 transition-all duration-500 hover:bg-white/[0.08] hover:text-white/50 hover:scale-[1.05] ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
                 style={{ transitionDelay: `${600 + i * 50}ms` }}
