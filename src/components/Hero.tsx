@@ -51,14 +51,14 @@ export default function Hero() {
         <div data-reveal className="flex flex-wrap items-center gap-8">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative overflow-hidden rounded-2xl bg-white px-20 py-8 text-[20px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
+            className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-14 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)] sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
           >
             <span className="relative z-10 whitespace-nowrap">{t.hero.cta_works}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-2xl border-2 border-white/[0.15] px-20 py-8 text-[20px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white"
+            className="inline-flex items-center justify-center rounded-2xl border-2 border-white/20 px-14 py-7 text-[18px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
           >
             <span className="whitespace-nowrap">{t.hero.cta_contact}</span>
           </button>

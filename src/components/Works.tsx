@@ -144,7 +144,7 @@ export default function Works() {
             <button
               key={key}
               onClick={() => setActiveFilter(key)}
-              className={`rounded-2xl px-12 py-6 text-[17px] font-medium transition-all duration-300 hover:scale-[1.03] ${
+              className={`rounded-2xl px-10 py-5 text-[16px] font-medium transition-all duration-300 hover:scale-[1.03] sm:px-14 sm:py-6 sm:text-[18px] lg:px-16 lg:py-7 lg:text-[20px] ${
                 activeFilter === key
                   ? 'bg-white text-[#0a0a0a]'
                   : 'bg-white/[0.04] text-white/30 hover:bg-white/[0.08] hover:text-white/50'

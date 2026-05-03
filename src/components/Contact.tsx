@@ -114,7 +114,7 @@ export default function Contact() {
             <div className="pt-6">
               <button
                 type="submit"
-                className="group relative overflow-hidden rounded-2xl bg-white px-20 py-8 text-[20px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)]"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-14 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)] sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
               >
                 <span className="relative z-10">{t.contact.form.send}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
