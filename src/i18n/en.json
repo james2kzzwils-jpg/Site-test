@@ -19,15 +19,15 @@
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
     "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender and Nuke.",
-    "cta_works": "Selected Works",
+    "cta_works": "Projects",
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
     "click_hold": "Click & Hold",
     "discover": "Discover"
   },
   "works": {
-    "section_label": "Selected Works",
-    "title": "Selected Works",
+    "section_label": "Projects",
+    "title": "Projects",
     "subtitle": "A curated index of procedural animation, product visualization, fluid and cloth simulations, and pipeline tools.",
     "filters": {
       "all": "All",
@@ -54,7 +54,11 @@
           { "role": "Direction & 3D", "name": "James" },
           { "role": "Sound Design", "name": "Field Mute" },
           { "role": "Producer", "name": "North Studio" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "product-render",
@@ -72,7 +76,11 @@
           { "role": "Direction & 3D", "name": "James" },
           { "role": "Design", "name": "In-house Brand" },
           { "role": "Producer", "name": "Studio Standard" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "particle-systems",
@@ -89,7 +97,11 @@
         "collaborators": [
           { "role": "Direction & 3D", "name": "James" },
           { "role": "Brand", "name": "North & Co." }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "fluid-sim",
@@ -106,7 +118,11 @@
         "collaborators": [
           { "role": "Direction & 3D", "name": "James" },
           { "role": "Agency", "name": "Studio M" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "trim-tool",
@@ -122,7 +138,11 @@
         "context": "Adopted across three studios. The current build assembles 64-channel atlases in under three minutes.",
         "collaborators": [
           { "role": "Tooling", "name": "James" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "motion-reel",
@@ -139,7 +159,11 @@
         "collaborators": [
           { "role": "Direction & Edit", "name": "James" },
           { "role": "Sound Design", "name": "Field Mute" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       }
     ]
   },
@@ -263,7 +287,7 @@
     "solution_label": "Solution & Process",
     "context_label": "Context",
     "collaborators_label": "Collaborators",
-    "back_to_works": "All Works",
+    "back_to_works": "All Projects",
     "next_project": "Next Project"
   },
   "footer": {

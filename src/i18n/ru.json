@@ -19,15 +19,15 @@
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
     "subtitle": "Когда эстетика — не цель, а естественный результат грамотного технического процесса. Houdini, Blender, Nuke.",
-    "cta_works": "Избранные работы",
+    "cta_works": "Проекты",
     "cta_contact": "Начать проект",
     "scroll": "Листай ниже",
     "click_hold": "Click & Hold",
     "discover": "Посмотреть"
   },
   "works": {
-    "section_label": "Избранные работы",
-    "title": "Избранные работы",
+    "section_label": "Проекты",
+    "title": "Проекты",
     "subtitle": "Подборка проектов: процедурная анимация, продуктовая визуализация, симуляции жидкостей и тканей, инструменты пайплайна.",
     "filters": {
       "all": "Все",
@@ -54,7 +54,11 @@
           { "role": "Режиссура и 3D", "name": "James" },
           { "role": "Звуковой дизайн", "name": "Field Mute" },
           { "role": "Продюсер", "name": "North Studio" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "product-render",
@@ -72,7 +76,11 @@
           { "role": "Режиссура и 3D", "name": "James" },
           { "role": "Дизайн", "name": "In-house Brand" },
           { "role": "Продюсер", "name": "Studio Standard" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "particle-systems",
@@ -89,7 +97,11 @@
         "collaborators": [
           { "role": "Режиссура и 3D", "name": "James" },
           { "role": "Бренд", "name": "North & Co." }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "fluid-sim",
@@ -106,7 +118,11 @@
         "collaborators": [
           { "role": "Режиссура и 3D", "name": "James" },
           { "role": "Агентство", "name": "Studio M" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "trim-tool",
@@ -122,7 +138,11 @@
         "context": "Принят в трёх студиях. Текущая сборка собирает 64-канальные атласы меньше чем за три минуты.",
         "collaborators": [
           { "role": "Tooling", "name": "James" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       },
       {
         "id": "motion-reel",
@@ -139,7 +159,11 @@
         "collaborators": [
           { "role": "Режиссура и монтаж", "name": "James" },
           { "role": "Звуковой дизайн", "name": "Field Mute" }
-        ]
+        ],
+        "links": {
+          "behance": "#",
+          "artstation": "#"
+        }
       }
     ]
   },
@@ -239,7 +263,7 @@
     "solution_label": "Решение и процесс",
     "context_label": "Контекст",
     "collaborators_label": "Команда",
-    "back_to_works": "Все работы",
+    "back_to_works": "Все проекты",
     "next_project": "Следующий проект"
   },
   "footer": {

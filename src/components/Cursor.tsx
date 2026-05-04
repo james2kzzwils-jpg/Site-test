@@ -101,15 +101,19 @@ export default function Cursor() {
       />
       <div
         ref={ringRef}
-        className={`pv-cursor flex items-center justify-center rounded-full backdrop-blur-[2px] transition-[width,height,background-color,color,border-color] duration-300 ease-out ${ringSize} ${
+        className={`pv-cursor flex items-center justify-center rounded-full backdrop-blur-[3px] transition-[width,height,background-color,color,border-color,box-shadow] duration-300 ease-out ${ringSize} ${
           isView
-            ? 'border bg-[var(--accent)] text-[var(--background)] border-[var(--accent)]'
+            ? 'border bg-[var(--accent)] text-[var(--background)] border-[var(--accent)] shadow-[0_0_48px_8px_var(--accent-glow)]'
+            : mode === 'hover'
+            ? 'border border-[var(--accent)]/70 bg-[var(--accent)]/[0.06] text-transparent shadow-[0_0_36px_4px_var(--accent-glow)]'
             : 'is-blend border border-[#f5f3ee]/60 bg-transparent text-transparent'
         }`}
         aria-hidden="true"
       >
         {isView && (
-          <span className="font-mono uppercase tracking-[0.18em]">
+          <span
+            className="text-center font-mono uppercase tracking-[0.18em] [text-indent:0.18em]"
+          >
             {label || 'View'}
           </span>
         )}

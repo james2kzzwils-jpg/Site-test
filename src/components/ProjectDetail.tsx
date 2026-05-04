@@ -7,6 +7,115 @@ import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
 import { useLanguage } from '@/i18n/LanguageContext';
 
+/**
+ * Tiny editorial monogram badge used in place of full brand SVGs.
+ * Stays minimal and on-brand; works at any size; no extra requests.
+ */
+function PlatformBadge({
+  href,
+  label,
+  monogram,
+}: {
+  href: string;
+  label: string;
+  monogram: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={label}
+      className="group/badge inline-flex items-center gap-2 rounded-full border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-[color,border-color,background-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.06] hover:text-[var(--accent)]"
+      data-cursor="hover"
+    >
+      <span
+        aria-hidden="true"
+        className="flex h-5 w-5 items-center justify-center rounded-full border border-current font-display text-[10px] tracking-normal"
+      >
+        {monogram}
+      </span>
+      {label}
+      <span aria-hidden="true" className="text-current/60 group-hover/badge:text-[var(--accent)]">
+        ↗
+      </span>
+    </a>
+  );
+}
+
+/** Bento text card — index + label + body */
+function BentoText({
+  idx,
+  label,
+  body,
+  className = '',
+}: {
+  idx: string;
+  label: string;
+  body: string;
+  className?: string;
+}) {
+  return (
+    <article
+      className={`flex flex-col justify-between gap-10 rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] p-8 lg:p-10 ${className}`}
+    >
+      <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+        <span className="text-[var(--accent)]">({idx})</span> {label}
+      </p>
+      <p className="text-[clamp(1.05rem,1.3vw,1.25rem)] leading-[1.55] text-[var(--foreground)]/82">
+        {body}
+      </p>
+    </article>
+  );
+}
+
+/** Bento visual placeholder — for moodboard / breakdown / final frame */
+function BentoVisual({
+  label,
+  caption,
+  aspect = 'aspect-[4/3]',
+  className = '',
+  big = false,
+}: {
+  label: string;
+  caption?: string;
+  aspect?: string;
+  className?: string;
+  big?: boolean;
+}) {
+  return (
+    <div
+      className={`relative flex ${aspect} flex-col justify-between overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015] p-6 lg:p-8 ${className}`}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }}
+      />
+      <span className="relative font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+        <span className="accent-diamond">◆</span> {label}
+      </span>
+      {big && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[clamp(4rem,12vw,10rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.10]"
+        >
+          ◆
+        </span>
+      )}
+      {caption && (
+        <span className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+          {caption}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export default function ProjectDetail({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLElement>(null);
@@ -74,23 +183,37 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                 {project.description}
               </p>
               <div
-                className="reveal-auto flex flex-wrap items-start gap-2"
+                className="reveal-auto flex flex-col gap-5"
                 style={{ animationDelay: '300ms' }}
               >
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-[var(--hairline)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/65"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                <div className="flex flex-wrap items-start gap-2">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-[var(--hairline)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/65"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <PlatformBadge
+                    href={project.links.behance}
+                    label="Behance"
+                    monogram="Be"
+                  />
+                  <PlatformBadge
+                    href={project.links.artstation}
+                    label="ArtStation"
+                    monogram="As"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Visual placeholder block */}
+        {/* Reel placeholder */}
         <section className="relative">
           <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
             <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015]">
@@ -138,31 +261,89 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* Assignment / Solution / Context */}
-        <section className="pb-32">
+        {/* Bento — Assignment / Solution / Process / Context with visual cells */}
+        <section className="pb-24 lg:pb-32">
           <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
-            {[
-              { label: t.project.assignment_label, body: project.assignment },
-              { label: t.project.solution_label, body: project.solution },
-              { label: t.project.context_label, body: project.context },
-            ].map((block, i) => (
+            <div className="grid grid-cols-12 gap-3 sm:gap-4">
+              <BentoText
+                idx="01"
+                label={t.project.assignment_label}
+                body={project.assignment}
+                className="col-span-12 lg:col-span-8"
+              />
+              <BentoVisual
+                label="Moodboard"
+                caption="01 / Reference"
+                aspect="aspect-[4/5] lg:aspect-auto lg:min-h-[360px]"
+                className="col-span-12 lg:col-span-4 lg:row-span-2"
+              />
+
+              <BentoText
+                idx="02"
+                label={t.project.solution_label}
+                body={project.solution}
+                className="col-span-12 lg:col-span-8"
+              />
+
+              <BentoVisual
+                label="Breakdown"
+                caption="Process — Frame 01"
+                aspect="aspect-[16/7]"
+                className="col-span-12 lg:col-span-7"
+                big
+              />
+              <BentoVisual
+                label="Frame"
+                caption="Process — Frame 02"
+                aspect="aspect-square"
+                className="col-span-6 lg:col-span-5"
+              />
+
+              <BentoText
+                idx="03"
+                label={t.project.context_label}
+                body={project.context}
+                className="col-span-12 lg:col-span-7"
+              />
+              <BentoVisual
+                label="Frame"
+                caption="Process — Frame 03"
+                aspect="aspect-square lg:aspect-auto lg:min-h-full"
+                className="col-span-6 lg:col-span-5"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Closing render — full bleed */}
+        <section className="relative pb-24 lg:pb-32">
+          <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+            <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+              <span className="accent-diamond">◆</span> Final Frame
+            </p>
+            <div className="relative flex aspect-[21/9] items-end overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015]">
               <div
-                key={block.label}
-                className="grid gap-10 border-t border-[var(--hairline)] py-16 lg:grid-cols-[1fr_2fr] lg:gap-24 lg:py-20"
+                aria-hidden="true"
+                className="absolute inset-0 opacity-40"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to right, rgba(245,243,238,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.06) 1px, transparent 1px)',
+                  backgroundSize: '80px 80px',
+                }}
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[clamp(8rem,22vw,22rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.10]"
               >
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-                    <span className="text-[var(--accent)]">
-                      ({String(i + 1).padStart(2, '0')})
-                    </span>{' '}
-                    {block.label}
-                  </p>
-                </div>
-                <p className="max-w-3xl text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.55] text-[var(--foreground)]/80">
-                  {block.body}
-                </p>
+                ◆
+              </span>
+              <div className="relative z-10 flex w-full items-end justify-between p-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                <span>
+                  <span className="text-[var(--accent)]">+</span> {project.title}
+                </span>
+                <span>{project.year}</span>
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
