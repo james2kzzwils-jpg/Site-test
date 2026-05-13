@@ -14,6 +14,10 @@ import {
   type StageKind,
   type StageRow,
 } from '@/lib/portal/stages';
+import {
+  clientApproveStageAction,
+  clientRequestChangesAction,
+} from './actions';
 
 interface ClientProjectParams {
   projectId: string;
@@ -175,6 +179,46 @@ export default async function ClientProjectPage({
                   <p className="mt-3 max-w-2xl text-[14px] leading-[1.7] text-[var(--foreground)]/75">
                     {s.admin_summary}
                   </p>
+                ) : null}
+
+                {/* Client-side stage controls: only surfaced when the
+                    studio has marked this stage as ready for review
+                    (`in_review`). Approve advances to the next stage;
+                    Request changes flips state back into iteration. */}
+                {isCurrent && s.state === 'in_review' ? (
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <form action={clientApproveStageAction}>
+                      <input type="hidden" name="project_id" value={project.id} />
+                      <input type="hidden" name="stage_id" value={s.id} />
+                      <input type="hidden" name="stage_kind" value={s.kind} />
+                      <button
+                        type="submit"
+                        className="flex h-full w-full flex-col items-start gap-1 border border-[var(--accent)] bg-[var(--accent)] px-3 py-3 text-left text-[var(--background)] transition-colors"
+                      >
+                        <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                          {t('clientStageActions.approve.title')}
+                        </span>
+                        <span className="text-[11px] leading-[1.55] text-[var(--background)]/80">
+                          {t('clientStageActions.approve.hint')}
+                        </span>
+                      </button>
+                    </form>
+                    <form action={clientRequestChangesAction}>
+                      <input type="hidden" name="project_id" value={project.id} />
+                      <input type="hidden" name="stage_id" value={s.id} />
+                      <button
+                        type="submit"
+                        className="flex h-full w-full flex-col items-start gap-1 border border-[var(--hairline)] px-3 py-3 text-left text-[var(--foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      >
+                        <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                          {t('clientStageActions.changes.title')}
+                        </span>
+                        <span className="text-[11px] leading-[1.55] text-[var(--foreground)]/55">
+                          {t('clientStageActions.changes.hint')}
+                        </span>
+                      </button>
+                    </form>
+                  </div>
                 ) : null}
 
                 <div className="mt-5 border-t border-[var(--hairline)] pt-5">

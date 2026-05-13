@@ -47,7 +47,7 @@
         "title": "Парфюм. Симуляция",
         "client": "Личный проект",
         "year": "2025",
-        "category": "product_viz",
+        "category": "simulations",
         "cover": "/works/parfume-simulation/cover.jpg",
         "gallery": [
           "/works/parfume-simulation/01.jpg",
@@ -97,7 +97,7 @@
         "title": "Hoodi. Симуляция ткани",
         "client": "Личный проект",
         "year": "2024",
-        "category": "simulations",
+        "category": "product_viz",
         "cover": "/works/hoodi-cloth/cover.png",
         "gallery": [
           "/works/hoodi-cloth/01.jpg",
@@ -266,7 +266,7 @@
         "title": "Космос. Москва",
         "client": "Правительство Москвы",
         "year": "2024",
-        "category": "motion_design",
+        "category": "animation",
         "cover": "/works/cosmos/cover.jpg",
         "gallery": [
           "/works/cosmos/01.mp4",
@@ -494,8 +494,8 @@
       "send": "Отправить"
     },
     "info": {
-      "email": "placeholder@example.com",
-      "telegram": "@placeholder_handle",
+      "email": "cggeneralistandrey@gmail.com",
+      "telegram": "@aepov_2kzz",
       "location": "Москва, проспект 60-летия Октября, 11"
     }
   },

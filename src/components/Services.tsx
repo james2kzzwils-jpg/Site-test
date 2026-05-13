@@ -234,7 +234,7 @@ export default function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="relative py-32 lg:py-44">
-      <AmbientParticles highlight={highlight} count={150} seed={202} />
+      <AmbientParticles highlight={highlight} count={220} seed={202} />
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           className={`mb-20 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${

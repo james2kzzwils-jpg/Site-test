@@ -181,8 +181,10 @@ export async function updateProjectNdaAction(formData: FormData) {
 }
 
 // Toggle whether the project should land in the public portfolio.
-// Phase B just stores the flag; the actual portfolio sync ships in B3
-// once cover images are wired up.
+// Server-side mirror of the UI guard: only allow flipping the flag
+// when the project is on the Final stage OR has been wrapped early
+// (status === 'archived'). Anything earlier is silently ignored so a
+// crafted POST can't bypass the UI lock.
 export async function togglePublishAction(formData: FormData) {
   const clientId = String(formData.get('client_id') ?? '');
   const projectId = String(formData.get('project_id') ?? '');
@@ -190,10 +192,41 @@ export async function togglePublishAction(formData: FormData) {
   if (!projectId) return;
 
   const { supabase } = await requireAdmin();
+
+  const { data: current } = await supabase
+    .from('projects')
+    .select('status')
+    .eq('id', projectId)
+    .maybeSingle();
+  if (!current) return;
+  if (current.status !== 'final' && current.status !== 'archived') return;
+
   await supabase
     .from('projects')
     .update({ is_public_portfolio: next })
     .eq('id', projectId);
+
+  const { adminProject, clientProject } = pathsFor(clientId, projectId);
+  revalidatePath(adminProject);
+  revalidatePath(clientProject);
+}
+
+// Per-stage summary. Stored in `stages.admin_summary`; the surface
+// on the page renders stage-aware placeholder hints (references for
+// Mood, scene list for Animatic, etc.) so the admin knows what to
+// write at each step. Client view renders this as plain prose.
+export async function updateStageSummaryAction(formData: FormData) {
+  const clientId = String(formData.get('client_id') ?? '');
+  const projectId = String(formData.get('project_id') ?? '');
+  const stageId = String(formData.get('stage_id') ?? '');
+  const summary = String(formData.get('summary') ?? '');
+  if (!projectId || !stageId) return;
+
+  const { supabase } = await requireAdmin();
+  await supabase
+    .from('stages')
+    .update({ admin_summary: summary.length > 0 ? summary : null })
+    .eq('id', stageId);
 
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);

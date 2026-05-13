@@ -109,6 +109,22 @@ const DICT = {
     en: 'Magic link sent',
     ru: 'Ссылка отправлена',
   },
+  // "Test link" path: generates a magiclink via service-role admin
+  // API and shows the URL inline so the admin can paste it into a
+  // private window instead of waiting for an email. Bypasses the
+  // Supabase per-IP email rate limit entirely.
+  'admin.client.testLink': {
+    en: 'Test login link',
+    ru: 'Тестовая ссылка',
+  },
+  'admin.client.testLinkReady': {
+    en: 'Test login link ready',
+    ru: 'Тестовая ссылка готова',
+  },
+  'admin.client.testLinkHint': {
+    en: 'Copy the URL below and open it in a private window to log in as this user. No email is sent, so the magic-link rate limit is not touched.',
+    ru: 'Скопируй ссылку ниже и открой в приватном окне, чтобы зайти за клиента. Письмо не отправляется — лимит magic-link не тратится.',
+  },
   'admin.client.projects': { en: 'Projects', ru: 'Проекты' },
   'admin.client.projectsEmpty': {
     en: 'No projects yet. Create one below.',
@@ -173,12 +189,107 @@ const DICT = {
   'stageState.approved': { en: 'approved', ru: 'утверждено' },
   'stageState.current': { en: 'current', ru: 'текущая' },
 
-  // Stage action buttons
+  // Stage action buttons (legacy short labels)
   'stageAction.pending': { en: 'Mark pending', ru: 'В ожидание' },
   'stageAction.in_review': { en: 'Send to review', ru: 'На ревью' },
   'stageAction.changes_requested': {
     en: 'Request changes',
     ru: 'Запросить правки',
+  },
+
+  // Stage state buttons — verbose, role-aware versions. Each button
+  // is admin-only and pairs a clear title with a one-line hint so it
+  // is obvious what each transition does to the client side.
+  'stageActions.adminLabel': {
+    en: 'Studio-side stage controls',
+    ru: 'Управление этапом (студия)',
+  },
+  'stageActions.pending.title': {
+    en: 'Studio is working',
+    ru: 'Студия работает',
+  },
+  'stageActions.pending.hint': {
+    en: 'Reset to in-progress — the client sees this stage as still being prepared.',
+    ru: 'Этап снова в работе — клиент видит, что результат ещё готовится.',
+  },
+  'stageActions.in_review.title': {
+    en: 'Hand off for review',
+    ru: 'Передать клиенту на ревью',
+  },
+  'stageActions.in_review.hint': {
+    en: 'Deliverable is ready — the client sees a CTA to leave feedback or approve.',
+    ru: 'Результат готов — клиент получает кнопки «утвердить» или «оставить правки».',
+  },
+  'stageActions.changes_requested.title': {
+    en: 'Mark as needs changes',
+    ru: 'Помечено: нужны правки',
+  },
+  'stageActions.changes_requested.hint': {
+    en: 'Client raised edits — studio side is iterating. A new revision round opens automatically on the next comment.',
+    ru: 'Клиент попросил правки — студия в работе. На следующий коммент открывается новый раунд.',
+  },
+
+  // Client-side stage actions (only visible when stage is in review).
+  'clientStageActions.approve.title': {
+    en: 'Approve this stage',
+    ru: 'Утвердить этап',
+  },
+  'clientStageActions.approve.hint': {
+    en: 'Locks the deliverable and moves the project to the next stage.',
+    ru: 'Фиксирует результат и переводит проект на следующий этап.',
+  },
+  'clientStageActions.changes.title': {
+    en: 'Request changes',
+    ru: 'Запросить правки',
+  },
+  'clientStageActions.changes.hint': {
+    en: 'Sends the stage back into iteration — leave details in the conversation below.',
+    ru: 'Возвращает этап в работу — детали оставь в обсуждении ниже.',
+  },
+
+  // Per-stage meta — each kind gets its own label + placeholder so the
+  // editor obviously means "references" on Mood, "scene list" on
+  // Animatic, etc.
+  'stageMeta.save': { en: 'Save stage notes', ru: 'Сохранить заметки этапа' },
+  'stageMeta.discovery.label': {
+    en: 'Discovery brief',
+    ru: 'Discovery — бриф',
+  },
+  'stageMeta.discovery.placeholder': {
+    en: 'Goals, audience, scope, deadlines, budget.',
+    ru: 'Цели, аудитория, объём, дедлайны, бюджет.',
+  },
+  'stageMeta.mood.label': {
+    en: 'Mood & references',
+    ru: 'Настроение и референсы',
+  },
+  'stageMeta.mood.placeholder': {
+    en: 'Reference links, mood notes, palette direction, neuro-matic ideas.',
+    ru: 'Ссылки на референсы, описание настроения, палитра, нейроматик-идеи.',
+  },
+  'stageMeta.animatic.label': {
+    en: 'Animatic & scene list',
+    ru: 'Аниматик и сцены',
+  },
+  'stageMeta.animatic.placeholder': {
+    en: 'Shot/scene list, timing, voiceover hooks, camera notes.',
+    ru: 'Раскадровка, сцены, тайминг, акценты речи, заметки по камере.',
+  },
+  'stageMeta.lookdev.label': {
+    en: 'Lookdev direction',
+    ru: 'Lookdev — направление',
+  },
+  'stageMeta.lookdev.placeholder': {
+    en: 'Render style, key materials, lighting language, palette locks.',
+    ru: 'Стиль рендера, ключевые материалы, язык света, утверждённая палитра.',
+  },
+  'stageMeta.final.label': {
+    en: 'Delivery spec',
+    ru: 'Финал — спецификация',
+  },
+  'stageMeta.final.placeholder': {
+    en: 'Final formats, frame rates, deliverables, distribution channels.',
+    ru: 'Финальные форматы, частоты кадров, поставка, каналы распространения.',
   },
 
   // Project meta
@@ -215,6 +326,10 @@ const DICT = {
   'portfolio.help': {
     en: 'Flag this project to appear in the public Works section. The actual sync to the marketing site lands once cover images are wired up.',
     ru: 'Отметь проект, чтобы он появился в публичных Works. Сама синхронизация на сайт включится, когда подключим обложки.',
+  },
+  'portfolio.lockedHint': {
+    en: 'Available only at Final stage or after the project is wrapped early.',
+    ru: 'Доступно только на финале — или после досрочного завершения проекта.',
   },
   'portfolio.toggle': {
     en: 'Publish to portfolio',

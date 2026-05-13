@@ -45,7 +45,10 @@ export default function About() {
               {t.about.philosophy_title}
             </h3>
           </div>
-          <p className="max-w-xl text-[16px] leading-[1.75] text-[var(--foreground)]/55">
+          {/* Push the body copy down by the label height (≈11px line +
+              1.5rem mb-6) so it sits flush with the heading, not the
+              tiny "Философия" label above it. */}
+          <p className="max-w-xl text-[16px] leading-[1.75] text-[var(--foreground)]/55 lg:pt-[2.6rem]">
             {t.about.philosophy_text}
           </p>
         </div>

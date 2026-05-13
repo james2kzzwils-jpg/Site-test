@@ -43,14 +43,24 @@ export default function Footer() {
                 <span className="accent-diamond">◆</span> Social
               </p>
               <div className="flex flex-col gap-3">
-                {['Behance', 'Vimeo', 'LinkedIn', 'Telegram', 'Instagram'].map((s) => (
+                {(
+                  [
+                    ['Behance', 'https://www.behance.net/2kzz'],
+                    ['Vimeo', 'https://vimeo.com/1166636825'],
+                    ['LinkedIn', 'https://www.linkedin.com/feed/'],
+                    ['Telegram', 'https://t.me/aepov_2kzz'],
+                    ['Instagram', 'https://www.instagram.com/2kzz___/'],
+                  ] as const
+                ).map(([label, href]) => (
                   <a
-                    key={s}
-                    href="#"
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
                     className="hover-line inline-block w-fit pb-[3px] font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 hover:text-[var(--foreground)]"
                     data-cursor="hover"
                   >
-                    {s} <span className="text-[var(--accent)]">↗</span>
+                    {label} <span className="text-[var(--accent)]">↗</span>
                   </a>
                 ))}
               </div>

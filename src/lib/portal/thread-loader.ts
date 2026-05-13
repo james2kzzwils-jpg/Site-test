@@ -25,6 +25,7 @@ interface RoundDbRow {
 interface CommentDbRow {
   id: string;
   round_id: string;
+  author_id: string | null;
   author_role: 'admin' | 'client';
   body: string;
   created_at: string;
@@ -69,12 +70,38 @@ export async function loadProjectThreads(
     roundIds.length > 0
       ? await supabase
           .from('comments')
-          .select('id, round_id, author_role, body, created_at')
+          .select('id, round_id, author_id, author_role, body, created_at')
           .in('round_id', roundIds)
           .order('created_at', { ascending: true })
       : { data: [] as CommentDbRow[] };
   const comments = (commentRowsResult.data ?? []) as CommentDbRow[];
   const commentIds = comments.map((c) => c.id);
+
+  // Resolve author display names. RLS on `profiles` only lets admins
+  // read non-self rows, so for clients this query just returns the
+  // current user's own profile — that's fine, we fall back to the
+  // generic "Studio / Client" label for everyone else.
+  const authorIds = Array.from(
+    new Set(
+      comments
+        .map((c) => c.author_id)
+        .filter((v): v is string => typeof v === 'string')
+    )
+  );
+  const authorNames = new Map<string, string>();
+  if (authorIds.length > 0) {
+    const { data: profilesRows } = await supabase
+      .from('profiles')
+      .select('id, display_name, email')
+      .in('id', authorIds);
+    for (const p of profilesRows ?? []) {
+      const label =
+        (p.display_name && p.display_name.trim().length > 0
+          ? p.display_name
+          : p.email) ?? null;
+      if (label) authorNames.set(p.id, label);
+    }
+  }
 
   // PostgREST's `.or()` doesn't play well with `.in.()` lists when the
   // lists contain commas, so we issue two scoped queries and merge —
@@ -156,10 +183,15 @@ export async function loadProjectThreads(
   const commentsByRound = new Map<string, ThreadComment[]>();
   for (const c of comments) {
     const items = commentsByRound.get(c.round_id) ?? [];
+    const author_name =
+      c.author_id && authorNames.has(c.author_id)
+        ? authorNames.get(c.author_id) ?? null
+        : null;
     items.push({
       id: c.id,
       body: c.body,
       author_role: c.author_role,
+      author_name,
       created_at: c.created_at,
       attachments: attachByComment.get(c.id) ?? [],
     });
@@ -195,6 +227,7 @@ export async function loadProjectThreads(
         id: `pinned-${stageId}`,
         body: '',
         author_role: 'admin',
+        author_name: null,
         created_at: last.opened_at,
         attachments: orphans,
       });

@@ -54,6 +54,10 @@ export interface ThreadComment {
   id: string;
   body: string;
   author_role: 'admin' | 'client';
+  /** Display name resolved from `profiles` when RLS allows it
+   * (admin viewing any author; client viewing their own messages).
+   * `null` falls back to the generic role label. */
+  author_name: string | null;
   created_at: string;
   attachments: ThreadAttachment[];
 }
@@ -474,12 +478,27 @@ function CommentRow({
     dateStyle: 'short',
     timeStyle: 'short',
   });
+  // Prefer the resolved display name when the loader could fetch it
+  // (admin reader, or self). Always tag the side with a coloured pill
+  // so it's obvious who is speaking even when the name is missing.
+  const roleLabel = isStudio ? labels.studio : labels.client;
   return (
     <li className="flex flex-col gap-2">
       <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]">
-        <span className={isStudio ? 'text-[var(--accent)]' : 'text-[var(--foreground)]/65'}>
-          {isStudio ? labels.studio : labels.client}
+        <span
+          className={`border px-2 py-[2px] ${
+            isStudio
+              ? 'border-[var(--accent)] text-[var(--accent)]'
+              : 'border-[var(--hairline)] text-[var(--foreground)]/65'
+          }`}
+        >
+          {roleLabel}
         </span>
+        {comment.author_name ? (
+          <span className="text-[var(--foreground)]/65 normal-case tracking-normal text-[11px]">
+            {comment.author_name}
+          </span>
+        ) : null}
         <span className="text-[var(--foreground)]/35">· {stamp}</span>
       </div>
       {comment.body.trim().length > 0 ? (

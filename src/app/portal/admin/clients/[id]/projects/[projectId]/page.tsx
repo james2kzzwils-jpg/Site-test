@@ -21,6 +21,7 @@ import {
   togglePublishAction,
   updateProjectMetaAction,
   updateProjectNdaAction,
+  updateStageSummaryAction,
 } from './actions';
 
 interface ProjectDetailParams {
@@ -336,34 +337,53 @@ export default async function AdminProjectDetailPage({
             </button>
           </form>
 
-          <form
-            action={togglePublishAction}
-            className="flex flex-col gap-3 border border-[var(--hairline)] p-6"
-          >
-            <input type="hidden" name="client_id" value={id} />
-            <input type="hidden" name="project_id" value={project.id} />
-            <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-              {t('portfolio.title')}
-            </h2>
-            <p className="text-[12px] leading-[1.7] text-[var(--foreground)]/55">
-              {t('portfolio.help')}
-            </p>
-            <label className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/65">
-              <input
-                type="checkbox"
-                name="publish"
-                defaultChecked={project.is_public_portfolio}
-                className="accent-[var(--accent)]"
-              />
-              {t('portfolio.toggle')}
-            </label>
-            <button
-              type="submit"
-              className="mt-1 self-start border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
-            >
-              {t('portfolio.save')}
-            </button>
-          </form>
+          {/* Portfolio publish: locked until the project reaches Final
+              OR has been wrapped early (status === 'archived'). Until
+              then the toggle is disabled and we show a hint explaining
+              why. Server action mirrors the same guard. */}
+          {(() => {
+            const canPublish =
+              projectStatus === 'final' || projectStatus === 'archived';
+            return (
+              <form
+                action={togglePublishAction}
+                className={`flex flex-col gap-3 border border-[var(--hairline)] p-6 ${
+                  canPublish ? '' : 'opacity-60'
+                }`}
+              >
+                <input type="hidden" name="client_id" value={id} />
+                <input type="hidden" name="project_id" value={project.id} />
+                <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
+                  {t('portfolio.title')}
+                </h2>
+                <p className="text-[12px] leading-[1.7] text-[var(--foreground)]/55">
+                  {t('portfolio.help')}
+                </p>
+                {!canPublish ? (
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                    {t('portfolio.lockedHint')}
+                  </p>
+                ) : null}
+                <label className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/65">
+                  <input
+                    type="checkbox"
+                    name="publish"
+                    defaultChecked={project.is_public_portfolio}
+                    disabled={!canPublish}
+                    className="accent-[var(--accent)]"
+                  />
+                  {t('portfolio.toggle')}
+                </label>
+                <button
+                  type="submit"
+                  disabled={!canPublish}
+                  className="mt-1 self-start border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {t('portfolio.save')}
+                </button>
+              </form>
+            );
+          })()}
         </div>
       </section>
 
@@ -417,32 +437,100 @@ export default async function AdminProjectDetailPage({
                   </span>
                 </div>
 
+                {/* Per-stage summary editor (admin only). Placeholder
+                    is stage-aware so the field obviously means
+                    "references" on Mood, "scene list" on Animatic,
+                    etc. — instead of repeating the project-level
+                    brief on every stage. */}
+                <form
+                  action={updateStageSummaryAction}
+                  className="flex flex-col gap-2 border-t border-[var(--hairline)] pt-4"
+                >
+                  <input type="hidden" name="client_id" value={id} />
+                  <input
+                    type="hidden"
+                    name="project_id"
+                    value={project.id}
+                  />
+                  <input type="hidden" name="stage_id" value={s.id} />
+                  <label className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                    {t(`stageMeta.${s.kind as StageKind}.label` as const)}
+                  </label>
+                  <textarea
+                    name="summary"
+                    defaultValue={s.admin_summary ?? ''}
+                    rows={3}
+                    placeholder={t(
+                      `stageMeta.${s.kind as StageKind}.placeholder` as const
+                    )}
+                    className="border border-[var(--hairline)] bg-transparent px-3 py-2 text-[13px] leading-[1.6] outline-none focus:border-[var(--accent)]"
+                  />
+                  <button
+                    type="submit"
+                    className="self-start border border-[var(--accent)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--background)]"
+                  >
+                    {t('stageMeta.save')}
+                  </button>
+                </form>
+
                 {isCurrent && s.state !== 'approved' ? (
-                  <div className="flex flex-wrap gap-2 border-t border-[var(--hairline)] pt-4">
-                    {(
-                      [
-                        ['pending', t('stageAction.pending')],
-                        ['in_review', t('stageAction.in_review')],
-                        ['changes_requested', t('stageAction.changes_requested')],
-                      ] as const
-                    ).map(([value, label]) => (
-                      <form key={value} action={setStageStateAction}>
-                        <input type="hidden" name="client_id" value={id} />
-                        <input type="hidden" name="project_id" value={project.id} />
-                        <input type="hidden" name="stage_id" value={s.id} />
-                        <input type="hidden" name="state" value={value} />
-                        <button
-                          type="submit"
-                          className={`border px-3 py-[6px] font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
-                            s.state === value
-                              ? 'border-[var(--accent)] text-[var(--accent)]'
-                              : 'border-[var(--hairline)] text-[var(--foreground)]/55 hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      </form>
-                    ))}
+                  <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4">
+                    {/* Admin-only stage transitions. Each button has a
+                        clearly-worded label + a one-line hint so it's
+                        obvious what happens when it's pressed. The
+                        approve-and-advance step (next stage) lives in
+                        the global Progress Controls panel above. */}
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
+                      <span className="text-[var(--accent)]">◆</span>{' '}
+                      {t('stageActions.adminLabel')}
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {(
+                        [
+                          [
+                            'pending',
+                            t('stageActions.pending.title'),
+                            t('stageActions.pending.hint'),
+                          ],
+                          [
+                            'in_review',
+                            t('stageActions.in_review.title'),
+                            t('stageActions.in_review.hint'),
+                          ],
+                          [
+                            'changes_requested',
+                            t('stageActions.changes_requested.title'),
+                            t('stageActions.changes_requested.hint'),
+                          ],
+                        ] as const
+                      ).map(([value, title, hint]) => (
+                        <form key={value} action={setStageStateAction}>
+                          <input type="hidden" name="client_id" value={id} />
+                          <input
+                            type="hidden"
+                            name="project_id"
+                            value={project.id}
+                          />
+                          <input type="hidden" name="stage_id" value={s.id} />
+                          <input type="hidden" name="state" value={value} />
+                          <button
+                            type="submit"
+                            className={`flex h-full w-full flex-col items-start gap-1 border px-3 py-3 text-left transition-colors ${
+                              s.state === value
+                                ? 'border-[var(--accent)] text-[var(--accent)]'
+                                : 'border-[var(--hairline)] text-[var(--foreground)]/65 hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                            }`}
+                          >
+                            <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                              {title}
+                            </span>
+                            <span className="text-[11px] leading-[1.55] text-[var(--foreground)]/55">
+                              {hint}
+                            </span>
+                          </button>
+                        </form>
+                      ))}
+                    </div>
                   </div>
                 ) : null}
 

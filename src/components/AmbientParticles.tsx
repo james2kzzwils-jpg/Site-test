@@ -51,8 +51,8 @@ type AmbientParticlesProps = {
   /** Optional rect (in parent-local coords) the particles should
    * orient toward. `null` clears the highlight. */
   highlight?: HighlightRect | null;
-  /** Particle count. Default ~120 reads as soft texture without
-   * tipping into visual noise on large sections. */
+  /** Particle count. Default ~220 reads as soft texture across the
+   * whole section without tipping into visual noise. */
   count?: number;
   /** PRNG seed — keeps the layout stable across re-renders and HMR. */
   seed?: number;
@@ -62,7 +62,7 @@ type AmbientParticlesProps = {
 
 export default function AmbientParticles({
   highlight = null,
-  count = 120,
+  count = 220,
   seed = 1,
   rgb = '245,243,238',
 }: AmbientParticlesProps) {
@@ -104,29 +104,15 @@ export default function AmbientParticles({
     const ro = new ResizeObserver(sync);
     ro.observe(container);
 
-    // Width of the "perimeter band" inside which particles prefer to
-    // live. Anything outside this band gets a soft outward push back
-    // toward the nearest edge, so the centre of the section stays
-    // mostly clear and the field reads as a frame.
-    const BAND_PX = 160;
-
-    const spawnPosition = (rngF: () => number): { x: number; y: number } => {
-      // Pick a side (0=top, 1=right, 2=bottom, 3=left) and place the
-      // particle inside that side's band of thickness BAND_PX. This
-      // keeps the initial frame readable even before the drift kicks
-      // in.
-      const side = Math.floor(rngF() * 4);
-      switch (side) {
-        case 0:
-          return { x: rngF() * width, y: rngF() * BAND_PX };
-        case 1:
-          return { x: width - rngF() * BAND_PX, y: rngF() * height };
-        case 2:
-          return { x: rngF() * width, y: height - rngF() * BAND_PX };
-        default:
-          return { x: rngF() * BAND_PX, y: rngF() * height };
-      }
-    };
+    // We used to clamp particles into a perimeter band so the centre
+    // stayed clear, but James asked for them to spread through the
+    // whole section (including the bottom). The field now seeds
+    // uniformly across the rect and there's no edge-bias drift; the
+    // hover-attractor is the only directional force.
+    const spawnPosition = (rngF: () => number): { x: number; y: number } => ({
+      x: rngF() * width,
+      y: rngF() * height,
+    });
 
     const rng = makeRng(seed);
     const particles: Particle[] = [];
@@ -170,25 +156,8 @@ export default function AmbientParticles({
           p.vy += (Math.random() - 0.5) * 0.05;
         }
 
-        // Soft outward push when the particle drifts past the perimeter
-        // band toward the centre of the section. We nudge along the
-        // *nearest-edge* normal so particles glide back toward the
-        // frame rather than picking a single attractor. The push only
-        // engages once the particle is more than BAND_PX from every
-        // edge — within the band, free drift is preserved.
-        const distLeft = p.x;
-        const distRight = width - p.x;
-        const distTop = p.y;
-        const distBottom = height - p.y;
-        const nearest = Math.min(distLeft, distRight, distTop, distBottom);
-        if (nearest > BAND_PX) {
-          const depth = nearest - BAND_PX;
-          const k = Math.min(depth / 220, 1) * 0.012;
-          if (nearest === distLeft) p.vx -= k;
-          else if (nearest === distRight) p.vx += k;
-          else if (nearest === distTop) p.vy -= k;
-          else p.vy += k;
-        }
+        // No perimeter push: the field drifts freely across the whole
+        // section. Edge-wrap above is enough to keep particles in view.
 
         let alpha = p.baseAlpha;
         let radius = 1;

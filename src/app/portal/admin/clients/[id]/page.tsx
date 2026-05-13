@@ -13,6 +13,11 @@ interface ClientDetailParams {
 interface ClientDetailSearch {
   sent?: string;
   err?: string;
+  /** Magic-link URL returned by generateTestLoginAction — surfaced on
+   * the same page so the admin can copy it into a private window
+   * without spending a Supabase email quota. */
+  test_link?: string;
+  test_link_email?: string;
 }
 
 async function requireAdmin() {
@@ -78,6 +83,47 @@ async function inviteMemberAction(formData: FormData) {
   redirect(`/portal/admin/clients/${clientId}?sent=invited`);
 }
 
+// Generate a one-shot magic link for an existing member email — but
+// instead of emailing it, return the action_link directly in the URL
+// so the admin can copy/paste it into a private browser window. This
+// is the recommended path for testing because it doesn't burn the
+// Supabase "magic links per hour" budget.
+async function generateTestLoginAction(formData: FormData) {
+  'use server';
+  await requireAdmin();
+
+  const clientId = String(formData.get('client_id') ?? '');
+  const email = String(formData.get('email') ?? '').trim();
+  if (!clientId || !email) return;
+
+  const admin = createSupabaseAdminClient();
+  // Pin the post-verify redirect to our /auth/callback so the user
+  // lands inside the portal even if the project's "Site URL" in the
+  // Supabase dashboard hasn't been configured. The callback exchanges
+  // the code for a session and forwards to /portal.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
+  const redirectTo = siteUrl
+    ? `${siteUrl}/auth/callback?redirect=/portal`
+    : undefined;
+
+  const { data, error } = await admin.auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+    ...(redirectTo ? { options: { redirectTo } } : {}),
+  });
+
+  if (error || !data?.properties?.action_link) {
+    redirect(`/portal/admin/clients/${clientId}?err=test_link_failed`);
+  }
+
+  const link = data.properties.action_link;
+  const params = new URLSearchParams({
+    test_link: link,
+    test_link_email: email,
+  });
+  redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
+}
+
 // Resend a magic link to an existing member email. Uses signInWithOtp
 // which dispatches a fresh magic link email and works for users that
 // were already invited.
@@ -113,7 +159,7 @@ export default async function ClientDetailPage({
   searchParams: Promise<ClientDetailSearch>;
 }) {
   const { id } = await params;
-  const { sent, err } = await searchParams;
+  const { sent, err, test_link, test_link_email } = await searchParams;
 
   const { user, profile } = await requireAdmin();
   const supabase = await createSupabaseServerClient();
@@ -185,9 +231,28 @@ export default async function ClientDetailPage({
             ? locale === 'ru'
               ? 'Не удалось отправить ссылку. Проверь email.'
               : "Couldn't send magic link. Check the email."
+            : err === 'test_link_failed'
+            ? locale === 'ru'
+              ? 'Не удалось сгенерировать тестовую ссылку.'
+              : "Couldn't generate test login link."
             : locale === 'ru'
             ? 'Приглашение не отправлено.'
             : 'Invite failed.'}
+        </div>
+      ) : null}
+
+      {test_link ? (
+        <div className="mb-6 flex flex-col gap-2 border border-[var(--accent)] bg-[var(--accent)]/10 p-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+            ◆ {t('admin.client.testLinkReady')}
+            {test_link_email ? ` · ${test_link_email}` : ''}
+          </p>
+          <p className="text-[12px] leading-[1.6] text-[var(--foreground)]/70">
+            {t('admin.client.testLinkHint')}
+          </p>
+          <code className="break-all border border-[var(--hairline)] bg-[var(--background)] p-2 font-mono text-[11px] leading-[1.5] text-[var(--foreground)]/80">
+            {test_link}
+          </code>
         </div>
       ) : null}
 
@@ -231,16 +296,36 @@ export default async function ClientDetailPage({
                         invited {m.invited_at.slice(0, 10)}
                       </span>
                     </div>
-                    <form action={resendMagicLinkAction}>
-                      <input type="hidden" name="client_id" value={client.id} />
-                      <input type="hidden" name="email" value={email} />
-                      <button
-                        type="submit"
-                        className="border border-[var(--hairline)] px-3 py-[6px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                      >
-                        {t('admin.client.resend')}
-                      </button>
-                    </form>
+                    <div className="flex flex-wrap gap-2">
+                      <form action={generateTestLoginAction}>
+                        <input
+                          type="hidden"
+                          name="client_id"
+                          value={client.id}
+                        />
+                        <input type="hidden" name="email" value={email} />
+                        <button
+                          type="submit"
+                          className="border border-[var(--accent)] px-3 py-[6px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--background)]"
+                        >
+                          {t('admin.client.testLink')}
+                        </button>
+                      </form>
+                      <form action={resendMagicLinkAction}>
+                        <input
+                          type="hidden"
+                          name="client_id"
+                          value={client.id}
+                        />
+                        <input type="hidden" name="email" value={email} />
+                        <button
+                          type="submit"
+                          className="border border-[var(--hairline)] px-3 py-[6px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                        >
+                          {t('admin.client.resend')}
+                        </button>
+                      </form>
+                    </div>
                   </li>
                 );
               })}
