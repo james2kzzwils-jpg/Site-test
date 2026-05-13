@@ -3,11 +3,14 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
+import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
 
 // Admin dashboard: list of all clients. RLS guarantees only admins can
 // read these rows, but the middleware redirected non-admins already.
 export default async function AdminClientsPage() {
   const supabase = await createSupabaseServerClient();
+  const locale = await getPortalLocale();
+  const t = tFactory(locale);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -27,34 +30,34 @@ export default async function AdminClientsPage() {
   return (
     <>
       <PortalHeader
-        label="Admin / Clients"
+        label={`${t('role.admin')} / ${t('admin.clients.title')}`}
         email={profile?.email ?? user.email ?? ''}
         role="admin"
       />
 
-      <Breadcrumb trail={[{ label: 'Clients' }]} />
+      <Breadcrumb trail={[{ label: t('crumb.clients') }]} />
 
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
-            Clients
+            {t('admin.clients.title')}
           </h1>
           <p className="mt-2 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
-            Every active and archived client. Tap a row to open their projects.
+            {t('admin.clients.subtitle')}
           </p>
         </div>
         <Link
           href="/portal/admin/clients/new"
           className="border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
         >
-          + New client
+          + {t('admin.clients.new')}
         </Link>
       </div>
 
       <div className="border-t border-[var(--hairline)]">
         {(clients ?? []).length === 0 ? (
           <p className="py-10 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
-            No clients yet. Use «New client» to invite the first one.
+            {t('admin.clients.empty')}
           </p>
         ) : (
           <ul>
@@ -77,7 +80,7 @@ export default async function AdminClientsPage() {
                   href={`/portal/admin/clients/${c.id}`}
                   className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
                 >
-                  Open →
+                  {t('common.open')} →
                 </Link>
               </li>
             ))}

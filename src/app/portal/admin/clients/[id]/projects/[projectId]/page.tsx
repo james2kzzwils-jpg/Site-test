@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '@/app/portal/_shared/PortalHeader';
 import Breadcrumb from '@/app/portal/_shared/Breadcrumb';
 import StageStepper from '@/app/portal/_shared/StageStepper';
+import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
 import {
   STAGE_ORDER,
   type ProjectStatus,
@@ -23,6 +24,11 @@ interface ProjectDetailParams {
   projectId: string;
 }
 
+// Whitelist of supported currencies in the meta form. Stored as plain
+// text in the DB (`currency` column) so adding new options is just an
+// edit here.
+const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB', 'USDT', 'BTC', 'ETH'] as const;
+
 export default async function AdminProjectDetailPage({
   params,
 }: {
@@ -30,6 +36,8 @@ export default async function AdminProjectDetailPage({
 }) {
   const { id, projectId } = await params;
   const supabase = await createSupabaseServerClient();
+  const locale = await getPortalLocale();
+  const t = tFactory(locale);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -69,7 +77,6 @@ export default async function AdminProjectDetailPage({
   const stages = (stagesRaw ?? []) as StageRow[];
   const projectStatus = project.status as ProjectStatus;
 
-  // Derive UX-friendly NDA mode from the stored value.
   const ndaMode: 'none' | 'until' | 'perpetual' =
     project.nda_until == null
       ? 'none'
@@ -87,19 +94,28 @@ export default async function AdminProjectDetailPage({
       ? (project.budget_cents / 100).toFixed(2)
       : '';
 
+  const dueDateDefault = project.due_date ?? today;
+  const ndaDateDefault = ndaMode === 'until' ? project.nda_until ?? today : today;
+  const selectedCurrency = (project.currency ?? 'USD').toUpperCase();
+  const knownCurrency = CURRENCY_OPTIONS.includes(
+    selectedCurrency as (typeof CURRENCY_OPTIONS)[number]
+  )
+    ? selectedCurrency
+    : 'USD';
+
   return (
     <>
       <PortalHeader
-        label={`Admin / Project / ${project.title}`}
+        label={`${t('role.admin')} / ${t('admin.project.label')} / ${project.title}`}
         email={profile.email ?? user.email ?? ''}
         role="admin"
       />
 
       <Breadcrumb
         trail={[
-          { label: 'Clients', href: '/portal/admin' },
+          { label: t('crumb.clients'), href: '/portal/admin' },
           {
-            label: client?.name ?? 'Client',
+            label: client?.name ?? t('crumb.client'),
             href: `/portal/admin/clients/${id}`,
           },
           { label: project.title },
@@ -108,19 +124,19 @@ export default async function AdminProjectDetailPage({
 
       <div className="mb-10">
         <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/55">
-          <span className="text-[var(--accent)]">◆</span> Project
+          <span className="text-[var(--accent)]">◆</span> {t('admin.project.label')}
         </p>
         <h1 className="mt-2 font-display text-[clamp(2rem,4.5vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
           {project.title}
         </h1>
         <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
-          status: {project.status}
+          {t('admin.project.status')}: {project.status}
           {isUnderNda
             ? project.nda_until === 'infinity'
-              ? ' · NDA perpetual'
-              : ` · NDA until ${project.nda_until}`
-            : ' · no NDA'}
-          {project.is_public_portfolio ? ' · published' : ''}
+              ? ` · ${t('admin.project.ndaPerpetual')}`
+              : ` · ${t('admin.project.ndaUntil')} ${project.nda_until}`
+            : ` · ${t('admin.project.ndaNone')}`}
+          {project.is_public_portfolio ? ` · ${t('admin.project.published')}` : ''}
         </p>
       </div>
 
@@ -129,12 +145,10 @@ export default async function AdminProjectDetailPage({
       <section className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto] lg:items-start">
         <div className="flex flex-col gap-3">
           <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-            Progress controls
+            {t('progress.title')}
           </h2>
           <p className="max-w-md text-[13px] leading-[1.7] text-[var(--foreground)]/55">
-            Advance the project to the next stage once the current deliverable
-            is signed off. Approved stages stay locked unless you reset the
-            whole flow.
+            {t('progress.help')}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -147,10 +161,10 @@ export default async function AdminProjectDetailPage({
               className="border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {projectStatus === 'archived'
-                ? 'Archived'
+                ? t('progress.archived')
                 : projectStatus === 'final'
-                ? 'Finish project →'
-                : 'Approve & advance →'}
+                ? t('progress.finish')
+                : t('progress.advance')}
             </button>
           </form>
           <form action={resetProjectAction}>
@@ -160,7 +174,7 @@ export default async function AdminProjectDetailPage({
               type="submit"
               className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:border-[var(--accent)] hover:text-[var(--accent)]"
             >
-              Reset to discovery
+              {t('progress.reset')}
             </button>
           </form>
         </div>
@@ -174,26 +188,26 @@ export default async function AdminProjectDetailPage({
           <input type="hidden" name="client_id" value={id} />
           <input type="hidden" name="project_id" value={project.id} />
           <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-            Project meta
+            {t('meta.title')}
           </h2>
 
           <label className="flex flex-col gap-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
-              Brief / scope
+              {t('meta.brief')}
             </span>
             <textarea
               name="brief"
               defaultValue={project.brief ?? ''}
               rows={4}
               className="border border-[var(--hairline)] bg-transparent px-3 py-2 text-[13px] leading-[1.6] outline-none focus:border-[var(--accent)]"
-              placeholder="Goals, audience, scope, deadline notes…"
+              placeholder={t('meta.briefPlaceholder')}
             />
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-[1fr_120px]">
+          <div className="grid gap-4 sm:grid-cols-[1fr_140px]">
             <label className="flex flex-col gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
-                Budget
+                {t('meta.budget')}
               </span>
               <input
                 name="budget"
@@ -205,25 +219,32 @@ export default async function AdminProjectDetailPage({
             </label>
             <label className="flex flex-col gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
-                Currency
+                {t('meta.currency')}
               </span>
-              <input
+              <select
                 name="currency"
-                defaultValue={project.currency ?? 'USD'}
+                defaultValue={knownCurrency}
                 className="border border-[var(--hairline)] bg-transparent px-3 py-2 text-[13px] outline-none focus:border-[var(--accent)]"
-                placeholder="USD"
-              />
+              >
+                {CURRENCY_OPTIONS.map((c) => (
+                  <option key={c} value={c} className="bg-[var(--background)]">
+                    {c}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
           <label className="flex flex-col gap-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
-              Due date
+              {t('meta.dueDate')}
             </span>
             <input
               type="date"
               name="due_date"
-              defaultValue={project.due_date ?? ''}
+              defaultValue={dueDateDefault}
+              min="2020-01-01"
+              max="2100-12-31"
               className="w-fit border border-[var(--hairline)] bg-transparent px-3 py-2 text-[13px] outline-none focus:border-[var(--accent)]"
             />
           </label>
@@ -232,7 +253,7 @@ export default async function AdminProjectDetailPage({
             type="submit"
             className="mt-2 self-start border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
           >
-            Save meta
+            {t('meta.save')}
           </button>
         </form>
 
@@ -244,14 +265,14 @@ export default async function AdminProjectDetailPage({
             <input type="hidden" name="client_id" value={id} />
             <input type="hidden" name="project_id" value={project.id} />
             <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-              NDA
+              {t('nda.title')}
             </h2>
             <div className="flex flex-col gap-3 text-[13px]">
               {(
                 [
-                  ['none', 'No NDA — public-safe'],
-                  ['until', 'Active until date'],
-                  ['perpetual', 'Perpetual NDA'],
+                  ['none', t('nda.none')],
+                  ['until', t('nda.until')],
+                  ['perpetual', t('nda.perpetual')],
                 ] as const
               ).map(([value, label]) => (
                 <label
@@ -271,12 +292,14 @@ export default async function AdminProjectDetailPage({
             </div>
             <label className="flex flex-col gap-2">
               <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
-                Until date (if active)
+                {t('nda.untilLabel')}
               </span>
               <input
                 type="date"
                 name="nda_until_date"
-                defaultValue={ndaMode === 'until' ? project.nda_until ?? '' : ''}
+                defaultValue={ndaDateDefault}
+                min="2020-01-01"
+                max="2100-12-31"
                 className="w-fit border border-[var(--hairline)] bg-transparent px-3 py-2 text-[13px] outline-none focus:border-[var(--accent)]"
               />
             </label>
@@ -284,7 +307,7 @@ export default async function AdminProjectDetailPage({
               type="submit"
               className="mt-1 self-start border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
             >
-              Save NDA
+              {t('nda.save')}
             </button>
           </form>
 
@@ -295,12 +318,10 @@ export default async function AdminProjectDetailPage({
             <input type="hidden" name="client_id" value={id} />
             <input type="hidden" name="project_id" value={project.id} />
             <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-              Portfolio
+              {t('portfolio.title')}
             </h2>
             <p className="text-[12px] leading-[1.7] text-[var(--foreground)]/55">
-              Flag this project to appear in the public Works section. The
-              actual sync to the marketing site lands once cover images are
-              wired up.
+              {t('portfolio.help')}
             </p>
             <label className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/65">
               <input
@@ -309,13 +330,13 @@ export default async function AdminProjectDetailPage({
                 defaultChecked={project.is_public_portfolio}
                 className="accent-[var(--accent)]"
               />
-              Publish to portfolio
+              {t('portfolio.toggle')}
             </label>
             <button
               type="submit"
               className="mt-1 self-start border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
             >
-              Save publish flag
+              {t('portfolio.save')}
             </button>
           </form>
         </div>
@@ -323,7 +344,7 @@ export default async function AdminProjectDetailPage({
 
       <section>
         <h2 className="mb-6 font-display text-[22px] font-medium tracking-[-0.01em]">
-          Stages detail
+          {t('stagesDetail.title')}
         </h2>
         <ol className="grid gap-4">
           {stages.map((s) => {
@@ -346,7 +367,9 @@ export default async function AdminProjectDetailPage({
                           : 'text-[var(--foreground)]/55'
                       }`}
                     >
-                      {String(STAGE_ORDER.indexOf(s.kind as StageKind) + 1).padStart(2, '0')}{' '}
+                      {String(
+                        STAGE_ORDER.indexOf(s.kind as StageKind) + 1
+                      ).padStart(2, '0')}{' '}
                       · {s.kind}
                     </p>
                     <p className="mt-1 font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
@@ -354,12 +377,18 @@ export default async function AdminProjectDetailPage({
                     </p>
                     {s.deliverable ? (
                       <p className="mt-2 max-w-2xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
-                        → Deliverable: {s.deliverable}
+                        {t('stagesDetail.deliverable')}: {s.deliverable}
                       </p>
                     ) : null}
                   </div>
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55">
-                    {s.state}
+                    {s.state === 'pending'
+                      ? t('stageState.pending')
+                      : s.state === 'in_review'
+                      ? t('stageState.in_review')
+                      : s.state === 'changes_requested'
+                      ? t('stageState.changes_requested')
+                      : t('stageState.approved')}
                   </span>
                 </div>
 
@@ -367,9 +396,9 @@ export default async function AdminProjectDetailPage({
                   <div className="flex flex-wrap gap-2 border-t border-[var(--hairline)] pt-4">
                     {(
                       [
-                        ['pending', 'Mark pending'],
-                        ['in_review', 'Send to review'],
-                        ['changes_requested', 'Request changes'],
+                        ['pending', t('stageAction.pending')],
+                        ['in_review', t('stageAction.in_review')],
+                        ['changes_requested', t('stageAction.changes_requested')],
                       ] as const
                     ).map(([value, label]) => (
                       <form key={value} action={setStageStateAction}>
@@ -397,7 +426,7 @@ export default async function AdminProjectDetailPage({
         </ol>
 
         <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/35">
-          Round comments, file uploads and paste-from-clipboard ship in Wave B2 next.
+          {t('stages.b2hint')}
         </p>
       </section>
     </>
