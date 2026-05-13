@@ -18,7 +18,7 @@
     "kicker": "Portfolio — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender, After Effects and DaVinci Resolve.",
+    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process.",
     "cta_works": "Projects",
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
@@ -28,7 +28,7 @@
   "works": {
     "section_label": "Projects",
     "title": "Projects",
-    "subtitle": "A curated index of procedural animation, product visualization, fluid and cloth simulations, and pipeline tools.",
+    "subtitle": "",
     "filters": {
       "all": "All",
       "animation": "Animation",
@@ -210,10 +210,18 @@
     "subtitle": "Production-tested prompts and scripts to accelerate creative work — from product renders to web design.",
     "categories": {
       "all": "All",
+      "studio": "Studio",
       "prompts": "Prompts",
       "scripts": "Scripts"
     },
     "products": [
+      {
+        "id": "portfolio-site-build",
+        "title": "Portfolio + Client Portal Build",
+        "category": "studio",
+        "price": "On request",
+        "description": "Editorial studio portfolio with a closed-area client CRM — pipeline stages, NDA gating, review rounds. Built on this very template."
+      },
       {
         "id": "product-viz-prompts",
         "title": "Product Visualization Prompts",
@@ -248,36 +256,49 @@
     "approach_label": "Approach",
     "approach_title": "How I Work With Clients",
     "deliverable_label": "You Get",
+    "understanding_label": "Mutual understanding",
+    "result_label": "Result",
+    "rounds_note": "One revision round is included on each stage — except the final, where every revision is billed. Each additional round is billed as well.",
     "approach_steps": [
       {
         "number": "01",
         "title": "Discovery",
         "description": "Kickoff call to align on goals, scope, audience, budget and timeline.",
-        "deliverable": "A written brief covering goals, audience, scope, budget and timeline — ready to act on."
+        "deliverable": "A written brief covering goals, audience, scope, budget and timeline — ready to act on.",
+        "mutual_pct": 50,
+        "result_pct": 20
       },
       {
         "number": "02",
         "title": "Moodboard & References",
         "description": "Visual research and neural references. We lock the mood before any animation.",
-        "deliverable": "An approved moodboard with the exact reference frames the film will live in."
+        "deliverable": "An approved moodboard with the exact reference frames the film will live in.",
+        "mutual_pct": 60,
+        "result_pct": 30
       },
       {
         "number": "03",
         "title": "Animatic",
         "description": "Low-fi edit — timing, rhythm and camera work. You approve the cut before lookdev.",
-        "deliverable": "An approved cut: timing, rhythm and camera framing locked before any expensive lookdev."
+        "deliverable": "An approved cut: timing, rhythm and camera framing locked before any expensive lookdev.",
+        "mutual_pct": 70,
+        "result_pct": 50
       },
       {
         "number": "04",
         "title": "Lookdev & Lighting",
         "description": "Shading, lighting, FX and preview renders with comp passes — sent over for sign-off.",
-        "deliverable": "Composited preview renders showing exactly how every shot will read at final quality."
+        "deliverable": "Composited preview renders showing exactly how every shot will read at final quality.",
+        "mutual_pct": 90,
+        "result_pct": 80
       },
       {
         "number": "05",
         "title": "Final Render",
         "description": "Graded master plus cut-downs for every platform. Documented project files included.",
-        "deliverable": "A graded master plus cut-downs for every platform, with documented project files."
+        "deliverable": "A graded master plus cut-downs for every platform, with documented project files.",
+        "mutual_pct": 100,
+        "result_pct": 100
       }
     ],
     "toolkit_label": "Toolkit",
@@ -286,24 +307,24 @@
   "contact": {
     "section_label": "Contact",
     "title": "Let's Work Together",
-    "subtitle": "Have a project in mind? Let's discuss how to solve it — creative direction, simulation, or full production.",
+    "subtitle": "Got an idea? Let's talk it through. We'll plan it all and make this world a touch more beautiful.",
     "form": {
       "name": "Name",
       "email": "Email",
-      "project_type": "Project Type",
+      "project_type": "Type of Idea",
       "project_types": {
-        "services": "Project Services",
-        "strategic": "Strategic Design",
+        "services": "Project",
         "consultation": "Consultation",
+        "strategic": "Strategic Design",
         "other": "Other"
       },
-      "message": "Tell me about your project",
+      "message": "Tell me about your idea",
       "send": "Send Message"
     },
     "info": {
       "email": "placeholder@example.com",
       "telegram": "@placeholder_handle",
-      "location": "Location TBA"
+      "location": "Moscow, 60-letiya Oktyabrya Prospekt, 11"
     }
   },
   "project": {

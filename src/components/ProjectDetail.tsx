@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -119,12 +119,27 @@ function BentoVisual({
 export default function ProjectDetail({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLElement>(null);
+  const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
   }, [slug]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onScroll = () => setShowTop(window.scrollY > 600);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const projects = t.works.projects;
   const index = useMemo(
@@ -201,11 +216,6 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                     href={project.links.behance}
                     label="Behance"
                     monogram="Be"
-                  />
-                  <PlatformBadge
-                    href={project.links.artstation}
-                    label="ArtStation"
-                    monogram="As"
                   />
                 </div>
               </div>
@@ -411,6 +421,22 @@ export default function ProjectDetail({ slug }: { slug: string }) {
 
         <Footer />
       </main>
+
+      {/* Floating back-to-top — visible only after the visitor has
+          scrolled past the hero. Sits above the cursor canvas. */}
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label={t.project.back_to_works}
+        className={`fixed bottom-8 right-8 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-[var(--background)]/85 font-mono text-[14px] text-[var(--foreground)]/80 backdrop-blur transition-[opacity,transform,background-color,border-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.08] hover:text-[var(--accent)] ${
+          showTop
+            ? 'pointer-events-auto translate-y-0 opacity-100'
+            : 'pointer-events-none translate-y-2 opacity-0'
+        }`}
+        data-cursor="hover"
+      >
+        ↑
+      </button>
     </>
   );
 }

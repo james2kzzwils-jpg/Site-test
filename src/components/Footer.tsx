@@ -43,7 +43,7 @@ export default function Footer() {
                 <span className="accent-diamond">◆</span> Social
               </p>
               <div className="flex flex-col gap-3">
-                {['Behance', 'Vimeo', 'LinkedIn', 'Telegram'].map((s) => (
+                {['Behance', 'Vimeo', 'LinkedIn', 'Telegram', 'Instagram'].map((s) => (
                   <a
                     key={s}
                     href="#"

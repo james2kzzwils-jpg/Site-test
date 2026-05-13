@@ -100,9 +100,11 @@ export default function Works() {
             <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
               {t.works.title}
             </h2>
-            <p className="mt-7 max-w-md text-[15px] leading-[1.7] text-[var(--foreground)]/45">
-              {t.works.subtitle}
-            </p>
+            {t.works.subtitle && (
+              <p className="mt-7 max-w-md text-[15px] leading-[1.7] text-[var(--foreground)]/45">
+                {t.works.subtitle}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
