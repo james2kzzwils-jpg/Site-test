@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import AmbientParticles, { type HighlightRect } from './AmbientParticles';
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -59,6 +60,7 @@ function FilterPill({
 export default function Works() {
   const { t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [highlight, setHighlight] = useState<HighlightRect | null>(null);
   const { ref, shown } = useReveal<HTMLElement>();
 
   const total = t.works.projects.length;
@@ -80,13 +82,32 @@ export default function Works() {
     [t.works.projects, activeFilter]
   );
 
+  // Translate a hovered card's viewport-relative rect into coordinates
+  // local to the section, so the AmbientParticles canvas (which is
+  // pinned to the section) can pull particles toward it.
+  const handleCardEnter = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    const section = ref.current;
+    if (!section) return;
+    const tr = target.getBoundingClientRect();
+    const sr = section.getBoundingClientRect();
+    setHighlight({
+      x: tr.left - sr.left,
+      y: tr.top - sr.top,
+      w: tr.width,
+      h: tr.height,
+    });
+  };
+  const handleCardLeave = () => setHighlight(null);
+
   return (
     <section
       id="works"
       ref={ref}
       className="relative py-32 lg:py-44"
     >
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+      <AmbientParticles highlight={highlight} count={140} seed={101} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         {/* Section header */}
         <div
           className={`mb-16 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${
@@ -141,6 +162,8 @@ export default function Works() {
                   shown ? 'reveal is-in' : 'reveal'
                 }`}
                 style={{ transitionDelay: `${120 + i * 90}ms` }}
+                onMouseEnter={handleCardEnter}
+                onMouseLeave={handleCardLeave}
                 data-cursor="view"
                 data-cursor-label={t.works.view_project}
               >

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import AmbientParticles, { type HighlightRect } from './AmbientParticles';
 
 // Each clip is paired with its service by item number. Videos live in
 // /public/services and are H.264 yuv420p with no audio, ~720p, ≈1-2MB each.
@@ -18,11 +19,14 @@ function ServiceRow({
   service,
   index,
   isVisible,
+  onHover,
 }: {
   service: { number: string; title: string; description: string; tools: string[] };
   index: number;
   isVisible: boolean;
+  onHover?: (el: HTMLElement | null) => void;
 }) {
+  const rowRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(index === 0);
   // We mount the <video> the first time the panel opens and leave it
   // mounted afterwards so re-opening is instant.
@@ -59,12 +63,19 @@ function ServiceRow({
 
   return (
     <div
+      ref={rowRef}
       className={`group transition-all duration-1000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       }`}
       style={{ transitionDelay: `${200 + index * 110}ms` }}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      onMouseEnter={() => {
+        setHovering(true);
+        onHover?.(rowRef.current);
+      }}
+      onMouseLeave={() => {
+        setHovering(false);
+        onHover?.(null);
+      }}
     >
       <button
         onClick={handleToggle}
@@ -170,6 +181,7 @@ export default function Services() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
+  const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -182,9 +194,28 @@ export default function Services() {
     return () => obs.disconnect();
   }, []);
 
+  // Translate a hovered row's DOM rect into section-local coordinates
+  // so the AmbientParticles canvas (which is pinned to the section)
+  // can brighten particles in the row's neighbourhood.
+  const handleRowHover = (el: HTMLElement | null) => {
+    if (!el || !sectionRef.current) {
+      setHighlight(null);
+      return;
+    }
+    const tr = el.getBoundingClientRect();
+    const sr = sectionRef.current.getBoundingClientRect();
+    setHighlight({
+      x: tr.left - sr.left,
+      y: tr.top - sr.top,
+      w: tr.width,
+      h: tr.height,
+    });
+  };
+
   return (
-    <section id="services" ref={sectionRef} className="py-32 lg:py-44">
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+    <section id="services" ref={sectionRef} className="relative py-32 lg:py-44">
+      <AmbientParticles highlight={highlight} count={110} seed={202} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           className={`mb-20 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${
             shown ? 'reveal is-in' : 'reveal'
@@ -210,6 +241,7 @@ export default function Services() {
               service={service}
               index={i}
               isVisible={shown}
+              onHover={handleRowHover}
             />
           ))}
           <div className="border-t border-[var(--hairline)]" />
