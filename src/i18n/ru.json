@@ -1,7 +1,7 @@
 {
   "brand": {
-    "monogram": "J",
-    "name": "James Creative Lab's",
+    "monogram": "A",
+    "name": "Epov Creative Labs",
     "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
   },
   "nav": {
@@ -15,10 +15,10 @@
     "label": "Looooading"
   },
   "hero": {
-    "kicker": "Портфолио — 2025",
+    "kicker": "Портфолио — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Когда эстетика — не цель, а естественный результат грамотного технического процесса. Houdini, Blender, Nuke.",
+    "subtitle": "Когда эстетика — не цель, а естественный результат грамотного технического процесса. Houdini, Blender, After Effects, DaVinci Resolve.",
     "cta_works": "Проекты",
     "cta_contact": "Начать проект",
     "scroll": "Листай ниже",
@@ -48,7 +48,7 @@
         "outputs": ["Режиссура", "Симуляция", "Lookdev", "Композитинг"],
         "description": "Процедурная симуляция ткани с динамическим ветром и системой столкновений для кампании модного бренда.",
         "assignment": "Atelier Nord попросили снять фильм, в котором ткань живёт сама по себе — без съёмочной площадки. Задача — перевести характер их ремесла на полностью процедурный язык: осязаемый, но безусловно цифровой.",
-        "solution": "Одежда пересобрана через Vellum-сольвер, поверх лёг ветер, управляемый атрибутным шумом, столкновения настроены под призрачные тела. Lookdev под референсы 1:1, финиш в Nuke с одной мягкой коррекцией.",
+        "solution": "Одежда пересобрана через Vellum-сольвер, поверх лёг ветер, управляемый атрибутным шумом, столкновения настроены под призрачные тела. Lookdev под референсы 1:1, финиш в After Effects с одной мягкой коррекцией.",
         "context": "60-секундный hero и десять вертикальных нарезок для ритейла. Каждый кадр рендерится из одного источника — направление меняется только камерой.",
         "collaborators": [
           { "role": "Режиссура и 3D", "name": "James" },
@@ -147,7 +147,7 @@
       {
         "id": "motion-reel",
         "title": "Годовой Motion Reel",
-        "client": "James Creative Lab's",
+        "client": "Epov Creative Labs",
         "year": "2024",
         "category": "animation",
         "tags": ["Blender", "3ds Max", "After Effects"],
@@ -181,8 +181,8 @@
       {
         "number": "02",
         "title": "Полный цикл создания роликов",
-        "description": "От концепта и шейдинга в Blender / 3ds Max до финального композитинга в After Effects и Nuke. Сквозная интеграция на каждом этапе.",
-        "tools": ["Blender", "3ds Max", "After Effects", "Nuke"]
+        "description": "От концепта и шейдинга в Blender / 3ds Max до финального композитинга в After Effects и цветокоррекции в DaVinci Resolve. Сквозная интеграция на каждом этапе.",
+        "tools": ["Blender", "3ds Max", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
@@ -232,7 +232,7 @@
       { "number": "04", "title": "Сдача и оптимизация", "description": "Финал оптимизирован под платформу, файлы задокументированы." }
     ],
     "toolkit_label": "Инструменты",
-    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "Nuke", "Python", "Redshift", "Octane"]
+    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "DaVinci Resolve", "Python", "Redshift", "Octane"]
   },
   "contact": {
     "section_label": "Контакт",
@@ -267,7 +267,7 @@
     "next_project": "Следующий проект"
   },
   "footer": {
-    "brand": "James Creative Lab's",
+    "brand": "Epov Creative Labs",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "Все права защищены.",
     "available": "Доступен для избранных проектов, 2025"

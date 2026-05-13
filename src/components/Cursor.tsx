@@ -15,6 +15,18 @@ export default function Cursor() {
   const [mode, setMode] = useState<CursorMode>('default');
   const [label, setLabel] = useState<string>('');
 
+  // Half-size of the ring in px — kept in a ref so the rAF tick (set up
+  // once in useEffect) always sees the latest mode-driven value without
+  // re-binding. Ramped toward the target half-size so the offset animates
+  // in step with the CSS width/height transition (300ms).
+  const targetHalfRef = useRef(18);
+  const renderedHalfRef = useRef(18);
+
+  useEffect(() => {
+    targetHalfRef.current =
+      mode === 'view' ? 64 : mode === 'hover' ? 24 : 18;
+  }, [mode]);
+
   useEffect(() => {
     if (!isFinePointer) return;
     const ring = ringRef.current;
@@ -36,7 +48,10 @@ export default function Cursor() {
     const tick = () => {
       ringX += (targetX - ringX) * 0.18;
       ringY += (targetY - ringY) * 0.18;
-      ring.style.transform = `translate3d(${ringX - 18}px, ${ringY - 18}px, 0)`;
+      renderedHalfRef.current +=
+        (targetHalfRef.current - renderedHalfRef.current) * 0.18;
+      const half = renderedHalfRef.current;
+      ring.style.transform = `translate3d(${ringX - half}px, ${ringY - half}px, 0)`;
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);

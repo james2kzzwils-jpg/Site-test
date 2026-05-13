@@ -18,8 +18,8 @@ export default function HomePage() {
     t.brand.roles[0],
     t.brand.roles[1],
     t.brand.roles[2],
-    'Houdini · Blender · Nuke',
-    '2025',
+    'Houdini · Blender · After Effects · DaVinci Resolve',
+    '2026',
   ];
 
   return (

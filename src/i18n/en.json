@@ -1,7 +1,7 @@
 {
   "brand": {
-    "monogram": "J",
-    "name": "James Creative Lab's",
+    "monogram": "A",
+    "name": "Epov Creative Labs",
     "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
   },
   "nav": {
@@ -15,10 +15,10 @@
     "label": "Looooading"
   },
   "hero": {
-    "kicker": "Portfolio — 2025",
+    "kicker": "Portfolio — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender and Nuke.",
+    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender, After Effects and DaVinci Resolve.",
     "cta_works": "Projects",
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
@@ -48,7 +48,7 @@
         "outputs": ["Direction", "Simulation", "Lookdev", "Compositing"],
         "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign.",
         "assignment": "Atelier Nord asked for a film that captured fabric in motion without cinematography on set. The brief was to translate the soul of their craft into a fully procedural language — touchable, but unmistakably digital.",
-        "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in Nuke with a single soft grade.",
+        "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in After Effects with a single soft grade.",
         "context": "Delivered as a 60-second hero film and ten 9:16 cutdowns for retail screens. Every shot is rendered from the same source — direction shifts only happen at the camera level.",
         "collaborators": [
           { "role": "Direction & 3D", "name": "James" },
@@ -147,7 +147,7 @@
       {
         "id": "motion-reel",
         "title": "Annual Motion Reel",
-        "client": "James Creative Lab's",
+        "client": "Epov Creative Labs",
         "year": "2024",
         "category": "animation",
         "tags": ["Blender", "3ds Max", "After Effects"],
@@ -181,8 +181,8 @@
       {
         "number": "02",
         "title": "Full Production Cycle",
-        "description": "From concept and shading in Blender / 3ds Max to final compositing in After Effects and Nuke. End-to-end production with seamless integration at every stage.",
-        "tools": ["Blender", "3ds Max", "After Effects", "Nuke"]
+        "description": "From concept and shading in Blender / 3ds Max to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
+        "tools": ["Blender", "3ds Max", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
@@ -256,7 +256,7 @@
       { "number": "04", "title": "Delivery & Optimization", "description": "Final output optimized for the target platform with documented project files." }
     ],
     "toolkit_label": "Toolkit",
-    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "Nuke", "Python", "Redshift", "Octane"]
+    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "DaVinci Resolve", "Python", "Redshift", "Octane"]
   },
   "contact": {
     "section_label": "Contact",
@@ -291,7 +291,7 @@
     "next_project": "Next Project"
   },
   "footer": {
-    "brand": "James Creative Lab's",
+    "brand": "Epov Creative Labs",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
     "available": "Available for selected projects, 2025"
