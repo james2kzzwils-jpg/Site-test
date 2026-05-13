@@ -21,16 +21,18 @@ function ServiceRow({
   isVisible,
   onHover,
 }: {
-  service: { number: string; title: string; description: string; tools: string[] };
+  service: { number: string; title: string; description: string; tools: string[]; price?: string };
   index: number;
   isVisible: boolean;
   onHover?: (el: HTMLElement | null) => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(index === 0);
+  // Every row starts collapsed — the hover preview alone is enough of an
+  // invitation to click through.
+  const [open, setOpen] = useState(false);
   // We mount the <video> the first time the panel opens and leave it
   // mounted afterwards so re-opening is instant.
-  const [hasOpened, setHasOpened] = useState(index === 0);
+  const [hasOpened, setHasOpened] = useState(false);
   const [hovering, setHovering] = useState(false);
   const previewRef = useRef<HTMLVideoElement>(null);
 
@@ -115,6 +117,15 @@ function ServiceRow({
           {service.title}
         </h3>
 
+        {/* Indicative starting price — shown when the row provides one.
+            Sits between the title and the toggle so it's the first
+            thing the visitor reads next to the service name. */}
+        {service.price ? (
+          <span className="relative hidden shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 group-hover:text-[var(--accent)] md:inline-block">
+            {service.price}
+          </span>
+        ) : null}
+
         <span
           aria-hidden="true"
           className={`relative shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
@@ -135,6 +146,15 @@ function ServiceRow({
             <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
               {service.description}
             </p>
+            {/* Price echo inside the expanded panel — needed because the
+                inline pill on the title row is hidden on mobile widths,
+                and we still want a clear "from N ₽ / from $M" anchor on
+                small screens. */}
+            {service.price ? (
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--accent)] md:hidden">
+                {service.price}
+              </p>
+            ) : null}
             <div className="flex flex-wrap items-start gap-2">
               {service.tools.map((tool) => (
                 <span
@@ -214,7 +234,7 @@ export default function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="relative py-32 lg:py-44">
-      <AmbientParticles highlight={highlight} count={110} seed={202} />
+      <AmbientParticles highlight={highlight} count={150} seed={202} />
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           className={`mb-20 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${

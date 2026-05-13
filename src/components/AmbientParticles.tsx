@@ -104,12 +104,37 @@ export default function AmbientParticles({
     const ro = new ResizeObserver(sync);
     ro.observe(container);
 
+    // Width of the "perimeter band" inside which particles prefer to
+    // live. Anything outside this band gets a soft outward push back
+    // toward the nearest edge, so the centre of the section stays
+    // mostly clear and the field reads as a frame.
+    const BAND_PX = 160;
+
+    const spawnPosition = (rngF: () => number): { x: number; y: number } => {
+      // Pick a side (0=top, 1=right, 2=bottom, 3=left) and place the
+      // particle inside that side's band of thickness BAND_PX. This
+      // keeps the initial frame readable even before the drift kicks
+      // in.
+      const side = Math.floor(rngF() * 4);
+      switch (side) {
+        case 0:
+          return { x: rngF() * width, y: rngF() * BAND_PX };
+        case 1:
+          return { x: width - rngF() * BAND_PX, y: rngF() * height };
+        case 2:
+          return { x: rngF() * width, y: height - rngF() * BAND_PX };
+        default:
+          return { x: rngF() * BAND_PX, y: rngF() * height };
+      }
+    };
+
     const rng = makeRng(seed);
     const particles: Particle[] = [];
     for (let i = 0; i < count; i++) {
+      const { x, y } = spawnPosition(rng);
       particles.push({
-        x: rng() * width,
-        y: rng() * height,
+        x,
+        y,
         vx: (rng() - 0.5) * 0.22,
         vy: (rng() - 0.5) * 0.22,
         baseAlpha: 0.06 + rng() * 0.16,
@@ -143,6 +168,26 @@ export default function AmbientParticles({
         if (Math.random() < 0.012) {
           p.vx += (Math.random() - 0.5) * 0.05;
           p.vy += (Math.random() - 0.5) * 0.05;
+        }
+
+        // Soft outward push when the particle drifts past the perimeter
+        // band toward the centre of the section. We nudge along the
+        // *nearest-edge* normal so particles glide back toward the
+        // frame rather than picking a single attractor. The push only
+        // engages once the particle is more than BAND_PX from every
+        // edge — within the band, free drift is preserved.
+        const distLeft = p.x;
+        const distRight = width - p.x;
+        const distTop = p.y;
+        const distBottom = height - p.y;
+        const nearest = Math.min(distLeft, distRight, distTop, distBottom);
+        if (nearest > BAND_PX) {
+          const depth = nearest - BAND_PX;
+          const k = Math.min(depth / 220, 1) * 0.012;
+          if (nearest === distLeft) p.vx -= k;
+          else if (nearest === distRight) p.vx += k;
+          else if (nearest === distTop) p.vy -= k;
+          else p.vy += k;
         }
 
         let alpha = p.baseAlpha;

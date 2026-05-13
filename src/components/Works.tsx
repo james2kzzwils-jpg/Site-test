@@ -106,7 +106,7 @@ export default function Works() {
       ref={ref}
       className="relative py-32 lg:py-44"
     >
-      <AmbientParticles highlight={highlight} count={140} seed={101} />
+      <AmbientParticles highlight={highlight} count={180} seed={101} />
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         {/* Section header */}
         <div

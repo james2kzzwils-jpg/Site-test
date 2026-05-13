@@ -43,7 +43,16 @@
         "client": "Личный проект",
         "year": "2025",
         "category": "product_viz",
-        "cover": "/works/parfume-simulation.jpg",
+        "cover": "/works/parfume-simulation/cover.jpg",
+        "gallery": [
+          "/works/parfume-simulation/01.jpg",
+          "/works/parfume-simulation/02.jpg",
+          "/works/parfume-simulation/03.jpg",
+          "/works/parfume-simulation/04.jpg",
+          "/works/parfume-simulation/05.jpg",
+          "/works/parfume-simulation/06.jpg",
+          "/works/parfume-simulation/07.jpg"
+        ],
         "tags": ["Houdini", "Blender", "Симуляция"],
         "outputs": ["Симуляция жидкости", "Моделинг", "Lookdev", "Композ"],
         "description": "Продуктовая визуализация флакона парфюма: симуляция потока, отражения на стекле, мягкое студийное освещение.",
@@ -63,7 +72,19 @@
         "client": "Личный проект",
         "year": "2024",
         "category": "simulations",
-        "cover": "/works/hoodi-cloth.png",
+        "cover": "/works/hoodi-cloth/cover.png",
+        "gallery": [
+          "/works/hoodi-cloth/01.jpg",
+          "/works/hoodi-cloth/02.png",
+          "/works/hoodi-cloth/03.jpg",
+          "/works/hoodi-cloth/04.jpg",
+          "/works/hoodi-cloth/05.jpg",
+          "/works/hoodi-cloth/06.jpg",
+          "/works/hoodi-cloth/07.jpg",
+          "/works/hoodi-cloth/08.jpg",
+          "/works/hoodi-cloth/09.jpg",
+          "/works/hoodi-cloth/10.jpg"
+        ],
         "tags": ["Blender", "Marvelous Designer", "Cloth"],
         "outputs": ["Моделинг одежды", "Симуляция ткани", "Lookdev"],
         "description": "3D-моделинг и симуляция ткани в Marvelous Designer и Blender — визуализация худи для продуктовой презентации.",
@@ -83,7 +104,30 @@
         "client": "ThyName",
         "year": "2024",
         "category": "animation",
-        "cover": "/works/thyname-animation.png",
+        "cover": "/works/thyname-animation/cover.png",
+        "gallery": [
+          "/works/thyname-animation/01.jpg",
+          "/works/thyname-animation/02.jpg",
+          "/works/thyname-animation/03.mp4",
+          "/works/thyname-animation/04.jpg",
+          "/works/thyname-animation/05.jpg",
+          "/works/thyname-animation/06.mp4",
+          "/works/thyname-animation/07.jpg",
+          "/works/thyname-animation/08.jpg",
+          "/works/thyname-animation/09.mp4",
+          "/works/thyname-animation/10.jpg",
+          "/works/thyname-animation/11.jpg",
+          "/works/thyname-animation/12.mp4",
+          "/works/thyname-animation/13.png",
+          "/works/thyname-animation/14.png",
+          "/works/thyname-animation/15.mp4",
+          "/works/thyname-animation/16.png",
+          "/works/thyname-animation/17.png",
+          "/works/thyname-animation/18.mp4",
+          "/works/thyname-animation/19.png",
+          "/works/thyname-animation/20.png",
+          "/works/thyname-animation/21.jpg"
+        ],
         "tags": ["Blender", "After Effects", "DaVinci Resolve"],
         "outputs": ["3D-анимация", "Композ", "Грейд"],
         "description": "Брендовая 3D-анимация — моушн-дизайн в Blender, композитинг в After Effects, финальный грейд в DaVinci Resolve.",
@@ -107,30 +151,35 @@
       {
         "number": "01",
         "title": "Процедурная анимация и симуляции",
+        "price": "от 15 000 ₽ / от $200",
         "description": "Сложные симуляции в Houdini и Embergen — Vellum-ткани, FLIP-жидкости, частицы, волюметрика дыма и огня. Каждый эффект арт-директабелен и оптимизирован под продакшн.",
         "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
       },
       {
         "number": "02",
         "title": "Полный цикл создания роликов",
+        "price": "от 25 000 ₽ / от $400",
         "description": "От концепта и шейдинга в Blender до финального композитинга в After Effects и цветокоррекции в DaVinci Resolve. Сквозная интеграция на каждом этапе.",
         "tools": ["Blender", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
         "title": "Продуктовая визуализация",
+        "price": "от 10 000 ₽ / от $150",
         "description": "Высокотехнологичный контент для продуктовых, упаковочных и техно-брендов. Фотореалистичные кадры, динамичные ревилы и AI-концептинг — точностью.",
         "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
       },
       {
         "number": "04",
         "title": "Технические решения и автоматизация",
+        "price": "от 15 000 ₽ / от $200",
         "description": "Кастомные инструменты пайплайна, HDA, скрипты автоматизации и лёгкие веб-утилиты — убираем рутину из 3D-продакшна.",
         "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Пайплайн"]
       },
       {
         "number": "05",
         "title": "Консультации по 3D-графике и менторство",
+        "price": "от 2 000 ₽/час / от $25/ч",
         "description": "Менторство один-на-один для художников и студий: направление, технические разборы, дорожная карта и фокус роста.",
         "tools": ["Менторство", "Разборы", "Дорожная карта"]
       }
@@ -190,7 +239,7 @@
     "deliverable_label": "На выходе",
     "understanding_label": "Понимание",
     "result_label": "Результат",
-    "rounds_note": "На каждом этапе один раунд правок включён — кроме финала, где любые правки оплачиваются отдельно. Каждый следующий раунд тоже платный.",
+    "rounds_note": "На каждом этапе один раунд правок включён в стоимость — кроме финала. Каждый следующий раунд работы оплачиваемый.",
     "approach_steps": [
       {
         "number": "01",
@@ -264,6 +313,7 @@
     "assignment_label": "Задача",
     "solution_label": "Решение и процесс",
     "context_label": "Контекст",
+    "gallery_label": "Галерея",
     "collaborators_label": "Команда",
     "back_to_works": "Все проекты",
     "next_project": "Следующий проект"

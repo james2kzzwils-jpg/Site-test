@@ -43,7 +43,16 @@
         "client": "Personal",
         "year": "2025",
         "category": "product_viz",
-        "cover": "/works/parfume-simulation.jpg",
+        "cover": "/works/parfume-simulation/cover.jpg",
+        "gallery": [
+          "/works/parfume-simulation/01.jpg",
+          "/works/parfume-simulation/02.jpg",
+          "/works/parfume-simulation/03.jpg",
+          "/works/parfume-simulation/04.jpg",
+          "/works/parfume-simulation/05.jpg",
+          "/works/parfume-simulation/06.jpg",
+          "/works/parfume-simulation/07.jpg"
+        ],
         "tags": ["Houdini", "Blender", "Simulation"],
         "outputs": ["Fluid simulation", "Modeling", "Lookdev", "Compositing"],
         "description": "Product visualization of a perfume bottle — flow simulation, glass reflections, soft studio light.",
@@ -63,7 +72,19 @@
         "client": "Personal",
         "year": "2024",
         "category": "simulations",
-        "cover": "/works/hoodi-cloth.png",
+        "cover": "/works/hoodi-cloth/cover.png",
+        "gallery": [
+          "/works/hoodi-cloth/01.jpg",
+          "/works/hoodi-cloth/02.png",
+          "/works/hoodi-cloth/03.jpg",
+          "/works/hoodi-cloth/04.jpg",
+          "/works/hoodi-cloth/05.jpg",
+          "/works/hoodi-cloth/06.jpg",
+          "/works/hoodi-cloth/07.jpg",
+          "/works/hoodi-cloth/08.jpg",
+          "/works/hoodi-cloth/09.jpg",
+          "/works/hoodi-cloth/10.jpg"
+        ],
         "tags": ["Blender", "Marvelous Designer", "Cloth"],
         "outputs": ["Garment modeling", "Cloth simulation", "Lookdev"],
         "description": "3D modeling and cloth simulation in Marvelous Designer and Blender — product visualization of a hoodie.",
@@ -83,7 +104,30 @@
         "client": "ThyName",
         "year": "2024",
         "category": "animation",
-        "cover": "/works/thyname-animation.png",
+        "cover": "/works/thyname-animation/cover.png",
+        "gallery": [
+          "/works/thyname-animation/01.jpg",
+          "/works/thyname-animation/02.jpg",
+          "/works/thyname-animation/03.mp4",
+          "/works/thyname-animation/04.jpg",
+          "/works/thyname-animation/05.jpg",
+          "/works/thyname-animation/06.mp4",
+          "/works/thyname-animation/07.jpg",
+          "/works/thyname-animation/08.jpg",
+          "/works/thyname-animation/09.mp4",
+          "/works/thyname-animation/10.jpg",
+          "/works/thyname-animation/11.jpg",
+          "/works/thyname-animation/12.mp4",
+          "/works/thyname-animation/13.png",
+          "/works/thyname-animation/14.png",
+          "/works/thyname-animation/15.mp4",
+          "/works/thyname-animation/16.png",
+          "/works/thyname-animation/17.png",
+          "/works/thyname-animation/18.mp4",
+          "/works/thyname-animation/19.png",
+          "/works/thyname-animation/20.png",
+          "/works/thyname-animation/21.jpg"
+        ],
         "tags": ["Blender", "After Effects", "DaVinci Resolve"],
         "outputs": ["3D Animation", "Compositing", "Grading"],
         "description": "Brand 3D animation — motion design in Blender, compositing in After Effects, finishing grade in DaVinci Resolve.",
@@ -107,30 +151,35 @@
       {
         "number": "01",
         "title": "Procedural Animation & Simulations",
+        "price": "from 15,000 ₽ / from $200",
         "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
         "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
       },
       {
         "number": "02",
         "title": "Full Production Cycle",
+        "price": "from 25,000 ₽ / from $400",
         "description": "From concept and shading in Blender to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
         "tools": ["Blender", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
         "title": "Product Visualization",
+        "price": "from 10,000 ₽ / from $150",
         "description": "High-end content for product, packaging, and tech brands. Photorealistic stills, dynamic reveals, and AI-assisted concepting that communicate value through visual precision.",
         "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
       },
       {
         "number": "04",
         "title": "Technical Solutions & Automation",
+        "price": "from 15,000 ₽ / from $200",
         "description": "Custom pipeline tools, HDA development, automation scripts and lightweight web utilities that remove repetitive work from 3D production.",
         "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Pipeline"]
       },
       {
         "number": "05",
         "title": "3D Graphics Consulting & Mentorship",
+        "price": "from 2,000 ₽/hour / from $25/h",
         "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
         "tools": ["Mentorship", "Reviews", "Roadmap"]
       }
@@ -190,7 +239,7 @@
     "deliverable_label": "You Get",
     "understanding_label": "Mutual understanding",
     "result_label": "Result",
-    "rounds_note": "One revision round is included on each stage — except the final, where every revision is billed. Each additional round is billed as well.",
+    "rounds_note": "One revision round is included on every stage — except the final. Each following round of work is billable.",
     "approach_steps": [
       {
         "number": "01",
@@ -264,6 +313,7 @@
     "assignment_label": "Assignment",
     "solution_label": "Solution & Process",
     "context_label": "Context",
+    "gallery_label": "Gallery",
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
     "next_project": "Next Project"

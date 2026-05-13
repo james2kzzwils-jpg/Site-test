@@ -343,6 +343,59 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
+        {/* Behance gallery — every imported render / loop in the same
+            order the project ships on behance.net. Mp4s came from gifs
+            we converted to keep the page light; everything else is the
+            untouched 1400-wide CDN export. */}
+        {project.gallery && project.gallery.length > 0 ? (
+          <section className="relative pb-24 lg:pb-32">
+            <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+              <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+                <span className="accent-diamond">◆</span> {t.project.gallery_label}
+              </p>
+              <div className="flex flex-col gap-3 sm:gap-4">
+                {project.gallery.map((src, i) => {
+                  const isVideo = src.toLowerCase().endsWith('.mp4');
+                  const key = `${src}-${i}`;
+                  return (
+                    <figure
+                      key={key}
+                      className="relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012]"
+                    >
+                      {isVideo ? (
+                        <video
+                          className="block h-auto w-full"
+                          src={src}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={src}
+                          alt={`${project.title} — ${i + 1}`}
+                          className="block h-auto w-full"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                      <figcaption className="pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                        <span className="text-[var(--accent)]">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>{' '}
+                        / {String(project.gallery.length).padStart(2, '0')}
+                      </figcaption>
+                    </figure>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* Closing render — full bleed */}
         <section className="relative pb-24 lg:pb-32">
           <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
@@ -459,12 +512,13 @@ export default function ProjectDetail({ slug }: { slug: string }) {
       </main>
 
       {/* Floating back-to-top — visible only after the visitor has
-          scrolled past the hero. Sits above the cursor canvas. */}
+          scrolled past the hero. Anchored to the left edge so it stays
+          clear of the custom cursor canvas on the right. */}
       <button
         type="button"
         onClick={scrollToTop}
         aria-label={t.project.back_to_works}
-        className={`fixed bottom-8 right-8 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-[var(--background)]/85 font-mono text-[14px] text-[var(--foreground)]/80 backdrop-blur transition-[opacity,transform,background-color,border-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.08] hover:text-[var(--accent)] ${
+        className={`fixed bottom-8 left-8 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-[var(--background)]/85 font-mono text-[14px] text-[var(--foreground)]/80 backdrop-blur transition-[opacity,transform,background-color,border-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.08] hover:text-[var(--accent)] ${
           showTop
             ? 'pointer-events-auto translate-y-0 opacity-100'
             : 'pointer-events-none translate-y-2 opacity-0'
