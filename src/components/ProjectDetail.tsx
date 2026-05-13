@@ -116,6 +116,76 @@ function BentoVisual({
   );
 }
 
+/**
+ * Vertical media gallery used for moodboard, experiments and the main
+ * Behance gallery. Picks <img> vs <video> by file extension and keeps the
+ * source aspect ratio so frames don't get cropped.
+ *
+ * `kind` only affects the small index label on each tile so the same
+ * component can render three sections without colliding numbering.
+ */
+function ProjectGallery({
+  label,
+  items,
+  title,
+  kind,
+}: {
+  label: string;
+  items: readonly string[];
+  title: string;
+  kind: 'moodboard' | 'experiments' | 'gallery';
+}) {
+  const total = items.length;
+  return (
+    <section className="relative pb-24 lg:pb-32" data-gallery={kind}>
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+        <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+          <span className="accent-diamond">◆</span> {label}
+        </p>
+        <div className="flex flex-col gap-3 sm:gap-4">
+          {items.map((src, i) => {
+            const isVideo = src.toLowerCase().endsWith('.mp4');
+            const key = `${src}-${i}`;
+            return (
+              <figure
+                key={key}
+                className="relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012]"
+              >
+                {isVideo ? (
+                  <video
+                    className="block h-auto w-full"
+                    src={src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={src}
+                    alt={`${title} — ${label} ${i + 1}`}
+                    className="block h-auto w-full"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <figcaption className="pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                  <span className="text-[var(--accent)]">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>{' '}
+                  / {String(total).padStart(2, '0')}
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function ProjectDetail({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLElement>(null);
@@ -211,13 +281,15 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                     </span>
                   ))}
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <PlatformBadge
-                    href={project.links.behance}
-                    label="Behance"
-                    monogram="Be"
-                  />
-                </div>
+                {project.links.behance ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <PlatformBadge
+                      href={project.links.behance}
+                      label="Behance"
+                      monogram="Be"
+                    />
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -343,57 +415,39 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* Behance gallery — every imported render / loop in the same
-            order the project ships on behance.net. Mp4s came from gifs
-            we converted to keep the page light; everything else is the
-            untouched 1400-wide CDN export. */}
+        {/* Moodboard — reference images and references collected before the
+            project even starts. Rendered as a masonry-ish column flow so the
+            mixed aspect ratios stack without forced cropping. */}
+        {project.moodboard && project.moodboard.length > 0 ? (
+          <ProjectGallery
+            label={t.project.moodboard_label}
+            items={project.moodboard}
+            title={project.title}
+            kind="moodboard"
+          />
+        ) : null}
+
+        {/* Experiments — extra explorations and look tests that sit alongside
+            the final gallery but aren't part of the published cut. */}
+        {project.experiments && project.experiments.length > 0 ? (
+          <ProjectGallery
+            label={t.project.experiments_label}
+            items={project.experiments}
+            title={project.title}
+            kind="experiments"
+          />
+        ) : null}
+
+        {/* Final gallery — every imported render / loop in the same order
+            the project ships on its source (behance.net, deliverable, etc).
+            Stacked single-column to preserve the original framing. */}
         {project.gallery && project.gallery.length > 0 ? (
-          <section className="relative pb-24 lg:pb-32">
-            <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
-              <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
-                <span className="accent-diamond">◆</span> {t.project.gallery_label}
-              </p>
-              <div className="flex flex-col gap-3 sm:gap-4">
-                {project.gallery.map((src, i) => {
-                  const isVideo = src.toLowerCase().endsWith('.mp4');
-                  const key = `${src}-${i}`;
-                  return (
-                    <figure
-                      key={key}
-                      className="relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012]"
-                    >
-                      {isVideo ? (
-                        <video
-                          className="block h-auto w-full"
-                          src={src}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          preload="metadata"
-                        />
-                      ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={src}
-                          alt={`${project.title} — ${i + 1}`}
-                          className="block h-auto w-full"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      )}
-                      <figcaption className="pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
-                        <span className="text-[var(--accent)]">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>{' '}
-                        / {String(project.gallery.length).padStart(2, '0')}
-                      </figcaption>
-                    </figure>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
+          <ProjectGallery
+            label={t.project.gallery_label}
+            items={project.gallery}
+            title={project.title}
+            kind="gallery"
+          />
         ) : null}
 
         {/* Closing render — full bleed */}

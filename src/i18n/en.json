@@ -2,7 +2,11 @@
   "brand": {
     "monogram": "A",
     "name": "Epov Creative Lab's",
-    "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
+    "roles": [
+      "3D Motion Designer",
+      "CG Generalist",
+      "Houdini FX Artist"
+    ]
   },
   "nav": {
     "works": "Works",
@@ -33,7 +37,8 @@
       "all": "All",
       "animation": "Animation",
       "product_viz": "Product Viz",
-      "simulations": "Simulations"
+      "simulations": "Simulations",
+      "motion_design": "Motion Design"
     },
     "view_project": "View Project",
     "projects": [
@@ -53,18 +58,39 @@
           "/works/parfume-simulation/06.jpg",
           "/works/parfume-simulation/07.jpg"
         ],
-        "tags": ["Houdini", "Blender", "Simulation"],
-        "outputs": ["Fluid simulation", "Modeling", "Lookdev", "Compositing"],
+        "tags": [
+          "Houdini",
+          "Blender",
+          "Simulation"
+        ],
+        "outputs": [
+          "Fluid simulation",
+          "Modeling",
+          "Lookdev",
+          "Compositing"
+        ],
         "description": "Product visualization of a perfume bottle — flow simulation, glass reflections, soft studio light.",
         "assignment": "Make a static bottle feel like a living material — without a shoot, without props. The image had to read in product retail and in social feeds at the same time.",
         "solution": "Houdini solver handles fluid and splash, Blender finishes shading and rendering, DaVinci Resolve carries the grade. One setup delivers a series of angles from a single source.",
         "context": "Published on Behance in 2025 — reused as a testbed for product-loop renders in the portfolio.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" }
+          {
+            "role": "Direction & 3D",
+            "name": "Epov"
+          }
         ],
         "links": {
           "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
-        }
+        },
+        "moodboard": [
+          "/works/parfume-simulation/moodboard.jpg",
+          "/works/parfume-simulation/ref-dark.jpg",
+          "/works/parfume-simulation/ref-light.jpg",
+          "/works/parfume-simulation/ref-lowkey-1.jpg",
+          "/works/parfume-simulation/ref-lowkey-2.jpg",
+          "/works/parfume-simulation/ref-highkey-1.jpg",
+          "/works/parfume-simulation/ref-highkey-2.jpg"
+        ]
       },
       {
         "id": "hoodi-cloth",
@@ -85,18 +111,36 @@
           "/works/hoodi-cloth/09.jpg",
           "/works/hoodi-cloth/10.jpg"
         ],
-        "tags": ["Blender", "Marvelous Designer", "Cloth"],
-        "outputs": ["Garment modeling", "Cloth simulation", "Lookdev"],
+        "tags": [
+          "Blender",
+          "Marvelous Designer",
+          "Cloth"
+        ],
+        "outputs": [
+          "Garment modeling",
+          "Cloth simulation",
+          "Lookdev"
+        ],
         "description": "3D modeling and cloth simulation in Marvelous Designer and Blender — product visualization of a hoodie.",
         "assignment": "Translate a hoodie product photo into pure CG — material, folds, fit. Keep the cut recognisable and the fabric character intact.",
         "solution": "Base pattern is built in Marvelous Designer, with folds and seams reworked in Blender. Shading runs on physically-based fabric maps.",
         "context": "The approach is reused as a template for product graphics for apparel brands.",
         "collaborators": [
-          { "role": "3D & Simulation", "name": "Epov" }
+          {
+            "role": "3D & Simulation",
+            "name": "Epov"
+          }
         ],
         "links": {
           "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
-        }
+        },
+        "moodboard": [
+          "/works/hoodi-cloth/moodboard.jpg"
+        ],
+        "experiments": [
+          "/works/hoodi-cloth/experiment.jpg",
+          "/works/hoodi-cloth/ref-motion.jpg"
+        ]
       },
       {
         "id": "thyname-animation",
@@ -128,18 +172,127 @@
           "/works/thyname-animation/20.png",
           "/works/thyname-animation/21.jpg"
         ],
-        "tags": ["Blender", "After Effects", "DaVinci Resolve"],
-        "outputs": ["3D Animation", "Compositing", "Grading"],
+        "tags": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ],
+        "outputs": [
+          "3D Animation",
+          "Compositing",
+          "Grading"
+        ],
         "description": "Brand 3D animation — motion design in Blender, compositing in After Effects, finishing grade in DaVinci Resolve.",
         "assignment": "Build a short brand film that holds rhythm and reads on any screen — from a phone feed to a large monitor.",
         "solution": "Modeling and animation in Blender, post in After Effects (light comp, grain, vignette), finished with a calm grade in DaVinci Resolve — no aggressive contrast.",
         "context": "Used in social channels and as the title shot on the brand's site.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" }
+          {
+            "role": "Direction & 3D",
+            "name": "Epov"
+          }
         ],
         "links": {
           "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
         }
+      },
+      {
+        "id": "batara-travel",
+        "title": "Batara Travel",
+        "client": "Batara Travel",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/batara-travel/cover.jpg",
+        "gallery": [
+          "/works/batara-travel/01.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Motion Design"
+        ],
+        "outputs": [
+          "2D animation",
+          "Brand motion",
+          "Compositing"
+        ],
+        "description": "2D motion design for a travel agency — frame-by-frame brand storytelling assembled in After Effects.",
+        "assignment": "Translate the agency's identity into a short looping spot that reads on social feeds and on partner LED screens.",
+        "solution": "Layout, animation and final grade live in After Effects. The cut keeps a calm rhythm so the type and the destinations remain the lead actors.",
+        "context": "Used by the agency in social channels and inside their offline presentations.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {}
+      },
+      {
+        "id": "metallplace",
+        "title": "MetallPlace",
+        "client": "MetallPlace",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/metallplace/cover.jpg",
+        "gallery": [
+          "/works/metallplace/01.mp4",
+          "/works/metallplace/02.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Explainer"
+        ],
+        "outputs": [
+          "Looping brand mark",
+          "Lecture explainer",
+          "Edit & grade"
+        ],
+        "description": "Two motion design pieces for an industrial marketplace — a short brand loop and a long-form lecture cut.",
+        "assignment": "Two formats from the same visual system: a punchy brand loop for digital touchpoints, and an explainer for an internal lecture.",
+        "solution": "Built on a shared 2D toolkit in After Effects so both pieces share rhythm, palette, and typography while serving very different runtimes.",
+        "context": "Used on the company's public channels and during their training sessions.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {}
+      },
+      {
+        "id": "cosmos",
+        "title": "Cosmos. Moscow",
+        "client": "Moscow Government",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/cosmos/cover.jpg",
+        "gallery": [
+          "/works/cosmos/01.mp4",
+          "/works/cosmos/02.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Government"
+        ],
+        "outputs": [
+          "Concept loop",
+          "Final loop",
+          "Sound design"
+        ],
+        "description": "2D motion design loop developed for a Moscow Government cultural project on the topic of space.",
+        "assignment": "Build a calm, looping piece on the theme of cosmos — to be projected during a city cultural event for a wide audience.",
+        "solution": "A draft loop set the rhythm and palette; the final piece extends the system into a longer, more textured cut with sound, designed to live as a continuous projection.",
+        "context": "Produced as part of a Moscow Government cultural programme.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {}
       }
     ]
   },
@@ -153,35 +306,61 @@
         "title": "Procedural Animation & Simulations",
         "price": "from 15,000 ₽ / from $200",
         "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
-        "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
+        "tools": [
+          "Houdini",
+          "Vellum",
+          "FLIP",
+          "Particles",
+          "Embergen"
+        ]
       },
       {
         "number": "02",
         "title": "Full Production Cycle",
         "price": "from 25,000 ₽ / from $400",
         "description": "From concept and shading in Blender to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
-        "tools": ["Blender", "After Effects", "DaVinci Resolve"]
+        "tools": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ]
       },
       {
         "number": "03",
         "title": "Product Visualization",
         "price": "from 10,000 ₽ / from $150",
         "description": "High-end content for product, packaging, and tech brands. Photorealistic stills, dynamic reveals, and AI-assisted concepting that communicate value through visual precision.",
-        "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
+        "tools": [
+          "Blender",
+          "Cycles",
+          "Octane",
+          "Nano Banana"
+        ]
       },
       {
         "number": "04",
         "title": "Technical Solutions & Automation",
         "price": "from 15,000 ₽ / from $200",
         "description": "Custom pipeline tools, HDA development, automation scripts and lightweight web utilities that remove repetitive work from 3D production.",
-        "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Pipeline"]
+        "tools": [
+          "Python",
+          "JavaScript",
+          "HTML",
+          "CSS",
+          "HDAs",
+          "Pipeline"
+        ]
       },
       {
         "number": "05",
         "title": "3D Graphics Consulting & Mentorship",
         "price": "from 2,000 ₽/hour / from $25/h",
         "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
-        "tools": ["Mentorship", "Reviews", "Roadmap"]
+        "tools": [
+          "Mentorship",
+          "Reviews",
+          "Roadmap"
+        ]
       }
     ]
   },
@@ -283,7 +462,19 @@
       }
     ],
     "toolkit_label": "Toolkit",
-    "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
+    "tools": [
+      "Houdini",
+      "Blender",
+      "Embergen",
+      "Cycles",
+      "Octane",
+      "After Effects",
+      "DaVinci Resolve",
+      "Python",
+      "Nano Banana",
+      "Veo",
+      "Gemini"
+    ]
   },
   "contact": {
     "section_label": "Contact",
@@ -313,6 +504,8 @@
     "assignment_label": "Assignment",
     "solution_label": "Solution & Process",
     "context_label": "Context",
+    "moodboard_label": "Moodboard",
+    "experiments_label": "Experiments",
     "gallery_label": "Gallery",
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
