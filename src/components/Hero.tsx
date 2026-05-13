@@ -123,7 +123,7 @@ export default function Hero() {
           <span className="hidden sm:inline">
             {`(06)`} <span className="text-[var(--accent)]">◆</span> Index
           </span>
-          <span>2025</span>
+          <span>2026</span>
         </div>
       </div>
     </section>

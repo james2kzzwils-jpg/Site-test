@@ -1,7 +1,7 @@
 {
   "brand": {
     "monogram": "A",
-    "name": "Epov Creative Labs",
+    "name": "Epov Creative Lab's",
     "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
   },
   "nav": {
@@ -147,10 +147,10 @@
       {
         "id": "motion-reel",
         "title": "Годовой Motion Reel",
-        "client": "Epov Creative Labs",
+        "client": "Epov Creative Lab's",
         "year": "2024",
         "category": "animation",
-        "tags": ["Blender", "3ds Max", "After Effects"],
+        "tags": ["Blender", "After Effects", "DaVinci Resolve"],
         "outputs": ["Режиссура", "Монтаж", "Звуковой дизайн"],
         "description": "Сборник работ за год — полный цикл motion design и CG в 90 секунд.",
         "assignment": "Сложить год работы в 90 секунд, не потеряв технический почерк каждого проекта — не столько reel, сколько дегустация.",
@@ -175,26 +175,32 @@
       {
         "number": "01",
         "title": "Процедурная анимация и симуляции",
-        "description": "Сложные симуляции в Houdini — Vellum-ткани, FLIP-жидкости, частицы. Каждый эффект арт-директабелен и оптимизирован под продакшн.",
-        "tools": ["Houdini", "Vellum", "FLIP", "Particles"]
+        "description": "Сложные симуляции в Houdini и Embergen — Vellum-ткани, FLIP-жидкости, частицы, волюметрика дыма и огня. Каждый эффект арт-директабелен и оптимизирован под продакшн.",
+        "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
       },
       {
         "number": "02",
         "title": "Полный цикл создания роликов",
-        "description": "От концепта и шейдинга в Blender / 3ds Max до финального композитинга в After Effects и цветокоррекции в DaVinci Resolve. Сквозная интеграция на каждом этапе.",
-        "tools": ["Blender", "3ds Max", "After Effects", "DaVinci Resolve"]
+        "description": "От концепта и шейдинга в Blender до финального композитинга в After Effects и цветокоррекции в DaVinci Resolve. Сквозная интеграция на каждом этапе.",
+        "tools": ["Blender", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
         "title": "Продуктовая визуализация",
         "description": "Высокотехнологичный контент для продуктовых, упаковочных и техно-брендов. Фотореалистичные кадры и динамичные ревилы — точностью.",
-        "tools": ["Blender", "Octane", "Redshift", "Свет"]
+        "tools": ["Blender", "Cycles", "Octane", "Свет"]
       },
       {
         "number": "04",
         "title": "Технические решения и автоматизация",
-        "description": "Кастомные инструменты пайплайна, разработка HDA и скрипты автоматизации — убираем рутину из 3D-продакшна.",
-        "tools": ["Python", "HDAs", "Пайплайн", "Скриптинг"]
+        "description": "Кастомные инструменты пайплайна, HDA, скрипты автоматизации и лёгкие веб-утилиты — убираем рутину из 3D-продакшна.",
+        "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Пайплайн"]
+      },
+      {
+        "number": "05",
+        "title": "Консультации по 3D-графике и менторство",
+        "description": "Менторство один-на-один для художников и студий: направление, технические разборы, дорожная карта и фокус роста.",
+        "tools": ["Менторство", "Разборы", "Дорожная карта"]
       }
     ]
   },
@@ -221,18 +227,19 @@
     "section_label": "О себе",
     "title": "О себе",
     "philosophy_label": "Философия",
-    "philosophy_title": "Стадия нулевой ценности",
-    "philosophy_text": "Когда эстетика — не цель, а естественный результат грамотного технического процесса. Любой проект начинается с инженерной точности — красота приходит сама.",
+    "philosophy_title": "Сделано осмысленно",
+    "philosophy_text": "Каждый проект — на стыке инженерии и эстетики. Работа итеративна: красота полируется шаг за шагом, кадр за кадром, пока всё не попадает в нужное настроение.",
     "approach_label": "Подход",
-    "approach_title": "Как я работаю",
+    "approach_title": "Как я работаю с клиентом",
     "approach_steps": [
-      { "number": "01", "title": "Анализ и концепт", "description": "Понимаем бизнес-задачу за визуалом. Что мы вообще решаем?" },
-      { "number": "02", "title": "Технический дизайн", "description": "Подбираем инструменты и собираем пайплайн до первого пикселя." },
-      { "number": "03", "title": "Продакшн", "description": "Контроль на каждом этапе — от геометрии до финального композита." },
-      { "number": "04", "title": "Сдача и оптимизация", "description": "Финал оптимизирован под платформу, файлы задокументированы." }
+      { "number": "01", "title": "Discovery",              "description": "Созвон-знакомство: цели, задачи, аудитория, бюджет и сроки." },
+      { "number": "02", "title": "Мудборд и референсы", "description": "Визуальный ресёрч и нейроматик. Фиксируем настроение до любой анимации." },
+      { "number": "03", "title": "Аниматик",             "description": "Монтаж в черновике — тайминги, ритм, камера. Согласуем cut до lookdev'а." },
+      { "number": "04", "title": "Lookdev и свет",        "description": "Шейдинг, свет, эффекты и превью-рендеры с композом — на согласование." },
+      { "number": "05", "title": "Финальный рендер", "description": "Финал: мастер с грейдом + нарезки под каждую платформу. Проект задокументирован." }
     ],
     "toolkit_label": "Инструменты",
-    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "DaVinci Resolve", "Python", "Redshift", "Octane"]
+    "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
   },
   "contact": {
     "section_label": "Контакт",
@@ -267,9 +274,9 @@
     "next_project": "Следующий проект"
   },
   "footer": {
-    "brand": "Epov Creative Labs",
+    "brand": "Epov Creative Lab's",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "Все права защищены.",
-    "available": "Доступен для избранных проектов, 2025"
+    "available": "Доступен для избранных проектов, 2026"
   }
 }

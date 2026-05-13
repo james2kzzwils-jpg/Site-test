@@ -56,7 +56,7 @@ export default function Loader() {
           {tail}
         </span>
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#f5f3ee]/40">
-          2025 ©
+          2026 ©
         </span>
       </div>
     </div>

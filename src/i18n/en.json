@@ -1,7 +1,7 @@
 {
   "brand": {
     "monogram": "A",
-    "name": "Epov Creative Labs",
+    "name": "Epov Creative Lab's",
     "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
   },
   "nav": {
@@ -147,10 +147,10 @@
       {
         "id": "motion-reel",
         "title": "Annual Motion Reel",
-        "client": "Epov Creative Labs",
+        "client": "Epov Creative Lab's",
         "year": "2024",
         "category": "animation",
-        "tags": ["Blender", "3ds Max", "After Effects"],
+        "tags": ["Blender", "After Effects", "DaVinci Resolve"],
         "outputs": ["Direction", "Editorial", "Sound Design"],
         "description": "Compilation reel demonstrating a full production cycle across motion design and CG.",
         "assignment": "Cut a year of work into 90 seconds without losing the technical signature of each project — the brief was less a reel and more a tasting menu.",
@@ -175,26 +175,32 @@
       {
         "number": "01",
         "title": "Procedural Animation & Simulations",
-        "description": "Complex simulations in Houdini — Vellum cloth, FLIP fluids, particle systems. Every effect is art-directable and technically optimized for production.",
-        "tools": ["Houdini", "Vellum", "FLIP", "Particles"]
+        "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
+        "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
       },
       {
         "number": "02",
         "title": "Full Production Cycle",
-        "description": "From concept and shading in Blender / 3ds Max to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
-        "tools": ["Blender", "3ds Max", "After Effects", "DaVinci Resolve"]
+        "description": "From concept and shading in Blender to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
+        "tools": ["Blender", "After Effects", "DaVinci Resolve"]
       },
       {
         "number": "03",
         "title": "Product Visualization",
         "description": "High-end content for product, packaging, and tech brands. Photorealistic stills and dynamic reveals that communicate value through visual precision.",
-        "tools": ["Blender", "Octane", "Redshift", "Lighting"]
+        "tools": ["Blender", "Cycles", "Octane", "Lighting"]
       },
       {
         "number": "04",
         "title": "Technical Solutions & Automation",
-        "description": "Custom pipeline tools, HDA development, and automation scripts that streamline workflows and remove repetitive work from 3D production.",
-        "tools": ["Python", "HDAs", "Pipeline", "Scripting"]
+        "description": "Custom pipeline tools, HDA development, automation scripts and lightweight web utilities that remove repetitive work from 3D production.",
+        "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Pipeline"]
+      },
+      {
+        "number": "05",
+        "title": "3D Graphics Consulting & Mentorship",
+        "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
+        "tools": ["Mentorship", "Reviews", "Roadmap"]
       }
     ]
   },
@@ -245,18 +251,19 @@
     "section_label": "About",
     "title": "About",
     "philosophy_label": "Philosophy",
-    "philosophy_title": "The Stage of Zero Value",
-    "philosophy_text": "When aesthetics is not the goal but the natural result of a competent technical process. Every project starts with engineering precision — the beauty arrives on its own.",
+    "philosophy_title": "Crafted With Intent",
+    "philosophy_text": "Every project sits at the intersection of engineering and aesthetics. The work is iterative — beauty is polished step by step, frame by frame, until the piece lands in the right register.",
     "approach_label": "Approach",
-    "approach_title": "How I Work",
+    "approach_title": "How I Work With Clients",
     "approach_steps": [
-      { "number": "01", "title": "Analysis & Concept", "description": "Understanding the business task behind the visual. What are we actually solving?" },
-      { "number": "02", "title": "Technical Design", "description": "Choosing the right tools and building the pipeline before touching a single pixel." },
-      { "number": "03", "title": "Production",       "description": "Execution with full control over every stage — from geometry to final composite." },
-      { "number": "04", "title": "Delivery & Optimization", "description": "Final output optimized for the target platform with documented project files." }
+      { "number": "01", "title": "Discovery",             "description": "Kickoff call to align on goals, scope, audience, budget and timeline." },
+      { "number": "02", "title": "Moodboard & References", "description": "Visual research and neural references. We lock the mood before any animation." },
+      { "number": "03", "title": "Animatic",              "description": "Low-fi edit — timing, rhythm and camera work. You approve the cut before lookdev." },
+      { "number": "04", "title": "Lookdev & Lighting",    "description": "Shading, lighting, FX and preview renders with comp passes — sent over for sign-off." },
+      { "number": "05", "title": "Final Render",          "description": "Graded master plus cut-downs for every platform. Documented project files included." }
     ],
     "toolkit_label": "Toolkit",
-    "tools": ["Houdini", "Blender", "3ds Max", "After Effects", "DaVinci Resolve", "Python", "Redshift", "Octane"]
+    "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
   },
   "contact": {
     "section_label": "Contact",
@@ -291,9 +298,9 @@
     "next_project": "Next Project"
   },
   "footer": {
-    "brand": "Epov Creative Labs",
+    "brand": "Epov Creative Lab's",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
-    "available": "Available for selected projects, 2025"
+    "available": "Available for selected projects, 2026"
   }
 }

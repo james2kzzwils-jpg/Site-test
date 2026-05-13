@@ -60,11 +60,11 @@ export default function About() {
             </h3>
           </div>
 
-          <div className="grid border-t border-[var(--hairline)] sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid border-t border-[var(--hairline)] sm:grid-cols-2 lg:grid-cols-5">
             {t.about.approach_steps.map((step, i) => (
               <div
                 key={step.number}
-                className={`group flex flex-col gap-6 border-b border-[var(--hairline)] p-8 transition-colors duration-500 hover:bg-[var(--foreground)]/[0.015] sm:p-10 lg:border-r lg:[&:nth-child(4n)]:border-r-0 ${
+                className={`group flex flex-col gap-6 border-b border-[var(--hairline)] p-8 transition-colors duration-500 hover:bg-[var(--foreground)]/[0.015] sm:p-10 lg:border-r lg:[&:nth-child(5n)]:border-r-0 ${
                   shown ? 'reveal is-in' : 'reveal'
                 }`}
                 style={{ transitionDelay: `${200 + i * 100}ms` }}
