@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
+import Breadcrumb from '../_shared/Breadcrumb';
 
 // Admin dashboard: list of all clients. RLS guarantees only admins can
 // read these rows, but the middleware redirected non-admins already.
@@ -30,6 +31,8 @@ export default async function AdminClientsPage() {
         email={profile?.email ?? user.email ?? ''}
         role="admin"
       />
+
+      <Breadcrumb trail={[{ label: 'Clients' }]} />
 
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
+import Breadcrumb from '../_shared/Breadcrumb';
 
 // Client landing: list all projects visible to the signed-in client
 // (RLS already filters to client_members rows). For most clients this
@@ -32,6 +33,8 @@ export default async function ClientProjectsPage() {
         email={profile?.email ?? user.email ?? ''}
         role="client"
       />
+
+      <Breadcrumb trail={[{ label: 'My projects' }]} />
 
       <h1 className="mb-3 font-display text-[clamp(2rem,4.5vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
         Your projects

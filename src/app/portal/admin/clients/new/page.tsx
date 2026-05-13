@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import PortalHeader from '../../../_shared/PortalHeader';
+import Breadcrumb from '../../../_shared/Breadcrumb';
 
 // Server action for creating a client + invitee. We use the secret
 // client to generate the auth invite (bypass RLS), then attach them
@@ -81,6 +82,13 @@ export default async function NewClientPage() {
         label="Admin / New client"
         email={profile.email ?? user.email ?? ''}
         role="admin"
+      />
+
+      <Breadcrumb
+        trail={[
+          { label: 'Clients', href: '/portal/admin' },
+          { label: 'New client' },
+        ]}
       />
 
       <div className="mx-auto max-w-xl">

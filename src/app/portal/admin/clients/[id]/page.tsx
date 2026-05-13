@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../../../_shared/PortalHeader';
+import Breadcrumb from '../../../_shared/Breadcrumb';
 
 interface ClientDetailParams {
   id: string;
@@ -79,6 +80,13 @@ export default async function ClientDetailPage({
         label={`Admin / ${client.name}`}
         email={profile.email ?? user.email ?? ''}
         role="admin"
+      />
+
+      <Breadcrumb
+        trail={[
+          { label: 'Clients', href: '/portal/admin' },
+          { label: client.name },
+        ]}
       />
 
       <div className="mb-10 flex flex-col gap-2">
