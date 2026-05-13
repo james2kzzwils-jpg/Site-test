@@ -57,11 +57,21 @@ export default async function ClientDetailPage({
     .maybeSingle();
   if (!client) notFound();
 
-  const { data: projects } = await supabase
+  const { data: projectRows } = await supabase
     .from('projects')
-    .select('id, title, status, is_under_nda, is_public_portfolio, due_date')
+    .select('id, title, status, nda_until, is_public_portfolio, due_date')
     .eq('client_id', id)
     .order('created_at', { ascending: false });
+
+  // is_under_nda derived at read time. `nda_until` is null → no NDA;
+  // 'infinity' → perpetual; otherwise compare to today's date.
+  const today = new Date().toISOString().slice(0, 10);
+  const projects = (projectRows ?? []).map((p) => ({
+    ...p,
+    is_under_nda:
+      p.nda_until != null &&
+      (p.nda_until === 'infinity' || p.nda_until > today),
+  }));
 
   return (
     <>
@@ -91,13 +101,13 @@ export default async function ClientDetailPage({
         </div>
 
         <div className="border-t border-[var(--hairline)]">
-          {(projects ?? []).length === 0 ? (
+          {projects.length === 0 ? (
             <p className="py-8 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
               No projects yet. Create one below.
             </p>
           ) : (
             <ul>
-              {projects!.map((p) => (
+              {projects.map((p) => (
                 <li
                   key={p.id}
                   className="flex items-center justify-between border-b border-[var(--hairline)] py-4"

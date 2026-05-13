@@ -8,10 +8,18 @@
 create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------------------
+-- Enum types. PostgreSQL doesn't support `create type if not exists`, so
+-- we wrap each in a DO block that swallows duplicate_object errors.
+-- ---------------------------------------------------------------------------
+do $$ begin
+  create type portal_role as enum ('admin', 'client');
+exception when duplicate_object then null;
+end $$;
+
+-- ---------------------------------------------------------------------------
 -- Profiles: one row per auth.users row, carries the role and the user's
 -- chosen display name. Created automatically via the trigger below.
 -- ---------------------------------------------------------------------------
-create type if not exists portal_role as enum ('admin', 'client');
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -54,9 +62,12 @@ alter table public.client_members enable row level security;
 -- Projects. NDA flags + portfolio publication flag live here so the
 -- admin can flip them per-project from the start.
 -- ---------------------------------------------------------------------------
-create type if not exists project_status as enum (
-  'discovery', 'mood', 'animatic', 'lookdev', 'final', 'archived'
-);
+do $$ begin
+  create type project_status as enum (
+    'discovery', 'mood', 'animatic', 'lookdev', 'final', 'archived'
+  );
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.projects (
   id uuid primary key default gen_random_uuid(),
@@ -67,8 +78,12 @@ create table if not exists public.projects (
   currency text default 'USD',
   due_date date,
   status project_status not null default 'discovery',
-  nda_until date,            -- null = no NDA, 'infinity'::date = perpetual
-  is_under_nda boolean generated always as (nda_until is not null and (nda_until = 'infinity' or nda_until > current_date)) stored,
+  -- nda_until: null = no NDA. 'infinity'::date = perpetual NDA.
+  -- Otherwise an explicit date; expired when nda_until <= current_date.
+  -- The "is project under NDA right now" check is computed at read time
+  -- in the app (current_date is not IMMUTABLE so a STORED generated
+  -- column won't accept it).
+  nda_until date,
   is_public_portfolio boolean not null default false,
   portfolio_slug text unique,
   created_at timestamptz not null default now(),
@@ -83,13 +98,19 @@ alter table public.projects enable row level security;
 -- the deliverable text the client sees in the marketing site (mirrors
 -- the About section's "You Get / На выходе" copy).
 -- ---------------------------------------------------------------------------
-create type if not exists stage_kind as enum (
-  'discovery', 'mood', 'animatic', 'lookdev', 'final'
-);
+do $$ begin
+  create type stage_kind as enum (
+    'discovery', 'mood', 'animatic', 'lookdev', 'final'
+  );
+exception when duplicate_object then null;
+end $$;
 
-create type if not exists stage_state as enum (
-  'pending', 'in_review', 'changes_requested', 'approved'
-);
+do $$ begin
+  create type stage_state as enum (
+    'pending', 'in_review', 'changes_requested', 'approved'
+  );
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.stages (
   id uuid primary key default gen_random_uuid(),
