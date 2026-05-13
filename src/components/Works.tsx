@@ -167,9 +167,9 @@ export default function Works() {
                 data-cursor="view"
                 data-cursor-label={t.works.view_project}
               >
-                {/* Hover preview — soft placeholder render fading in from
-                    the right at ~20% opacity. Replace with real cover art
-                    by populating project.cover later. */}
+                {/* Hover preview — shows the project cover at low opacity
+                    fading in from the right. We mask the left edge so the
+                    project title stays legible on top of the imagery. */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] opacity-0 transition-opacity duration-500 group-hover:opacity-100 lg:block"
@@ -181,16 +181,30 @@ export default function Works() {
                   }}
                 >
                   <div className="relative h-full w-full overflow-hidden bg-[var(--foreground)]/[0.02]">
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 opacity-30"
-                      style={{
-                        backgroundImage:
-                          'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
-                        backgroundSize: '48px 48px',
-                      }}
-                    />
-                    <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.18]">
+                    {project.cover ? (
+                      // Plain <img> rather than next/image: the parent
+                      // size is animated and small (right half of a row),
+                      // so next/image's optimisation cost outweighs the
+                      // bandwidth saved here.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={project.cover}
+                        alt=""
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover opacity-65"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 opacity-30"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
+                          backgroundSize: '48px 48px',
+                        }}
+                      />
+                    )}
+                    <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.22] mix-blend-screen">
                       {idx}
                     </span>
                     <span className="absolute bottom-3 left-6 font-mono text-[9px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">

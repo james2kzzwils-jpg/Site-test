@@ -223,27 +223,45 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* Reel placeholder */}
+        {/* Cover frame — shows the imported Behance cover if the project
+            has one; otherwise falls back to the grid placeholder. */}
         <section className="relative">
           <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
             <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015]">
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 opacity-40"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(to right, rgba(245,243,238,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.06) 1px, transparent 1px)',
-                  backgroundSize: '64px 64px',
-                }}
-              />
-              <span className="font-display text-[clamp(6rem,18vw,16rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.12]">
-                {String(index + 1).padStart(2, '0')}
+              {project.cover ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={project.cover}
+                    alt={project.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    loading="eager"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--background)]/45 via-transparent to-transparent"
+                  />
+                </>
+              ) : (
+                <>
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 opacity-40"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(to right, rgba(245,243,238,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.06) 1px, transparent 1px)',
+                      backgroundSize: '64px 64px',
+                    }}
+                  />
+                  <span className="font-display text-[clamp(6rem,18vw,16rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.12]">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </>
+              )}
+              <span className="absolute bottom-6 left-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                <span className="accent-diamond">◆</span> {project.client}
               </span>
-              <span className="absolute bottom-6 left-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
-                <span className="accent-diamond">◆</span> Reel placeholder —
-                drop video here
-              </span>
-              <span className="absolute right-6 top-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+              <span className="absolute right-6 top-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
                 {project.year}
               </span>
             </div>
@@ -332,22 +350,40 @@ export default function ProjectDetail({ slug }: { slug: string }) {
               <span className="accent-diamond">◆</span> Final Frame
             </p>
             <div className="relative flex aspect-[21/9] items-end overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015]">
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 opacity-40"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(to right, rgba(245,243,238,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.06) 1px, transparent 1px)',
-                  backgroundSize: '80px 80px',
-                }}
-              />
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[clamp(8rem,22vw,22rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.10]"
-              >
-                ◆
-              </span>
-              <div className="relative z-10 flex w-full items-end justify-between p-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+              {project.cover ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={project.cover}
+                    alt={project.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--background)]/55 via-[var(--background)]/10 to-transparent"
+                  />
+                </>
+              ) : (
+                <>
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 opacity-40"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(to right, rgba(245,243,238,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.06) 1px, transparent 1px)',
+                      backgroundSize: '80px 80px',
+                    }}
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[clamp(8rem,22vw,22rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.10]"
+                  >
+                    ◆
+                  </span>
+                </>
+              )}
+              <div className="relative z-10 flex w-full items-end justify-between p-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/70">
                 <span>
                   <span className="text-[var(--accent)]">+</span> {project.title}
                 </span>

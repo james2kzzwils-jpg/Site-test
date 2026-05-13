@@ -33,136 +33,68 @@
       "all": "All",
       "animation": "Animation",
       "product_viz": "Product Viz",
-      "simulations": "Simulations",
-      "tools": "Tools"
+      "simulations": "Simulations"
     },
     "view_project": "View Project",
     "projects": [
       {
-        "id": "houdini-vellum",
-        "title": "Fabric Dynamics",
-        "client": "Atelier Nord",
-        "year": "2024",
-        "category": "simulations",
-        "tags": ["Houdini", "Vellum", "Simulation"],
-        "outputs": ["Direction", "Simulation", "Lookdev", "Compositing"],
-        "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign.",
-        "assignment": "Atelier Nord asked for a film that captured fabric in motion without cinematography on set. The brief was to translate the soul of their craft into a fully procedural language — touchable, but unmistakably digital.",
-        "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in After Effects with a single soft grade.",
-        "context": "Delivered as a 60-second hero film and ten 9:16 cutdowns for retail screens. Every shot is rendered from the same source — direction shifts only happen at the camera level.",
-        "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Sound Design", "name": "Field Mute" },
-          { "role": "Producer", "name": "North Studio" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "product-render",
-        "title": "Tech Product Launch",
-        "client": "Confidential — Consumer Tech",
-        "year": "2024",
+        "id": "parfume-simulation",
+        "title": "Parfume. Simulation",
+        "client": "Personal",
+        "year": "2025",
         "category": "product_viz",
-        "tags": ["Blender", "After Effects", "Compositing"],
-        "outputs": ["Modeling", "Lookdev", "Animation", "Compositing"],
-        "description": "High-end product visualization for a consumer electronics launch. Full pipeline from modeling to final composite.",
-        "assignment": "A consumer tech brand needed a launch film that would survive being intercut with live keynote footage. Build geometry tight enough for macro shots, light it without studio cliché, and finish in a comp pipeline a small team could maintain.",
-        "solution": "Modeling was authored in Blender with USD references kept identical to the engineering CAD. Lookdev used a thin-film and brushed-metal stack reused across the SKU family. Compositing in After Effects wrapped everything in a calm, broadcast-safe grade.",
-        "context": "Used in launch keynote, product page hero loop, and global retail signage. Eight SKUs delivered from a single shot graph.",
+        "cover": "/works/parfume-simulation.jpg",
+        "tags": ["Houdini", "Blender", "Simulation"],
+        "outputs": ["Fluid simulation", "Modeling", "Lookdev", "Compositing"],
+        "description": "Product visualization of a perfume bottle — flow simulation, glass reflections, soft studio light.",
+        "assignment": "Make a static bottle feel like a living material — without a shoot, without props. The image had to read in product retail and in social feeds at the same time.",
+        "solution": "Houdini solver handles fluid and splash, Blender finishes shading and rendering, DaVinci Resolve carries the grade. One setup delivers a series of angles from a single source.",
+        "context": "Published on Behance in 2025 — reused as a testbed for product-loop renders in the portfolio.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Design", "name": "In-house Brand" },
-          { "role": "Producer", "name": "Studio Standard" }
+          { "role": "Direction & 3D", "name": "Epov" }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
+          "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
         }
       },
       {
-        "id": "particle-systems",
-        "title": "Particle Universe",
-        "client": "Northwind Capital",
-        "year": "2023",
-        "category": "animation",
-        "tags": ["Houdini", "Particles", "Motion Design"],
-        "outputs": ["Direction", "Simulation", "Motion Design"],
-        "description": "Procedural particle system creating organic, data-driven motion graphics for a fintech brand film.",
-        "assignment": "Northwind wanted abstract motion that felt like a living index — populated, calm, never random. The brief explicitly avoided any literal interpretation of trading or markets.",
-        "solution": "We built a single Houdini particle setup driven by attribute volumes and a hand-curated set of attractors. Each frame is the same simulation, time-shifted, so editing was done in the timeline instead of in solver space.",
-        "context": "Delivered as a 90-second master plus a library of loops for stage screens, social, and the brand site. The same scene file shipped four years of campaign assets.",
-        "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Brand", "name": "North & Co." }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "fluid-sim",
-        "title": "Liquid Metal",
-        "client": "Marque Automotive",
-        "year": "2023",
+        "id": "hoodi-cloth",
+        "title": "Hoodi. Cloth Simulation",
+        "client": "Personal",
+        "year": "2024",
         "category": "simulations",
-        "tags": ["Houdini", "FLIP", "Rendering"],
-        "outputs": ["Simulation", "Lookdev", "Lighting", "Rendering"],
-        "description": "Metallic fluid simulation with custom shader development for an automotive brand commercial.",
-        "assignment": "A new vehicle was inbound and the agency wanted the body to feel as if it cast itself out of mercury. The work had to read on a phone and on a 30-metre LED wall.",
-        "solution": "FLIP simulation was directed via collision proxies of the final geometry; surface tension and curvature drove a thin-film shader baked from a measured BRDF. Renders were composited with a single matte luminance pass.",
-        "context": "A 45-second hero spot and three brand idents. The simulation cache was reused as B-roll for the entire model line.",
+        "cover": "/works/hoodi-cloth.png",
+        "tags": ["Blender", "Marvelous Designer", "Cloth"],
+        "outputs": ["Garment modeling", "Cloth simulation", "Lookdev"],
+        "description": "3D modeling and cloth simulation in Marvelous Designer and Blender — product visualization of a hoodie.",
+        "assignment": "Translate a hoodie product photo into pure CG — material, folds, fit. Keep the cut recognisable and the fabric character intact.",
+        "solution": "Base pattern is built in Marvelous Designer, with folds and seams reworked in Blender. Shading runs on physically-based fabric maps.",
+        "context": "The approach is reused as a template for product graphics for apparel brands.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Agency", "name": "Studio M" }
+          { "role": "3D & Simulation", "name": "Epov" }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
+          "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
         }
       },
       {
-        "id": "trim-tool",
-        "title": "Trim Texture Assembler",
-        "client": "Internal Tooling",
-        "year": "2024",
-        "category": "tools",
-        "tags": ["Python", "Pipeline", "Automation"],
-        "outputs": ["R&D", "Pipeline", "Tooling"],
-        "description": "Pipeline tool for automated trim texture assembly, reducing manual atlas work by 80%.",
-        "assignment": "Trim sheet authoring was the largest manual cost in a recurring archviz pipeline. The brief was to make it disappear.",
-        "solution": "A Python service ingests source artwork, normalises padding and resolution, and emits a texture set with metadata. Houdini and Blender both consume the same JSON, which means downstream artists never touch the assembler.",
-        "context": "Adopted across three studios. The current build assembles 64-channel atlases in under three minutes.",
-        "collaborators": [
-          { "role": "Tooling", "name": "Epov" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "motion-reel",
-        "title": "Annual Motion Reel",
-        "client": "Epov Creative Lab's",
+        "id": "thyname-animation",
+        "title": "ThyName. Animation",
+        "client": "ThyName",
         "year": "2024",
         "category": "animation",
+        "cover": "/works/thyname-animation.png",
         "tags": ["Blender", "After Effects", "DaVinci Resolve"],
-        "outputs": ["Direction", "Editorial", "Sound Design"],
-        "description": "Compilation reel demonstrating a full production cycle across motion design and CG.",
-        "assignment": "Cut a year of work into 90 seconds without losing the technical signature of each project — the brief was less a reel and more a tasting menu.",
-        "solution": "Selections were graded into a single calm look. Sound design was built around a slow pulse that lets each shot read on its own. Edit was paced for muted playback.",
-        "context": "Lives at the top of the works page and is the only piece on the site that auto-plays. Updated annually.",
+        "outputs": ["3D Animation", "Compositing", "Grading"],
+        "description": "Brand 3D animation — motion design in Blender, compositing in After Effects, finishing grade in DaVinci Resolve.",
+        "assignment": "Build a short brand film that holds rhythm and reads on any screen — from a phone feed to a large monitor.",
+        "solution": "Modeling and animation in Blender, post in After Effects (light comp, grain, vignette), finished with a calm grade in DaVinci Resolve — no aggressive contrast.",
+        "context": "Used in social channels and as the title shot on the brand's site.",
         "collaborators": [
-          { "role": "Direction & Edit", "name": "Epov" },
-          { "role": "Sound Design", "name": "Field Mute" }
+          { "role": "Direction & 3D", "name": "Epov" }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
+          "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
         }
       }
     ]
