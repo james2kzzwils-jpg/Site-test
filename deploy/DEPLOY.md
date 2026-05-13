@@ -1,224 +1,247 @@
-# Production deploy guide
+# Production deploy — Cloudflare in front, origin on port 80
 
-End-to-end walkthrough to host the marketing site + client portal on
-your own VPS behind nginx with the existing SSL certificate.
+Target architecture:
 
-Architecture:
-- One Next.js process listens on `127.0.0.1:3000` (PM2 keeps it alive).
-- `aepovcg.online` → marketing portfolio (everything served from `/`,
-  `/works/*`, etc.).
-- `portal.aepovcg.online` → client portal. The root path `/` redirects
-  to `/portal` so a client just types the host name.
-- nginx terminates TLS, proxies to Next.js, and redirects any `/portal`
-  or `/auth` traffic from the apex domain onto the portal subdomain so
-  Supabase callbacks always land on one canonical origin.
+```
+   user
+    │ HTTPS
+    ▼
+Cloudflare edge (terminates TLS, "Flexible" SSL mode)
+    │ HTTP  (X-Forwarded-Proto: https)
+    ▼
+194.31.173.119:80  ← nginx
+    │ HTTP
+    ▼
+127.0.0.1:3000     ← Next.js (pm2)
+```
 
-## 0. Before you SSH in
+Port 443 on this host is owned by xray (VPN). We do not touch it.
+Cloudflare gives us valid HTTPS on the public side without any cert
+work on the origin.
 
-### 0.1 Rotate Supabase keys
+Server context (from the diagnostic dump):
+- Ubuntu 22.04 at `194.31.173.119`, user `igor` (sudo + www-data).
+- nginx already running and serving an old `aepovcg.ru` vhost.
+- xray on `*:443`, `*:8443`. Untouched.
+- No Node / pm2 yet.
 
-The previous publishable/secret keys leaked in chat. Replace them
-before deploying.
+## 0. Prep — Cloudflare account + Supabase
 
-1. Open https://supabase.com/dashboard/project/awrnfgaqclfgrunetuhq/settings/api
-2. Click **Generate new publishable key** → copy the new `sb_publishable_…`.
-3. Click **Generate new secret key** → copy the new `sb_secret_…`.
-4. The old keys are auto-invalidated once new ones are generated.
+### 0.1 Cloudflare site
 
-Keep both new values in a password manager — you will paste them into
-`/opt/epov/site/.env.local` on the server in step 4.
+1. Register at https://dash.cloudflare.com/sign-up (free plan).
+2. Click **Add a site** → enter `aepovcg.online` → Free plan.
+3. Cloudflare scans existing DNS records. Confirm.
+4. CF shows two nameservers (e.g. `something.ns.cloudflare.com`).
+   Copy both — you'll paste them at Reg.ru in step 0.3.
+5. Inside the site dashboard → **SSL/TLS** → **Overview** →
+   set encryption mode to **Flexible**.
+6. **SSL/TLS** → **Edge Certificates** → enable
+   **Always Use HTTPS**, **Automatic HTTPS Rewrites**.
 
-### 0.2 Configure Supabase auth URLs
+### 0.2 Cloudflare DNS records
 
-Same dashboard, **Authentication → URL Configuration**:
+In the site dashboard → **DNS** → **Records** → **Add record**:
 
+| Type | Name   | Content         | Proxy status |
+|------|--------|-----------------|--------------|
+| A    | @      | 194.31.173.119  | Proxied (orange cloud) |
+| A    | www    | 194.31.173.119  | Proxied (orange cloud) |
+| A    | portal | 194.31.173.119  | Proxied (orange cloud) |
+
+### 0.3 Reg.ru nameserver swap
+
+In Reg.ru → Услуги → `aepovcg.online` → **DNS-серверы и управление
+зоной** → переключи режим на «использовать внешние NS» (formulation
+varies) → paste the two Cloudflare NS values from 0.1 → save.
+
+Propagation: typically 30 min – 4 hours. CF emails you when the
+domain becomes active on its side. You can keep working on the server
+while you wait.
+
+### 0.4 Supabase: rotate keys + URL config
+
+Old keys leaked in chat; rotate before going live.
+
+1. https://supabase.com/dashboard/project/awrnfgaqclfgrunetuhq/settings/api
+2. **Generate new publishable key** → copy `sb_publishable_…`.
+3. **Generate new secret key** → copy `sb_secret_…`.
+
+Then **Authentication → URL Configuration**:
 - **Site URL**: `https://portal.aepovcg.online`
 - **Additional Redirect URLs** (one per line):
   - `https://portal.aepovcg.online/auth/callback`
   - `http://localhost:3000/auth/callback` *(keep for local dev)*
 
-Hit **Save**. Without this, magic links from production will redirect
-to the wrong place.
+Save.
 
-### 0.3 DNS
+## 1. Server bootstrap
 
-At your domain registrar, add the following records on `aepovcg.online`:
+SSH in as `igor`.
 
-- `A` `@`     → SERVER_IPV4  (TTL 300)
-- `A` `www`   → SERVER_IPV4  (TTL 300)
-- `A` `portal` → SERVER_IPV4  (TTL 300)
-
-If you have IPv6, add matching `AAAA` records too. Propagation usually
-takes a few minutes. Check with `dig +short portal.aepovcg.online`.
-
-## 1. Provision the server
-
-SSH into the box as root or a sudo user.
-
-### 1.1 Bootstrap
-
-Copy `deploy/install-server.sh` from the repo to the server (or
-download it directly), then:
+### 1.1 Install Node + pm2
 
 ```bash
+cd ~
+curl -fsSL https://raw.githubusercontent.com/james2kzzwils-jpg/Site-test/devin/portal-phase-a/deploy/install-server.sh -o install-server.sh
 sudo bash install-server.sh
 ```
 
-This installs Node 20, nginx, PM2, git, and opens 80/443 in ufw. It
-also creates `/etc/ssl/aepovcg/` and `/var/www/letsencrypt/`.
+Expected output: Node 20, pm2 installed, no errors.
 
-### 1.2 Create the deploy user (recommended)
+### 1.2 Create app directory
 
 ```bash
-sudo adduser --disabled-password --gecos "" epov
-sudo usermod -aG sudo epov   # optional, only if epov needs sudo
 sudo mkdir -p /opt/epov
-sudo chown -R epov:epov /opt/epov
-sudo -iu epov                # become the deploy user
+sudo chown -R igor:igor /opt/epov
 ```
 
-The remaining steps assume you are logged in as `epov` (or root + a
-matching `cd /opt/epov`).
-
-## 2. SSL certificate
-
-Put your existing cert files at:
-
-- `/etc/ssl/aepovcg/fullchain.pem` — cert + chain (server cert first,
-  then intermediates). If you only have separate `cert.pem` and
-  `chain.pem`, concatenate them: `cat cert.pem chain.pem > fullchain.pem`.
-- `/etc/ssl/aepovcg/privkey.pem` — private key.
-
-Lock down permissions:
-
-```bash
-sudo chmod 600 /etc/ssl/aepovcg/privkey.pem
-sudo chmod 644 /etc/ssl/aepovcg/fullchain.pem
-sudo chown root:root /etc/ssl/aepovcg/*
-```
-
-Important: the certificate must cover **both** `aepovcg.online` and
-`portal.aepovcg.online`. Acceptable forms:
-- A single cert with both names as SAN.
-- A wildcard `*.aepovcg.online` + the apex name as SAN. Plain wildcard
-  alone does NOT cover the apex.
-
-## 3. Clone & build the app
-
-As `epov` (or whoever owns `/opt/epov`):
+### 1.3 Clone the repo
 
 ```bash
 cd /opt/epov
 git clone https://github.com/james2kzzwils-jpg/Site-test.git site
 cd site
-git checkout main   # or devin/portal-phase-a if not yet merged
+git checkout devin/portal-phase-a
 ```
 
-If the repo is private, generate a personal access token at
-https://github.com/settings/tokens (classic, scope `repo`) and use:
+If the repo asks for credentials (it is currently private):
+1. Generate a PAT at https://github.com/settings/tokens (classic, scope
+   `repo`). Set a 30-day expiry.
+2. Clone with `git clone https://USERNAME:TOKEN@github.com/james2kzzwils-jpg/Site-test.git site`.
+3. Immediately scrub the token from the remote URL:
+   `git remote set-url origin https://github.com/james2kzzwils-jpg/Site-test.git`.
+
+### 1.4 Environment
 
 ```bash
-git clone https://USERNAME:TOKEN@github.com/james2kzzwils-jpg/Site-test.git site
-```
-
-Then immediately scrub the token from history:
-
-```bash
-cd site
-git remote set-url origin https://github.com/james2kzzwils-jpg/Site-test.git
-```
-
-## 4. Environment
-
-```bash
-cd /opt/epov/site
 cp deploy/env.example .env.local
-nano .env.local   # paste the rotated Supabase keys from step 0.1
+nano .env.local
+# Paste the rotated Supabase keys from step 0.4. Save.
 chmod 600 .env.local
 ```
 
-## 5. Build + run
+### 1.5 Build & run
 
 ```bash
 cd /opt/epov/site
 npm ci
 npm run build
 pm2 start deploy/ecosystem.config.js
-pm2 save                    # persist process list
-sudo pm2 startup systemd -u epov --hp /home/epov   # auto-start on reboot
-# pm2 prints a command that registers the systemd unit — run it.
+pm2 save
+sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u igor --hp /home/igor
+# pm2 prints a sudo command — run it to register the systemd unit.
 ```
 
-Verify locally:
+Sanity check (still on the box):
 
 ```bash
-curl -I http://127.0.0.1:3000               # should return 200
-curl -I http://127.0.0.1:3000/portal/login  # should return 200
+curl -sI http://127.0.0.1:3000              # 200
+curl -sI http://127.0.0.1:3000/portal/login # 200
+pm2 status                                  # epov-web online
 ```
 
-Useful pm2 commands later:
-- `pm2 status` — see process state.
-- `pm2 logs epov-web` — tail logs.
-- `pm2 restart epov-web` — after a code update.
-- `pm2 reload epov-web` — zero-downtime restart.
+## 2. nginx — replace old aepovcg.ru config
 
-## 6. nginx
-
-Copy the vhost configs from the repo into nginx and enable them:
+### 2.1 Disable the old site
 
 ```bash
-sudo cp /opt/epov/site/deploy/nginx-aepovcg.conf /etc/nginx/sites-available/aepovcg.online
-sudo cp /opt/epov/site/deploy/nginx-portal.conf  /etc/nginx/sites-available/portal.aepovcg.online
+sudo rm -f /etc/nginx/sites-enabled/aepovcg.ru
+# Keep the file in sites-available in case we need it later:
+ls /etc/nginx/sites-available/aepovcg.ru   # should still exist
+```
+
+### 2.2 Install the new vhosts
+
+```bash
+sudo cp /opt/epov/site/deploy/nginx-aepovcg.conf  /etc/nginx/sites-available/aepovcg.online
+sudo cp /opt/epov/site/deploy/nginx-portal.conf   /etc/nginx/sites-available/portal.aepovcg.online
 sudo ln -sf /etc/nginx/sites-available/aepovcg.online        /etc/nginx/sites-enabled/
 sudo ln -sf /etc/nginx/sites-available/portal.aepovcg.online /etc/nginx/sites-enabled/
-
-# If a default site is enabled and would conflict on port 80/443:
-sudo rm -f /etc/nginx/sites-enabled/default
-
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## 7. Smoke test
+If `nginx -t` complains, paste the error and we'll fix it together
+before reloading.
+
+### 2.3 Optional: real client IP from Cloudflare
+
+When Cloudflare proxies, the request reaches us from a CF edge IP.
+To make the `$remote_addr` variable hold the real visitor IP, drop the
+official CF IP ranges into nginx:
+
+```bash
+sudo tee /etc/nginx/conf.d/cloudflare-realip.conf >/dev/null <<'EOF'
+# Trust Cloudflare edge IPs for X-Forwarded-For / CF-Connecting-IP.
+set_real_ip_from 173.245.48.0/20;
+set_real_ip_from 103.21.244.0/22;
+set_real_ip_from 103.22.200.0/22;
+set_real_ip_from 103.31.4.0/22;
+set_real_ip_from 141.101.64.0/18;
+set_real_ip_from 108.162.192.0/18;
+set_real_ip_from 190.93.240.0/20;
+set_real_ip_from 188.114.96.0/20;
+set_real_ip_from 197.234.240.0/22;
+set_real_ip_from 198.41.128.0/17;
+set_real_ip_from 162.158.0.0/15;
+set_real_ip_from 104.16.0.0/13;
+set_real_ip_from 104.24.0.0/14;
+set_real_ip_from 172.64.0.0/13;
+set_real_ip_from 131.0.72.0/22;
+set_real_ip_from 2400:cb00::/32;
+set_real_ip_from 2606:4700::/32;
+set_real_ip_from 2803:f800::/32;
+set_real_ip_from 2405:b500::/32;
+set_real_ip_from 2405:8100::/32;
+set_real_ip_from 2a06:98c0::/29;
+set_real_ip_from 2c0f:f248::/32;
+real_ip_header CF-Connecting-IP;
+EOF
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+(Source: https://www.cloudflare.com/ips/)
+
+## 3. Smoke test
+
+Once Cloudflare reports the domain active (you can check anytime with
+`dig +short NS aepovcg.online` — it should return cloudflare.com NS).
 
 From your laptop:
 
 ```bash
-curl -I https://aepovcg.online
-curl -I https://portal.aepovcg.online             # should 302 → /portal
-curl -I https://portal.aepovcg.online/portal/login
+curl -sI https://aepovcg.online              # 200 from Cloudflare
+curl -sI https://portal.aepovcg.online       # 302 → /portal
+curl -sI https://portal.aepovcg.online/portal/login
 ```
 
-Then in a browser:
+In a browser:
 
-1. Open `https://portal.aepovcg.online`. Should land on `/portal/login`.
-2. Enter your admin email. A magic link email arrives.
-3. Click the link → land on `/portal/admin`. Confirm the email/role
-   shown in the header is correct.
-4. Open a client (or create one). Verify projects render, the stage
-   stepper appears, breadcrumbs work.
-5. From a client account (or `/portal/client` directly), confirm the
-   read-only view works.
+1. Open https://portal.aepovcg.online → should land on `/portal/login`.
+2. Enter your admin email → magic link arrives.
+3. Click the link → land on `/portal/admin`. Header shows your email.
+4. Verify clients list, project page, stage stepper, NDA controls.
+5. Toggle EN/RU in the header.
 
-## 8. Updates after first deploy
+## 4. Updates after first deploy
 
-Push changes to `main`. On the server:
+Push to `devin/portal-phase-a` (or `main` once merged). On the server:
 
 ```bash
 cd /opt/epov/site
 git pull
-npm ci             # only when package-lock changes
+npm ci             # only when package-lock.json changed
 npm run build
 pm2 reload epov-web
 ```
 
-If you ever change nginx configs in `deploy/*.conf`, repeat step 6 to
-re-copy them.
+Cloudflare aggressively caches static assets. After a deploy you may
+want to purge the cache:
+**Cloudflare dashboard → Caching → Configuration → Purge Everything**
+(rare nuke) or **Custom Purge** by URL.
 
-## 9. Rollback
-
-Each deploy is the contents of `.next/`. To roll back to a previous
-commit:
+## 5. Rollback
 
 ```bash
 cd /opt/epov/site
@@ -229,13 +252,44 @@ npm run build
 pm2 reload epov-web
 ```
 
-## 10. What's NOT included yet
+## 6. Useful pm2 commands
 
-These will be deployed automatically by re-running step 8 once Phase B
-ships:
+- `pm2 status` — running processes.
+- `pm2 logs epov-web` — tail logs (Ctrl+C to stop tailing).
+- `pm2 logs epov-web --err --lines 200` — last 200 error lines.
+- `pm2 restart epov-web` — restart.
+- `pm2 reload epov-web` — zero-downtime reload.
+- `pm2 monit` — top-style monitor.
 
-- Round comments (admin + client thread per stage).
-- File uploads via Supabase Storage + paste-from-clipboard for
-  screenshots.
-- Auto-sync of `is_public_portfolio` projects to the marketing
-  `/works` section.
+## 7. Security note — origin IP exposure
+
+Right now the origin will still accept HTTP-80 requests from anyone,
+not just Cloudflare. After deploy works, lock the origin to CF only:
+
+```bash
+# /etc/nginx/conf.d/cloudflare-only.conf
+sudo tee /etc/nginx/conf.d/cloudflare-only.conf >/dev/null <<'EOF'
+geo $is_cloudflare {
+    default 0;
+    173.245.48.0/20 1;
+    103.21.244.0/22 1;
+    103.22.200.0/22 1;
+    103.31.4.0/22 1;
+    141.101.64.0/18 1;
+    108.162.192.0/18 1;
+    190.93.240.0/20 1;
+    188.114.96.0/20 1;
+    197.234.240.0/22 1;
+    198.41.128.0/17 1;
+    162.158.0.0/15 1;
+    104.16.0.0/13 1;
+    104.24.0.0/14 1;
+    172.64.0.0/13 1;
+    131.0.72.0/22 1;
+}
+EOF
+```
+
+Then in each server block add: `if ($is_cloudflare = 0) { return 403; }`.
+
+This is optional — start without it, add later if you care.
