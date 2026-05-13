@@ -242,6 +242,42 @@ const DICT = {
     ru: 'Тред комментариев и загрузка файлов появятся здесь дальше.',
   },
 
+  // Per-stage thread (rounds + comments + attachments)
+  'thread.studio': { en: 'Studio', ru: 'Студия' },
+  'thread.client': { en: 'Client', ru: 'Клиент' },
+  'thread.round': { en: 'Round', ru: 'Раунд' },
+  'thread.included': { en: 'included', ru: 'включён' },
+  'thread.billable': { en: 'billable', ru: 'оплачивается' },
+  'thread.open': { en: 'open', ru: 'открыт' },
+  'thread.closed': { en: 'closed', ru: 'закрыт' },
+  'thread.empty': {
+    en: 'No notes on this stage yet.',
+    ru: 'Заметок по этой стадии ещё нет.',
+  },
+  'thread.closeRound': { en: 'Close round', ru: 'Закрыть раунд' },
+  'thread.composer.placeholder': {
+    en: 'Notes, requests, edits…',
+    ru: 'Заметки, правки, вопросы…',
+  },
+  'thread.composer.attach': {
+    en: 'Attach files',
+    ru: 'Прикрепить файлы',
+  },
+  'thread.composer.send': { en: 'Send', ru: 'Отправить' },
+  'thread.composer.sending': { en: 'Sending…', ru: 'Отправка…' },
+  'thread.composer.hint': {
+    en: 'Drag & drop · Paste from clipboard · 25 MB max',
+    ru: 'Drag-n-drop · Вставка из буфера · до 25 МБ',
+  },
+  'thread.uploading': { en: 'Uploading…', ru: 'Загрузка…' },
+  'thread.uploadFailed': { en: 'Upload failed', ru: 'Ошибка загрузки' },
+  'thread.attachments': { en: 'Attachment', ru: 'Вложение' },
+  'thread.pastedClipboard': {
+    en: 'Pasted from clipboard',
+    ru: 'Вставлено из буфера',
+  },
+  'thread.title': { en: 'Conversation', ru: 'Обсуждение' },
+
   // Client list / projects
   'client.title': { en: 'Your projects', ru: 'Твои проекты' },
   'client.subtitle': {

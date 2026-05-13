@@ -3,7 +3,11 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '@/app/portal/_shared/PortalHeader';
 import Breadcrumb from '@/app/portal/_shared/Breadcrumb';
 import StageStepper from '@/app/portal/_shared/StageStepper';
+import StageThread, {
+  type StageThreadLabels,
+} from '@/app/portal/_shared/StageThread';
 import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { loadProjectThreads } from '@/lib/portal/thread-loader';
 import {
   STAGE_ORDER,
   type ProjectStatus,
@@ -76,6 +80,27 @@ export default async function AdminProjectDetailPage({
 
   const stages = (stagesRaw ?? []) as StageRow[];
   const projectStatus = project.status as ProjectStatus;
+  const threadsByStage = await loadProjectThreads(project.id);
+  const threadLabels: StageThreadLabels = {
+    studio: t('thread.studio'),
+    client: t('thread.client'),
+    round: t('thread.round'),
+    included: t('thread.included'),
+    billable: t('thread.billable'),
+    open: t('thread.open'),
+    closed: t('thread.closed'),
+    empty: t('thread.empty'),
+    closeRound: t('thread.closeRound'),
+    composerPlaceholder: t('thread.composer.placeholder'),
+    composerAttach: t('thread.composer.attach'),
+    composerSend: t('thread.composer.send'),
+    composerSending: t('thread.composer.sending'),
+    composerHint: t('thread.composer.hint'),
+    uploading: t('thread.uploading'),
+    uploadFailed: t('thread.uploadFailed'),
+    attachmentsLabel: t('thread.attachments'),
+    pastedClipboard: t('thread.pastedClipboard'),
+  };
 
   const ndaMode: 'none' | 'until' | 'perpetual' =
     project.nda_until == null
@@ -420,14 +445,26 @@ export default async function AdminProjectDetailPage({
                     ))}
                   </div>
                 ) : null}
+
+                <div className="border-t border-[var(--hairline)] pt-5">
+                  <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                    <span className="text-[var(--accent)]">◆</span>{' '}
+                    {t('thread.title')}
+                  </p>
+                  <StageThread
+                    projectId={project.id}
+                    clientId={id}
+                    stageId={s.id}
+                    stageKind={s.kind as StageKind}
+                    rounds={threadsByStage[s.id] ?? []}
+                    role="admin"
+                    labels={threadLabels}
+                  />
+                </div>
               </li>
             );
           })}
         </ol>
-
-        <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/35">
-          {t('stages.b2hint')}
-        </p>
       </section>
     </>
   );
