@@ -27,6 +27,8 @@ function ServiceRow({
   // We mount the <video> the first time the panel opens and leave it
   // mounted afterwards so re-opening is instant.
   const [hasOpened, setHasOpened] = useState(index === 0);
+  const [hovering, setHovering] = useState(false);
+  const previewRef = useRef<HTMLVideoElement>(null);
 
   const handleToggle = useCallback(() => {
     setOpen((prev) => {
@@ -38,29 +40,73 @@ function ServiceRow({
 
   const videoSrc = SERVICE_VIDEOS[service.number];
 
+  // Hover preview: only play while the row is collapsed AND the pointer
+  // is inside it. When the row is opened the full video below takes
+  // over, so we hide the preview to avoid duplicate playback.
+  const showPreview = hovering && !open && Boolean(videoSrc);
+
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    if (showPreview) {
+      el.play().catch(() => {
+        /* autoplay blocked — ignore */
+      });
+    } else {
+      el.pause();
+    }
+  }, [showPreview]);
+
   return (
     <div
       className={`group transition-all duration-1000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       }`}
       style={{ transitionDelay: `${200 + index * 110}ms` }}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
     >
       <button
         onClick={handleToggle}
-        className="flex w-full items-center gap-6 border-t border-[var(--hairline)] py-9 text-left lg:gap-14 lg:py-11"
+        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 text-left lg:gap-14 lg:py-11"
         data-cursor="hover"
       >
-        <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+        {/* Hover-only video preview — sits behind the title at ~50%
+            opacity. Hidden when the row is expanded. Right side only
+            so the title stays legible. */}
+        {videoSrc ? (
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block ${
+              showPreview ? 'opacity-50' : 'opacity-0'
+            } transition-opacity duration-500`}
+          >
+            <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_100%)]">
+              <video
+                ref={previewRef}
+                className="h-full w-full object-cover"
+                src={videoSrc}
+                muted
+                loop
+                playsInline
+                preload="none"
+              />
+            </span>
+            <span className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-transparent to-transparent" />
+          </span>
+        ) : null}
+
+        <span className="relative shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
           <span className="text-[var(--accent)]">({service.number})</span>
         </span>
 
-        <h3 className="flex-1 font-display text-[clamp(1.3rem,2.6vw,2rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 group-hover:text-[var(--foreground)]">
+        <h3 className="relative flex-1 font-display text-[clamp(1.3rem,2.6vw,2rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 group-hover:text-[var(--foreground)]">
           {service.title}
         </h3>
 
         <span
           aria-hidden="true"
-          className={`shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
+          className={`relative shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
             open ? 'rotate-45 text-[var(--accent)]' : 'text-[var(--foreground)]/35'
           }`}
         >

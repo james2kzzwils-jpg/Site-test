@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import ToolBalls from './ToolBalls';
 
 export default function About() {
   const { t } = useLanguage();
@@ -126,21 +127,12 @@ export default function About() {
           </p>
         </div>
 
-        {/* Toolkit */}
+        {/* Toolkit — floating balls inside a soft container */}
         <div className={shown ? 'reveal is-in' : 'reveal'}>
           <h3 className="mb-10 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
             ({t.about.toolkit_label})
           </h3>
-          <div className="flex flex-wrap gap-2">
-            {t.about.tools.map((tool) => (
-              <span
-                key={tool}
-                className="rounded-full border border-[var(--hairline)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--foreground)]/65 transition-colors duration-300 hover:border-[var(--hairline-strong)] hover:text-[var(--foreground)]"
-              >
-                {tool}
-              </span>
-            ))}
-          </div>
+          <ToolBalls tools={t.about.tools} />
         </div>
       </div>
     </section>
