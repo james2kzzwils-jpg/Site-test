@@ -78,6 +78,14 @@ export default function About() {
                 <p className="text-[14px] leading-[1.65] text-[var(--foreground)]/45">
                   {step.description}
                 </p>
+                <div className="mt-auto border-t border-[var(--hairline)] pt-5">
+                  <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--accent)]">
+                    → {t.about.deliverable_label}
+                  </p>
+                  <p className="text-[13px] leading-[1.6] text-[var(--foreground)]/70">
+                    {step.deliverable}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

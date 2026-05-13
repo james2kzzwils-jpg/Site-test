@@ -51,7 +51,7 @@
         "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in After Effects with a single soft grade.",
         "context": "Delivered as a 60-second hero film and ten 9:16 cutdowns for retail screens. Every shot is rendered from the same source — direction shifts only happen at the camera level.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Direction & 3D", "name": "Epov" },
           { "role": "Sound Design", "name": "Field Mute" },
           { "role": "Producer", "name": "North Studio" }
         ],
@@ -73,7 +73,7 @@
         "solution": "Modeling was authored in Blender with USD references kept identical to the engineering CAD. Lookdev used a thin-film and brushed-metal stack reused across the SKU family. Compositing in After Effects wrapped everything in a calm, broadcast-safe grade.",
         "context": "Used in launch keynote, product page hero loop, and global retail signage. Eight SKUs delivered from a single shot graph.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Direction & 3D", "name": "Epov" },
           { "role": "Design", "name": "In-house Brand" },
           { "role": "Producer", "name": "Studio Standard" }
         ],
@@ -95,7 +95,7 @@
         "solution": "We built a single Houdini particle setup driven by attribute volumes and a hand-curated set of attractors. Each frame is the same simulation, time-shifted, so editing was done in the timeline instead of in solver space.",
         "context": "Delivered as a 90-second master plus a library of loops for stage screens, social, and the brand site. The same scene file shipped four years of campaign assets.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Direction & 3D", "name": "Epov" },
           { "role": "Brand", "name": "North & Co." }
         ],
         "links": {
@@ -116,7 +116,7 @@
         "solution": "FLIP simulation was directed via collision proxies of the final geometry; surface tension and curvature drove a thin-film shader baked from a measured BRDF. Renders were composited with a single matte luminance pass.",
         "context": "A 45-second hero spot and three brand idents. The simulation cache was reused as B-roll for the entire model line.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "James" },
+          { "role": "Direction & 3D", "name": "Epov" },
           { "role": "Agency", "name": "Studio M" }
         ],
         "links": {
@@ -137,7 +137,7 @@
         "solution": "A Python service ingests source artwork, normalises padding and resolution, and emits a texture set with metadata. Houdini and Blender both consume the same JSON, which means downstream artists never touch the assembler.",
         "context": "Adopted across three studios. The current build assembles 64-channel atlases in under three minutes.",
         "collaborators": [
-          { "role": "Tooling", "name": "James" }
+          { "role": "Tooling", "name": "Epov" }
         ],
         "links": {
           "behance": "#",
@@ -157,7 +157,7 @@
         "solution": "Selections were graded into a single calm look. Sound design was built around a slow pulse that lets each shot read on its own. Edit was paced for muted playback.",
         "context": "Lives at the top of the works page and is the only piece on the site that auto-plays. Updated annually.",
         "collaborators": [
-          { "role": "Direction & Edit", "name": "James" },
+          { "role": "Direction & Edit", "name": "Epov" },
           { "role": "Sound Design", "name": "Field Mute" }
         ],
         "links": {
@@ -187,8 +187,8 @@
       {
         "number": "03",
         "title": "Product Visualization",
-        "description": "High-end content for product, packaging, and tech brands. Photorealistic stills and dynamic reveals that communicate value through visual precision.",
-        "tools": ["Blender", "Cycles", "Octane", "Lighting"]
+        "description": "High-end content for product, packaging, and tech brands. Photorealistic stills, dynamic reveals, and AI-assisted concepting that communicate value through visual precision.",
+        "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
       },
       {
         "number": "04",
@@ -207,41 +207,33 @@
   "shop": {
     "section_label": "Shop",
     "title": "Digital Products",
-    "subtitle": "Production-tested tools, assets, and scripts to accelerate your 3D workflow.",
+    "subtitle": "Production-tested prompts and scripts to accelerate creative work — from product renders to web design.",
     "categories": {
       "all": "All",
-      "hda": "HDA Tools",
-      "scripts": "Scripts",
-      "assets": "3D Assets"
+      "prompts": "Prompts",
+      "scripts": "Scripts"
     },
     "products": [
       {
-        "id": "trim-assembler",
-        "title": "Trim Texture Assembler",
-        "category": "scripts",
+        "id": "product-viz-prompts",
+        "title": "Product Visualization Prompts",
+        "category": "prompts",
         "price": "$49",
-        "description": "Automated trim texture assembly tool. Multi-format input, batch processing."
+        "description": "A curated pack of prompts for AI-assisted product visualization — lighting, materials, hero angles, packaging shots."
       },
       {
-        "id": "scatter-hda",
-        "title": "Procedural Scatter HDA",
-        "category": "hda",
-        "price": "$79",
-        "description": "Advanced scattering for Houdini with biome distribution and instancing."
-      },
-      {
-        "id": "cable-generator",
-        "title": "Cable Generator HDA",
-        "category": "hda",
-        "price": "$59",
-        "description": "Procedural cable & wire generation with physics draping and presets."
-      },
-      {
-        "id": "base-meshes",
-        "title": "Hard Surface Kit",
-        "category": "assets",
+        "id": "site-creation-prompts",
+        "title": "Site Creation Prompts",
+        "category": "prompts",
         "price": "$39",
-        "description": "50+ production-ready hard surface base meshes for subdivision."
+        "description": "Prompts for generating editorial-grade websites — layout systems, type scales, motion language, and content frameworks."
+      },
+      {
+        "id": "production-scripts",
+        "title": "Production Scripts Pack",
+        "category": "scripts",
+        "price": "$59",
+        "description": "Selected scripts from real production: render batching, naming conventions, asset cleanup, light export."
       }
     ],
     "buy_now": "Buy Now",
@@ -252,15 +244,41 @@
     "title": "About",
     "philosophy_label": "Philosophy",
     "philosophy_title": "Crafted With Intent",
-    "philosophy_text": "Every project sits at the intersection of engineering and aesthetics. The work is iterative — beauty is polished step by step, frame by frame, until the piece lands in the right register.",
+    "philosophy_text": "Every project sits at the intersection of engineering and aesthetics. The work is iterative — beauty is polished step by step, frame by frame, until everything lands on target.",
     "approach_label": "Approach",
     "approach_title": "How I Work With Clients",
+    "deliverable_label": "You Get",
     "approach_steps": [
-      { "number": "01", "title": "Discovery",             "description": "Kickoff call to align on goals, scope, audience, budget and timeline." },
-      { "number": "02", "title": "Moodboard & References", "description": "Visual research and neural references. We lock the mood before any animation." },
-      { "number": "03", "title": "Animatic",              "description": "Low-fi edit — timing, rhythm and camera work. You approve the cut before lookdev." },
-      { "number": "04", "title": "Lookdev & Lighting",    "description": "Shading, lighting, FX and preview renders with comp passes — sent over for sign-off." },
-      { "number": "05", "title": "Final Render",          "description": "Graded master plus cut-downs for every platform. Documented project files included." }
+      {
+        "number": "01",
+        "title": "Discovery",
+        "description": "Kickoff call to align on goals, scope, audience, budget and timeline.",
+        "deliverable": "A written brief covering goals, audience, scope, budget and timeline — ready to act on."
+      },
+      {
+        "number": "02",
+        "title": "Moodboard & References",
+        "description": "Visual research and neural references. We lock the mood before any animation.",
+        "deliverable": "An approved moodboard with the exact reference frames the film will live in."
+      },
+      {
+        "number": "03",
+        "title": "Animatic",
+        "description": "Low-fi edit — timing, rhythm and camera work. You approve the cut before lookdev.",
+        "deliverable": "An approved cut: timing, rhythm and camera framing locked before any expensive lookdev."
+      },
+      {
+        "number": "04",
+        "title": "Lookdev & Lighting",
+        "description": "Shading, lighting, FX and preview renders with comp passes — sent over for sign-off.",
+        "deliverable": "Composited preview renders showing exactly how every shot will read at final quality."
+      },
+      {
+        "number": "05",
+        "title": "Final Render",
+        "description": "Graded master plus cut-downs for every platform. Documented project files included.",
+        "deliverable": "A graded master plus cut-downs for every platform, with documented project files."
+      }
     ],
     "toolkit_label": "Toolkit",
     "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
