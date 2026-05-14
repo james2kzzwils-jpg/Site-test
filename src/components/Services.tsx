@@ -99,6 +99,15 @@ function ServiceRow({
                 ref={previewRef}
                 className="h-full w-full object-cover"
                 src={videoSrc}
+                style={{
+                  // The Product-Viz preview is a tall hoodie composition —
+                  // the figure sits in the upper half of the frame, so we
+                  // anchor it near the top instead of centering, otherwise
+                  // the cropped row hides the actual product. ~20px-equivalent
+                  // shift via `object-position` percentage.
+                  objectPosition:
+                    service.number === '03' ? 'center 28%' : undefined,
+                }}
                 muted
                 loop
                 playsInline

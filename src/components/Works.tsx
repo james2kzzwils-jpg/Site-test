@@ -186,12 +186,23 @@ export default function Works() {
                       // size is animated and small (right half of a row),
                       // so next/image's optimisation cost outweighs the
                       // bandwidth saved here.
+                      //
+                      // Metallplace's cover is a portrait composition
+                      // where the laptop sits in the upper third, so
+                      // we anchor that one near the top instead of the
+                      // default vertical centre — otherwise the
+                      // visible crop on the hover preview hides the
+                      // recognisable "MetallPlace.ru" portal frame.
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={project.cover}
                         alt=""
                         loading="lazy"
                         className="absolute inset-0 h-full w-full object-cover opacity-65"
+                        style={{
+                          objectPosition:
+                            project.id === 'metallplace' ? 'center 22%' : undefined,
+                        }}
                       />
                     ) : (
                       <div

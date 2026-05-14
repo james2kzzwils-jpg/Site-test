@@ -43,6 +43,57 @@
     "view_project": "Открыть проект",
     "projects": [
       {
+        "id": "cosmos",
+        "title": "Космос. Москва",
+        "client": "Правительство Москвы",
+        "year": "Август 2025",
+        "category": "animation",
+        "cover": "/works/cosmos/cover.jpg",
+        "gallery": [
+          "/works/cosmos/01.mp4",
+          "/works/cosmos/02.mp4"
+        ],
+        "tags": [
+          "Unreal Engine",
+          "3D",
+          "Городской проект"
+        ],
+        "outputs": [
+          "3D-сцена",
+          "Сборка сцены",
+          "Шейдинг и лайтинг",
+          "Анимация"
+        ],
+        "description": "3D-сцена в Unreal Engine для культурной программы правительства Москвы — для павильона «Космос» в одном из городских парков. Сцена крутится на LED-потолке павильона: посетители запрокидывают голову и смотрят, как над ними плывёт спокойный непрерывный космический ландшафт.",
+        "assignment": "Собрать спокойный, погружающий лупающийся ролик под LED-потолок — достаточно сильный, чтобы прохожий остановился и посмотрел вверх, и при этом мягкий, чтобы держать внимание минутами без шума и видимой повторяемости.",
+        "solution": "Собрано от и до в Unreal Engine: сборка сцены, композиция ассетов, шейдинг, лайтинг и анимация — всё живёт в одном проекте. Реалтайм-рендер ускоряет итерации; луп водится камерой так, чтобы потолочный формат читался под любым углом, с которого посетитель смотрит вверх.",
+        "context": "Сделано для павильона «Космос» в одном из московских парков, лето 2025, в рамках культурной программы города. Роль автора: сборка сцены, ассеты и шейдинг, лайтинг и анимация — саунд-дизайн делался отдельной командой.",
+        "collaborators": [
+          {
+            "role": "Режиссура и 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        },
+        "published_at": "2025-08"
+      },
+      {
         "id": "parfume-simulation",
         "title": "Парфюм. Симуляция",
         "client": "Личный проект",
@@ -88,7 +139,8 @@
           "breakdown": "/works/parfume-simulation/01.jpg",
           "frame02": "/works/parfume-simulation/04.jpg",
           "frame03": "/works/parfume-simulation/06.jpg"
-        }
+        },
+        "published_at": "2025-04"
       },
       {
         "id": "hoodi-cloth",
@@ -142,7 +194,8 @@
           "breakdown": "/works/hoodi-cloth/experiment.jpg",
           "frame02": "/works/hoodi-cloth/01.jpg",
           "frame03": "/works/hoodi-cloth/05.jpg"
-        }
+        },
+        "published_at": "2024-11"
       },
       {
         "id": "thyname-animation",
@@ -204,40 +257,8 @@
           "breakdown": "/works/thyname-animation/03.mp4",
           "frame02": "/works/thyname-animation/06.mp4",
           "frame03": "/works/thyname-animation/15.mp4"
-        }
-      },
-      {
-        "id": "batara-travel",
-        "title": "Batara Travel",
-        "client": "Batara Travel",
-        "year": "2024",
-        "category": "motion_design",
-        "cover": "/works/batara-travel/cover.jpg",
-        "gallery": [
-          "/works/batara-travel/01.mp4"
-        ],
-        "tags": [
-          "After Effects",
-          "2D",
-          "Motion Design"
-        ],
-        "outputs": [
-          "2D-анимация",
-          "Бренд-моушн",
-          "Композ"
-        ],
-        "description": "2D-моушн для туристического агентства — покадровая бренд-история, собранная в After Effects.",
-        "assignment": "Перевести айдентику агентства в короткий лупающийся ролик — чтобы он читался и в социальных лентах, и на LED-экранах партнёров.",
-        "solution": "Лейаут, анимация и финальный грейд живут в After Effects. Ритм спокойный, чтобы типографика и направления оставались главными героями.",
-        "context": "Используется агентством в социальных каналах и в офлайн-презентациях.",
-        "collaborators": [
-          {
-            "role": "Режиссура и 2D",
-            "name": "Epov"
-          }
-        ],
-        "links": {},
-        "simpleBento": true
+        },
+        "published_at": "2024-09"
       },
       {
         "id": "metallplace",
@@ -285,34 +306,33 @@
           "breakdown": "/works/metallplace/still-7.jpg",
           "frame02": "/works/metallplace/still-15.jpg",
           "frame03": "/works/metallplace/lecture-25.jpg"
-        }
+        },
+        "published_at": "2024-06"
       },
       {
-        "id": "cosmos",
-        "title": "Космос. Москва",
-        "client": "Правительство Москвы",
-        "year": "Август 2025",
-        "category": "animation",
-        "cover": "/works/cosmos/cover.jpg",
+        "id": "batara-travel",
+        "title": "Batara Travel",
+        "client": "Batara Travel",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/batara-travel/cover.jpg",
         "gallery": [
-          "/works/cosmos/01.mp4",
-          "/works/cosmos/02.mp4"
+          "/works/batara-travel/01.mp4"
         ],
         "tags": [
-          "Unreal Engine",
-          "3D",
-          "Городской проект"
+          "After Effects",
+          "2D",
+          "Motion Design"
         ],
         "outputs": [
-          "3D-сцена",
-          "Сборка сцены",
-          "Шейдинг и лайтинг",
-          "Анимация"
+          "2D-анимация",
+          "Бренд-моушн",
+          "Композ"
         ],
-        "description": "3D-сцена в Unreal Engine для культурной программы правительства Москвы — для павильона «Космос» в одном из городских парков. Сцена крутится на LED-потолке павильона: посетители запрокидывают голову и смотрят, как над ними плывёт спокойный непрерывный космический ландшафт.",
-        "assignment": "Собрать спокойный, погружающий лупающийся ролик под LED-потолок — достаточно сильный, чтобы прохожий остановился и посмотрел вверх, и при этом мягкий, чтобы держать внимание минутами без шума и видимой повторяемости.",
-        "solution": "Собрано от и до в Unreal Engine: сборка сцены, композиция ассетов, шейдинг, лайтинг и анимация — всё живёт в одном проекте. Реалтайм-рендер ускоряет итерации; луп водится камерой так, чтобы потолочный формат читался под любым углом, с которого посетитель смотрит вверх.",
-        "context": "Сделано для павильона «Космос» в одном из московских парков, лето 2025, в рамках культурной программы города. Роль автора: сборка сцены, ассеты и шейдинг, лайтинг и анимация — саунд-дизайн делался отдельной командой.",
+        "description": "2D-моушн для туристического агентства — покадровая бренд-история, собранная в After Effects.",
+        "assignment": "Перевести айдентику агентства в короткий лупающийся ролик — чтобы он читался и в социальных лентах, и на LED-экранах партнёров.",
+        "solution": "Лейаут, анимация и финальный грейд живут в After Effects. Ритм спокойный, чтобы типографика и направления оставались главными героями.",
+        "context": "Используется агентством в социальных каналах и в офлайн-презентациях.",
         "collaborators": [
           {
             "role": "Режиссура и 2D",
@@ -320,22 +340,8 @@
           }
         ],
         "links": {},
-        "moodboard": [
-          "/works/cosmos/moodboard.jpg",
-          "/works/cosmos/process-1.jpg",
-          "/works/cosmos/process-3.jpg",
-          "/works/cosmos/process-5.jpg",
-          "/works/cosmos/process-2.jpg",
-          "/works/cosmos/process-4.jpg",
-          "/works/cosmos/process-6.jpg"
-        ],
-        "bentoGallery": true,
-        "bento": {
-          "moodboard": "/works/cosmos/moodboard.jpg",
-          "breakdown": "/works/cosmos/process-1.jpg",
-          "frame02": "/works/cosmos/process-3.jpg",
-          "frame03": "/works/cosmos/process-5.jpg"
-        }
+        "simpleBento": true,
+        "published_at": "2024-02"
       }
     ]
   },
@@ -413,7 +419,7 @@
     "subtitle": "Проверенные в продакшне промпты и скрипты — от продуктовых рендеров до веб-дизайна.",
     "categories": {
       "all": "Все",
-      "studio": "Студия",
+      "product": "Продукт",
       "prompts": "Промпты",
       "scripts": "Скрипты"
     },
@@ -421,7 +427,7 @@
       {
         "id": "portfolio-site-build",
         "title": "Сайт-портфолио + CRM-портал",
-        "category": "studio",
+        "category": "product",
         "price": "По запросу",
         "description": "Editorial-сайт студии и закрытый клиентский портал: пайплайн-стадии, NDA, раунды правок. Сделано на этом же шаблоне."
       },
@@ -514,8 +520,13 @@
       "Octane",
       "After Effects",
       "DaVinci Resolve",
+      "Photoshop",
+      "Illustrator",
+      "Figma",
+      "Cavalry",
       "Python",
       "Nano Banana",
+      "Higgsfield",
       "Veo",
       "Gemini"
     ]
@@ -535,7 +546,12 @@
         "other": "Другое"
       },
       "message": "Расскажите о идее",
-      "send": "Отправить"
+      "send": "Отправить",
+      "sending": "Отправляем…",
+      "sent": "Отправлено",
+      "error": "Что-то пошло не так",
+      "rate_limited": "Уже отправляли — попробуйте позже",
+      "validation": "Заполните, пожалуйста, все поля"
     },
     "info": {
       "email": "cggeneralistandrey@gmail.com",

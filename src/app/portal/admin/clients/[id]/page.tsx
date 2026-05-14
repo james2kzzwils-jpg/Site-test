@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
+import CopyButton from '../../../_shared/CopyButton';
 import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
 
 interface ClientDetailParams {
@@ -261,11 +262,18 @@ export default async function ClientDetailPage({
       ) : null}
 
       {test_link ? (
-        <div className="mb-6 flex flex-col gap-2 border border-[var(--accent)] bg-[var(--accent)]/10 p-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
-            ◆ {t('admin.client.testLinkReady')}
-            {test_link_email ? ` · ${test_link_email}` : ''}
-          </p>
+        <div className="mb-6 flex flex-col gap-3 border border-[var(--accent)] bg-[var(--accent)]/10 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+              ◆ {t('admin.client.testLinkReady')}
+              {test_link_email ? ` · ${test_link_email}` : ''}
+            </p>
+            <CopyButton
+              value={test_link}
+              label={t('admin.client.testLinkCopy')}
+              labelCopied={t('admin.client.testLinkCopied')}
+            />
+          </div>
           <p className="text-[12px] leading-[1.6] text-[var(--foreground)]/70">
             {t('admin.client.testLinkHint')}
           </p>

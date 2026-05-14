@@ -43,6 +43,57 @@
     "view_project": "View Project",
     "projects": [
       {
+        "id": "cosmos",
+        "title": "Cosmos. Moscow",
+        "client": "Moscow Government",
+        "year": "August 2025",
+        "category": "animation",
+        "cover": "/works/cosmos/cover.jpg",
+        "gallery": [
+          "/works/cosmos/01.mp4",
+          "/works/cosmos/02.mp4"
+        ],
+        "tags": [
+          "Unreal Engine",
+          "3D",
+          "Public space"
+        ],
+        "outputs": [
+          "3D scene",
+          "Scene assembly",
+          "Shading & lighting",
+          "Animation"
+        ],
+        "description": "A 3D Unreal Engine scene built for the City of Moscow's cultural programme — specifically the Cosmos pavilion in one of the city parks. The piece plays on the pavilion's LED ceiling: visitors tilt their heads back and watch space drift overhead in a continuous, calm loop.",
+        "assignment": "Build a calm, immersive looping piece for an overhead LED ceiling — strong enough to pull a passer-by into stopping and looking up, soft enough to sustain attention for minutes without becoming noisy or repetitive.",
+        "solution": "Built end-to-end in Unreal Engine: scene assembly, asset composition, shading, lighting, and animation all live in the same project file. Real-time rendering keeps iteration fast; the loop is camera-driven so the ceiling format reads naturally even when visitors look up from any angle.",
+        "context": "Made for the Cosmos pavilion at a Moscow city park, summer 2025, as part of the city's cultural programme. Authored role: scene assembly, asset and shading work, lighting, and animation — sound design was handled separately.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        },
+        "published_at": "2025-08"
+      },
+      {
         "id": "parfume-simulation",
         "title": "Parfume. Simulation",
         "client": "Personal",
@@ -88,7 +139,8 @@
           "breakdown": "/works/parfume-simulation/01.jpg",
           "frame02": "/works/parfume-simulation/04.jpg",
           "frame03": "/works/parfume-simulation/06.jpg"
-        }
+        },
+        "published_at": "2025-04"
       },
       {
         "id": "hoodi-cloth",
@@ -142,7 +194,8 @@
           "breakdown": "/works/hoodi-cloth/experiment.jpg",
           "frame02": "/works/hoodi-cloth/01.jpg",
           "frame03": "/works/hoodi-cloth/05.jpg"
-        }
+        },
+        "published_at": "2024-11"
       },
       {
         "id": "thyname-animation",
@@ -204,40 +257,8 @@
           "breakdown": "/works/thyname-animation/03.mp4",
           "frame02": "/works/thyname-animation/06.mp4",
           "frame03": "/works/thyname-animation/15.mp4"
-        }
-      },
-      {
-        "id": "batara-travel",
-        "title": "Batara Travel",
-        "client": "Batara Travel",
-        "year": "2024",
-        "category": "motion_design",
-        "cover": "/works/batara-travel/cover.jpg",
-        "gallery": [
-          "/works/batara-travel/01.mp4"
-        ],
-        "tags": [
-          "After Effects",
-          "2D",
-          "Motion Design"
-        ],
-        "outputs": [
-          "2D animation",
-          "Brand motion",
-          "Compositing"
-        ],
-        "description": "2D motion design for a travel agency — frame-by-frame brand storytelling assembled in After Effects.",
-        "assignment": "Translate the agency's identity into a short looping spot that reads on social feeds and on partner LED screens.",
-        "solution": "Layout, animation and final grade live in After Effects. The cut keeps a calm rhythm so the type and the destinations remain the lead actors.",
-        "context": "Used by the agency in social channels and inside their offline presentations.",
-        "collaborators": [
-          {
-            "role": "Direction & 2D",
-            "name": "Epov"
-          }
-        ],
-        "links": {},
-        "simpleBento": true
+        },
+        "published_at": "2024-09"
       },
       {
         "id": "metallplace",
@@ -285,34 +306,33 @@
           "breakdown": "/works/metallplace/still-7.jpg",
           "frame02": "/works/metallplace/still-15.jpg",
           "frame03": "/works/metallplace/lecture-25.jpg"
-        }
+        },
+        "published_at": "2024-06"
       },
       {
-        "id": "cosmos",
-        "title": "Cosmos. Moscow",
-        "client": "Moscow Government",
-        "year": "August 2025",
-        "category": "animation",
-        "cover": "/works/cosmos/cover.jpg",
+        "id": "batara-travel",
+        "title": "Batara Travel",
+        "client": "Batara Travel",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/batara-travel/cover.jpg",
         "gallery": [
-          "/works/cosmos/01.mp4",
-          "/works/cosmos/02.mp4"
+          "/works/batara-travel/01.mp4"
         ],
         "tags": [
-          "Unreal Engine",
-          "3D",
-          "Public space"
+          "After Effects",
+          "2D",
+          "Motion Design"
         ],
         "outputs": [
-          "3D scene",
-          "Scene assembly",
-          "Shading & lighting",
-          "Animation"
+          "2D animation",
+          "Brand motion",
+          "Compositing"
         ],
-        "description": "A 3D Unreal Engine scene built for the City of Moscow's cultural programme — specifically the Cosmos pavilion in one of the city parks. The piece plays on the pavilion's LED ceiling: visitors tilt their heads back and watch space drift overhead in a continuous, calm loop.",
-        "assignment": "Build a calm, immersive looping piece for an overhead LED ceiling — strong enough to pull a passer-by into stopping and looking up, soft enough to sustain attention for minutes without becoming noisy or repetitive.",
-        "solution": "Built end-to-end in Unreal Engine: scene assembly, asset composition, shading, lighting, and animation all live in the same project file. Real-time rendering keeps iteration fast; the loop is camera-driven so the ceiling format reads naturally even when visitors look up from any angle.",
-        "context": "Made for the Cosmos pavilion at a Moscow city park, summer 2025, as part of the city's cultural programme. Authored role: scene assembly, asset and shading work, lighting, and animation — sound design was handled separately.",
+        "description": "2D motion design for a travel agency — frame-by-frame brand storytelling assembled in After Effects.",
+        "assignment": "Translate the agency's identity into a short looping spot that reads on social feeds and on partner LED screens.",
+        "solution": "Layout, animation and final grade live in After Effects. The cut keeps a calm rhythm so the type and the destinations remain the lead actors.",
+        "context": "Used by the agency in social channels and inside their offline presentations.",
         "collaborators": [
           {
             "role": "Direction & 2D",
@@ -320,22 +340,8 @@
           }
         ],
         "links": {},
-        "moodboard": [
-          "/works/cosmos/moodboard.jpg",
-          "/works/cosmos/process-1.jpg",
-          "/works/cosmos/process-3.jpg",
-          "/works/cosmos/process-5.jpg",
-          "/works/cosmos/process-2.jpg",
-          "/works/cosmos/process-4.jpg",
-          "/works/cosmos/process-6.jpg"
-        ],
-        "bentoGallery": true,
-        "bento": {
-          "moodboard": "/works/cosmos/moodboard.jpg",
-          "breakdown": "/works/cosmos/process-1.jpg",
-          "frame02": "/works/cosmos/process-3.jpg",
-          "frame03": "/works/cosmos/process-5.jpg"
-        }
+        "simpleBento": true,
+        "published_at": "2024-02"
       }
     ]
   },
@@ -413,7 +419,7 @@
     "subtitle": "Production-tested prompts and scripts to accelerate creative work — from product renders to web design.",
     "categories": {
       "all": "All",
-      "studio": "Studio",
+      "product": "Product",
       "prompts": "Prompts",
       "scripts": "Scripts"
     },
@@ -421,7 +427,7 @@
       {
         "id": "portfolio-site-build",
         "title": "Portfolio + Client Portal Build",
-        "category": "studio",
+        "category": "product",
         "price": "On request",
         "description": "Editorial studio portfolio with a closed-area client CRM — pipeline stages, NDA gating, review rounds. Built on this very template."
       },
@@ -514,8 +520,13 @@
       "Octane",
       "After Effects",
       "DaVinci Resolve",
+      "Photoshop",
+      "Illustrator",
+      "Figma",
+      "Cavalry",
       "Python",
       "Nano Banana",
+      "Higgsfield",
       "Veo",
       "Gemini"
     ]
@@ -535,7 +546,12 @@
         "other": "Other"
       },
       "message": "Tell me about your idea",
-      "send": "Send Message"
+      "send": "Send Message",
+      "sending": "Sending…",
+      "sent": "Sent",
+      "error": "Something went wrong",
+      "rate_limited": "Already sent — try again later",
+      "validation": "Please fill in all fields"
     },
     "info": {
       "email": "cggeneralistandrey@gmail.com",

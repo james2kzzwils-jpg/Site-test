@@ -125,6 +125,14 @@ const DICT = {
     en: 'Copy the URL below and open it in a private window to log in as this user. No email is sent, so the magic-link rate limit is not touched.',
     ru: 'Скопируй ссылку ниже и открой в приватном окне, чтобы зайти за клиента. Письмо не отправляется — лимит magic-link не тратится.',
   },
+  'admin.client.testLinkCopy': {
+    en: 'Copy link',
+    ru: 'Скопировать ссылку',
+  },
+  'admin.client.testLinkCopied': {
+    en: 'Copied',
+    ru: 'Скопировано',
+  },
   'admin.client.projects': { en: 'Projects', ru: 'Проекты' },
   'admin.client.projectsEmpty': {
     en: 'No projects yet. Create one below.',
