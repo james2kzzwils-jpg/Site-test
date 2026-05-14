@@ -82,19 +82,17 @@
         "links": {
           "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
         },
-        "moodboard": [
-          "/works/parfume-simulation/moodboard.jpg",
-          "/works/parfume-simulation/ref-dark.jpg",
-          "/works/parfume-simulation/ref-light.jpg",
-          "/works/parfume-simulation/ref-lowkey-1.jpg",
-          "/works/parfume-simulation/ref-lowkey-2.jpg",
-          "/works/parfume-simulation/ref-highkey-1.jpg",
-          "/works/parfume-simulation/ref-highkey-2.jpg"
-        ]
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/parfume-simulation/moodboard.jpg",
+          "breakdown": "/works/parfume-simulation/01.jpg",
+          "frame02": "/works/parfume-simulation/04.jpg",
+          "frame03": "/works/parfume-simulation/06.jpg"
+        }
       },
       {
         "id": "hoodi-cloth",
-        "title": "Hoodi. Симуляция ткани",
+        "title": "Hoodi",
         "client": "Личный проект",
         "year": "2024",
         "category": "product_viz",
@@ -121,10 +119,10 @@
           "Симуляция ткани",
           "Lookdev"
         ],
-        "description": "3D-моделинг и симуляция ткани в Marvelous Designer и Blender — визуализация худи для продуктовой презентации.",
-        "assignment": "Перевести продуктовое фото худи в чистый CG — материал, складки, посадка. Сохранить узнаваемость крой и характер материала.",
-        "solution": "Базовая выкройка собрана в Marvelous Designer, дальнейшая работа со складками и швами — в Blender. Шейдинг построен на физических картах ткани.",
-        "context": "Подход переиспользуется в продуктовой графике для брендов одежды.",
+        "description": "3D-визуализация худи с полным моделированием изделия и симуляцией ткани. Работа заменяет фотосессию — характер материала, складки, посадка и свет собираются и рендерятся целиком на CG.",
+        "assignment": "Перевести продуктовое фото худи в чистый CG — материал, складки, посадка. Сохранить читаемый крой и характер ткани при любом приближении.",
+        "solution": "Базовый паттерн собирается в Marvelous Designer и дорабатывается в Blender; симуляция послойная — силуэт остаётся чистым, а мелкие складки и швы — ощутимыми. Лукдев на физических картах ткани.",
+        "context": "Сетап переиспользуется как шаблон для продуктовой графики apparel-брендов — одна сцена, меняются паттерны изделия и карты лукдева.",
         "collaborators": [
           {
             "role": "3D и симуляция",
@@ -134,13 +132,17 @@
         "links": {
           "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
         },
-        "moodboard": [
-          "/works/hoodi-cloth/moodboard.jpg"
-        ],
         "experiments": [
           "/works/hoodi-cloth/experiment.jpg",
           "/works/hoodi-cloth/ref-motion.jpg"
-        ]
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/hoodi-cloth/moodboard.jpg",
+          "breakdown": "/works/hoodi-cloth/experiment.jpg",
+          "frame02": "/works/hoodi-cloth/01.jpg",
+          "frame03": "/works/hoodi-cloth/05.jpg"
+        }
       },
       {
         "id": "thyname-animation",
@@ -179,13 +181,14 @@
         ],
         "outputs": [
           "3D-анимация",
-          "Композ",
-          "Грейд"
+          "Процедурная анимация",
+          "Lookdev",
+          "Композ"
         ],
-        "description": "Брендовая 3D-анимация — моушн-дизайн в Blender, композитинг в After Effects, финальный грейд в DaVinci Resolve.",
-        "assignment": "Сделать короткий бренд-фильм, который держит ритм и читается на любых экранах — от ленты в телефоне до большого монитора.",
-        "solution": "Моделинг и анимация в Blender, поверх — пост в After Effects: лёгкий композ, шум, винетка. Финиш — спокойный грейд в DaVinci Resolve, без агрессивных контрастов.",
-        "context": "Использовался в социальных сетях и как titular кадр на сайте бренда.",
+        "description": "Короткое анимационное исследование на процедурных сетапах в Houdini и финале в Blender — двенадцать лупящихся моушн-этюдов, где типографика, геометрия и движение работают как единый скульптурный материал.",
+        "assignment": "Собрать персональный анимационный рил, который нагружает процедурный пайплайн — движение, которое масштабируется по лупам, сценам и стилистикам без пересборки риги под каждый кадр.",
+        "solution": "Houdini тянет процедурный риггинг, рост и динамику; Blender отвечает за лукдев и финальный рендер. Каждый шот переиспользует один граф нод с перебором параметров — визуальное разнообразие приходит из данных, не из ручной сборки.",
+        "context": "Опубликовано на Behance как ThyName Animation, 2024. Пайплайн идёт дальше — в процедурную типографику, R&D моушн-графики и клиентские анимационные тесты.",
         "collaborators": [
           {
             "role": "Режиссура и 3D",
@@ -194,6 +197,13 @@
         ],
         "links": {
           "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/thyname-animation/13.png",
+          "breakdown": "/works/thyname-animation/03.mp4",
+          "frame02": "/works/thyname-animation/06.mp4",
+          "frame03": "/works/thyname-animation/15.mp4"
         }
       },
       {
@@ -226,7 +236,8 @@
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "simpleBento": true
       },
       {
         "id": "metallplace",
@@ -249,23 +260,38 @@
           "Лекция-объяснение",
           "Монтаж и грейд"
         ],
-        "description": "Две моушн-работы для промышленного маркетплейса — короткий бренд-луп и длинный лекционный кат.",
-        "assignment": "Два формата на одной визуальной системе: короткий бренд-луп для диджитал-тачпоинтов и объясняющий ролик для внутренней лекции.",
-        "solution": "Оба ролика собраны в After Effects на общем 2D-наборе — единый ритм, палитра и типографика при очень разной длительности.",
-        "context": "Используется в публичных каналах компании и на внутренних обучениях.",
+        "description": "Две моушн-работы для информационного портала metallplace.ru — короткий бренд-луп для диджитал-тачпоинтов и длинный лекционный кат для внутреннего обучения. Одна визуальная система, очень разная длительность.",
+        "assignment": "Перевести бренд-кит портала в два формата: короткий луп для соцсетей и LED партнёров, и лекционный кат, который объясняет продукт поставщикам и покупателям на MetallConf и внутренних сессиях.",
+        "solution": "Оба ролика живут на одном 2D-наборе в After Effects — палитра, типографическая система, кривые движения. Бренд-луп идёт плотно и ритмично; лекционный кат — дышит, оставляет место под закадровый голос и проводит зрителя через продуктовые фичи портала от первого экрана до последнего.",
+        "context": "Используется в публичных каналах портала, в ключевых деках MetallConf 2023 и на внутреннем продуктовом онбординге для новых поставщиков и покупателей.",
         "collaborators": [
           {
             "role": "Режиссура и 2D",
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "moodboard": [
+          "/works/metallplace/moodboard-1.jpg",
+          "/works/metallplace/moodboard-3.jpg",
+          "/works/metallplace/moodboard-4.jpg",
+          "/works/metallplace/moodboard-5.jpg",
+          "/works/metallplace/moodboard-6.jpg",
+          "/works/metallplace/moodboard-2.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "breakdown": "/works/metallplace/still-7.jpg",
+          "frame02": "/works/metallplace/still-15.jpg",
+          "frame03": "/works/metallplace/lecture-25.jpg"
+        }
       },
       {
         "id": "cosmos",
         "title": "Космос. Москва",
         "client": "Правительство Москвы",
-        "year": "2024",
+        "year": "Август 2025",
         "category": "animation",
         "cover": "/works/cosmos/cover.jpg",
         "gallery": [
@@ -273,26 +299,43 @@
           "/works/cosmos/02.mp4"
         ],
         "tags": [
-          "After Effects",
-          "2D",
-          "Government"
+          "Unreal Engine",
+          "3D",
+          "Городской проект"
         ],
         "outputs": [
-          "Концепт-луп",
-          "Финальный луп",
-          "Саунд-дизайн"
+          "3D-сцена",
+          "Сборка сцены",
+          "Шейдинг и лайтинг",
+          "Анимация"
         ],
-        "description": "2D-луп, сделанный для культурного проекта Правительства Москвы на тему космоса.",
-        "assignment": "Собрать спокойный лупающийся ролик про космос — для проекции на городском культурном событии для широкой аудитории.",
-        "solution": "Драфт задаёт ритм и палитру; финальная версия расширяет систему до более длинного, более фактурного куска со звуком — рассчитанного на непрерывную проекцию.",
-        "context": "Сделано в рамках культурной программы Правительства Москвы.",
+        "description": "3D-сцена в Unreal Engine для культурной программы правительства Москвы — для павильона «Космос» в одном из городских парков. Сцена крутится на LED-потолке павильона: посетители запрокидывают голову и смотрят, как над ними плывёт спокойный непрерывный космический ландшафт.",
+        "assignment": "Собрать спокойный, погружающий лупающийся ролик под LED-потолок — достаточно сильный, чтобы прохожий остановился и посмотрел вверх, и при этом мягкий, чтобы держать внимание минутами без шума и видимой повторяемости.",
+        "solution": "Собрано от и до в Unreal Engine: сборка сцены, композиция ассетов, шейдинг, лайтинг и анимация — всё живёт в одном проекте. Реалтайм-рендер ускоряет итерации; луп водится камерой так, чтобы потолочный формат читался под любым углом, с которого посетитель смотрит вверх.",
+        "context": "Сделано для павильона «Космос» в одном из московских парков, лето 2025, в рамках культурной программы города. Роль автора: сборка сцены, ассеты и шейдинг, лайтинг и анимация — саунд-дизайн делался отдельной командой.",
         "collaborators": [
           {
             "role": "Режиссура и 2D",
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        }
       }
     ]
   },
@@ -465,6 +508,7 @@
     "tools": [
       "Houdini",
       "Blender",
+      "Unreal Engine",
       "Embergen",
       "Cycles",
       "Octane",

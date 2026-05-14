@@ -82,19 +82,17 @@
         "links": {
           "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
         },
-        "moodboard": [
-          "/works/parfume-simulation/moodboard.jpg",
-          "/works/parfume-simulation/ref-dark.jpg",
-          "/works/parfume-simulation/ref-light.jpg",
-          "/works/parfume-simulation/ref-lowkey-1.jpg",
-          "/works/parfume-simulation/ref-lowkey-2.jpg",
-          "/works/parfume-simulation/ref-highkey-1.jpg",
-          "/works/parfume-simulation/ref-highkey-2.jpg"
-        ]
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/parfume-simulation/moodboard.jpg",
+          "breakdown": "/works/parfume-simulation/01.jpg",
+          "frame02": "/works/parfume-simulation/04.jpg",
+          "frame03": "/works/parfume-simulation/06.jpg"
+        }
       },
       {
         "id": "hoodi-cloth",
-        "title": "Hoodi. Cloth Simulation",
+        "title": "Hoodi",
         "client": "Personal",
         "year": "2024",
         "category": "product_viz",
@@ -121,10 +119,10 @@
           "Cloth simulation",
           "Lookdev"
         ],
-        "description": "3D modeling and cloth simulation in Marvelous Designer and Blender — product visualization of a hoodie.",
-        "assignment": "Translate a hoodie product photo into pure CG — material, folds, fit. Keep the cut recognisable and the fabric character intact.",
-        "solution": "Base pattern is built in Marvelous Designer, with folds and seams reworked in Blender. Shading runs on physically-based fabric maps.",
-        "context": "The approach is reused as a template for product graphics for apparel brands.",
+        "description": "3D product visualization of a hoodie with full garment modeling and cloth simulation. The piece replaces a photo shoot — fabric character, folds, fit, and lighting are all built and rendered in CG.",
+        "assignment": "Translate a hoodie product photo into pure CG — material, folds, fit. Keep the cut recognisable and the fabric character intact at any zoom.",
+        "solution": "Base pattern is built in Marvelous Designer and groomed in Blender; the simulation is layered so the silhouette stays clean while micro-folds and seams stay tangible. Physically-based fabric maps drive the lookdev.",
+        "context": "The setup is reused as a template for product graphics for apparel brands — same scene, swap garment patterns and lookdev maps.",
         "collaborators": [
           {
             "role": "3D & Simulation",
@@ -134,13 +132,17 @@
         "links": {
           "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
         },
-        "moodboard": [
-          "/works/hoodi-cloth/moodboard.jpg"
-        ],
         "experiments": [
           "/works/hoodi-cloth/experiment.jpg",
           "/works/hoodi-cloth/ref-motion.jpg"
-        ]
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/hoodi-cloth/moodboard.jpg",
+          "breakdown": "/works/hoodi-cloth/experiment.jpg",
+          "frame02": "/works/hoodi-cloth/01.jpg",
+          "frame03": "/works/hoodi-cloth/05.jpg"
+        }
       },
       {
         "id": "thyname-animation",
@@ -178,14 +180,15 @@
           "DaVinci Resolve"
         ],
         "outputs": [
-          "3D Animation",
-          "Compositing",
-          "Grading"
+          "3D animation",
+          "Procedural animation",
+          "Lookdev",
+          "Compositing"
         ],
-        "description": "Brand 3D animation — motion design in Blender, compositing in After Effects, finishing grade in DaVinci Resolve.",
-        "assignment": "Build a short brand film that holds rhythm and reads on any screen — from a phone feed to a large monitor.",
-        "solution": "Modeling and animation in Blender, post in After Effects (light comp, grain, vignette), finished with a calm grade in DaVinci Resolve — no aggressive contrast.",
-        "context": "Used in social channels and as the title shot on the brand's site.",
+        "description": "A short animated study built around procedural setups in Houdini and finished in Blender — twelve looping motion vignettes that treat type, geometry, and motion as a single sculpting material.",
+        "assignment": "Build a personal animation reel that stress-tests a procedural pipeline — motion that can scale across loops, scenes, and stylistic registers without rebuilding the rig every time.",
+        "solution": "Houdini drives the procedural rigging, growth, and dynamics; Blender carries lookdev and final render. Each shot reuses the same node graph with parameter overrides — the visual variety comes from data, not from manual scene work.",
+        "context": "Published on Behance as ThyName Animation, 2024. The pipeline rolls forward into procedural type, motion-graphics R&D, and client-facing animation tests.",
         "collaborators": [
           {
             "role": "Direction & 3D",
@@ -194,6 +197,13 @@
         ],
         "links": {
           "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/thyname-animation/13.png",
+          "breakdown": "/works/thyname-animation/03.mp4",
+          "frame02": "/works/thyname-animation/06.mp4",
+          "frame03": "/works/thyname-animation/15.mp4"
         }
       },
       {
@@ -226,7 +236,8 @@
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "simpleBento": true
       },
       {
         "id": "metallplace",
@@ -249,23 +260,38 @@
           "Lecture explainer",
           "Edit & grade"
         ],
-        "description": "Two motion design pieces for an industrial marketplace — a short brand loop and a long-form lecture cut.",
-        "assignment": "Two formats from the same visual system: a punchy brand loop for digital touchpoints, and an explainer for an internal lecture.",
-        "solution": "Built on a shared 2D toolkit in After Effects so both pieces share rhythm, palette, and typography while serving very different runtimes.",
-        "context": "Used on the company's public channels and during their training sessions.",
+        "description": "Two motion pieces for the metallplace.ru information portal — a tight brand loop for digital touchpoints and a long-form lecture cut for internal education. One visual system, two very different runtimes.",
+        "assignment": "Translate the portal's brand kit into two formats: a short loop that lives on social and partner LED screens, and a lecture cut that explains the product to suppliers and buyers at MetallConf and internal sessions.",
+        "solution": "Both pieces share the same 2D toolkit in After Effects — palette, typographic system, motion curves. The brand loop runs tight and rhythmic; the lecture cut breathes, leaves room for voiceover, and threads through the portal's product features end-to-end.",
+        "context": "Used in the portal's public channels, in MetallConf 2023 keynote decks, and in internal product onboarding for new suppliers and buyers.",
         "collaborators": [
           {
             "role": "Direction & 2D",
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "moodboard": [
+          "/works/metallplace/moodboard-1.jpg",
+          "/works/metallplace/moodboard-3.jpg",
+          "/works/metallplace/moodboard-4.jpg",
+          "/works/metallplace/moodboard-5.jpg",
+          "/works/metallplace/moodboard-6.jpg",
+          "/works/metallplace/moodboard-2.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "breakdown": "/works/metallplace/still-7.jpg",
+          "frame02": "/works/metallplace/still-15.jpg",
+          "frame03": "/works/metallplace/lecture-25.jpg"
+        }
       },
       {
         "id": "cosmos",
         "title": "Cosmos. Moscow",
         "client": "Moscow Government",
-        "year": "2024",
+        "year": "August 2025",
         "category": "animation",
         "cover": "/works/cosmos/cover.jpg",
         "gallery": [
@@ -273,26 +299,43 @@
           "/works/cosmos/02.mp4"
         ],
         "tags": [
-          "After Effects",
-          "2D",
-          "Government"
+          "Unreal Engine",
+          "3D",
+          "Public space"
         ],
         "outputs": [
-          "Concept loop",
-          "Final loop",
-          "Sound design"
+          "3D scene",
+          "Scene assembly",
+          "Shading & lighting",
+          "Animation"
         ],
-        "description": "2D motion design loop developed for a Moscow Government cultural project on the topic of space.",
-        "assignment": "Build a calm, looping piece on the theme of cosmos — to be projected during a city cultural event for a wide audience.",
-        "solution": "A draft loop set the rhythm and palette; the final piece extends the system into a longer, more textured cut with sound, designed to live as a continuous projection.",
-        "context": "Produced as part of a Moscow Government cultural programme.",
+        "description": "A 3D Unreal Engine scene built for the City of Moscow's cultural programme — specifically the Cosmos pavilion in one of the city parks. The piece plays on the pavilion's LED ceiling: visitors tilt their heads back and watch space drift overhead in a continuous, calm loop.",
+        "assignment": "Build a calm, immersive looping piece for an overhead LED ceiling — strong enough to pull a passer-by into stopping and looking up, soft enough to sustain attention for minutes without becoming noisy or repetitive.",
+        "solution": "Built end-to-end in Unreal Engine: scene assembly, asset composition, shading, lighting, and animation all live in the same project file. Real-time rendering keeps iteration fast; the loop is camera-driven so the ceiling format reads naturally even when visitors look up from any angle.",
+        "context": "Made for the Cosmos pavilion at a Moscow city park, summer 2025, as part of the city's cultural programme. Authored role: scene assembly, asset and shading work, lighting, and animation — sound design was handled separately.",
         "collaborators": [
           {
             "role": "Direction & 2D",
             "name": "Epov"
           }
         ],
-        "links": {}
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        }
       }
     ]
   },
@@ -465,6 +508,7 @@
     "tools": [
       "Houdini",
       "Blender",
+      "Unreal Engine",
       "Embergen",
       "Cycles",
       "Octane",
