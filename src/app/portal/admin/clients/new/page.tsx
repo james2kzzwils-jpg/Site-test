@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
@@ -43,10 +44,20 @@ async function createClientAction(formData: FormData) {
   }
 
   // 2) Invite the contact (magic link). Supabase will create the
-  //    auth.users row and dispatch an email automatically.
+  //    auth.users row and dispatch an email automatically. We pin
+  //    redirectTo to the live origin from the request headers so the
+  //    invite link doesn't fall back to the dashboard's "Site URL"
+  //    (which can still point at localhost in fresh projects).
   if (inviteEmail) {
+    const h = await headers();
+    const proto =
+      h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+    const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+    const inviteRedirectTo = `${proto}://${host}/auth/callback?redirect=${encodeURIComponent('/portal')}`;
     const { data: inviteData, error: inviteErr } =
-      await admin.auth.admin.inviteUserByEmail(inviteEmail);
+      await admin.auth.admin.inviteUserByEmail(inviteEmail, {
+        redirectTo: inviteRedirectTo,
+      });
     if (inviteErr) {
       // We don't unwind the client row — the admin can re-invite from
       // the client detail screen later.

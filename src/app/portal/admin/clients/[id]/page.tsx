@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
@@ -18,6 +19,19 @@ interface ClientDetailSearch {
    * without spending a Supabase email quota. */
   test_link?: string;
   test_link_email?: string;
+}
+
+// Resolve the absolute `/auth/callback` URL for the *current* deploy
+// by reading the live request headers. Used by every magic-link
+// server action so we never hardcode `localhost` or `NEXT_PUBLIC_SITE_URL`.
+// The forwarded headers are set by our reverse proxy (nginx) and fall
+// back to the regular `host` header for direct connections.
+async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
+  const h = await headers();
+  const proto =
+    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  return `${proto}://${host}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
 }
 
 async function requireAdmin() {
@@ -68,7 +82,10 @@ async function inviteMemberAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.auth.admin.inviteUserByEmail(email);
+  const redirectTo = await resolveAuthCallbackUrl();
+  const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+    redirectTo,
+  });
 
   if (error) {
     redirect(`/portal/admin/clients/${clientId}?err=invite_failed`);
@@ -97,19 +114,19 @@ async function generateTestLoginAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  // Pin the post-verify redirect to our /auth/callback so the user
-  // lands inside the portal even if the project's "Site URL" in the
-  // Supabase dashboard hasn't been configured. The callback exchanges
-  // the code for a session and forwards to /portal.
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
-  const redirectTo = siteUrl
-    ? `${siteUrl}/auth/callback?redirect=/portal`
-    : undefined;
+  // Derive the post-verify redirect from the live request so we never
+  // hardcode a host. This always lands on the current portal origin
+  // — production, staging, or localhost — regardless of what the
+  // Supabase "Site URL" setting is. NOTE: the resolved URL must still
+  // be on the Supabase project's allow-list (Authentication → URL
+  // Configuration → Additional Redirect URLs); otherwise Supabase
+  // silently falls back to the default Site URL.
+  const redirectTo = await resolveAuthCallbackUrl();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',
     email,
-    ...(redirectTo ? { options: { redirectTo } } : {}),
+    options: { redirectTo },
   });
 
   if (error || !data?.properties?.action_link) {
@@ -136,10 +153,12 @@ async function resendMagicLinkAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
+  const emailRedirectTo = await resolveAuthCallbackUrl();
   const { error } = await admin.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: false,
+      emailRedirectTo,
     },
   });
 

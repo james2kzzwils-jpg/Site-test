@@ -69,37 +69,76 @@ function BentoText({
   );
 }
 
-/** Bento visual placeholder — for moodboard / breakdown / final frame */
+/**
+ * Bento visual cell — empty grid placeholder by default; when `src` is
+ * provided it renders an actual image/video filling the cell with a
+ * subtle dark gradient so the corner labels stay legible.
+ */
 function BentoVisual({
   label,
   caption,
   aspect = 'aspect-[4/3]',
   className = '',
   big = false,
+  src,
 }: {
   label: string;
   caption?: string;
   aspect?: string;
   className?: string;
   big?: boolean;
+  src?: string;
 }) {
+  const isVideo =
+    typeof src === 'string' && src.toLowerCase().endsWith('.mp4');
+  const hasMedia = typeof src === 'string' && src.length > 0;
   return (
     <div
       className={`relative flex ${aspect} flex-col justify-between overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015] p-6 lg:p-8 ${className}`}
     >
-      <span
-        aria-hidden="true"
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
-      <span className="relative font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+      {hasMedia ? (
+        <>
+          {isVideo ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src={src}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={src}
+              alt={label}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          {/* Legibility wash for the label/caption */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--background)]/35 via-transparent to-[var(--background)]/45"
+          />
+        </>
+      ) : (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
+      )}
+      <span className="relative font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/55">
         <span className="accent-diamond">◆</span> {label}
       </span>
-      {big && (
+      {big && !hasMedia && (
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[clamp(4rem,12vw,10rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.10]"
@@ -108,11 +147,92 @@ function BentoVisual({
         </span>
       )}
       {caption && (
-        <span className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+        <span className="relative font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
           {caption}
         </span>
       )}
     </div>
+  );
+}
+
+// Bento layout pattern for the gallery. Cells cycle through a small
+// rotating set of (col-span, row-span, aspect) tuples so a long list
+// of frames doesn't read as one flat scroll. Each tuple lands on a
+// 12-column grid; the pattern repeats every 7 items so neighbouring
+// pages don't look identical.
+const BENTO_PATTERN: Array<{ cls: string; aspect: string }> = [
+  // wide hero — full width on mobile, 8/12 on desktop
+  { cls: 'col-span-12 lg:col-span-8', aspect: 'aspect-[16/10]' },
+  // tall companion
+  { cls: 'col-span-12 lg:col-span-4', aspect: 'aspect-[3/4]' },
+  // square trio
+  { cls: 'col-span-6 lg:col-span-4', aspect: 'aspect-square' },
+  { cls: 'col-span-6 lg:col-span-4', aspect: 'aspect-square' },
+  { cls: 'col-span-12 lg:col-span-4', aspect: 'aspect-[3/4]' },
+  // wide
+  { cls: 'col-span-12 lg:col-span-7', aspect: 'aspect-[16/9]' },
+  { cls: 'col-span-12 lg:col-span-5', aspect: 'aspect-[4/3]' },
+];
+
+function BentoGallery({
+  label,
+  items,
+  title,
+  kind,
+}: {
+  label: string;
+  items: readonly string[];
+  title: string;
+  kind: 'moodboard' | 'experiments' | 'gallery';
+}) {
+  const total = items.length;
+  return (
+    <section className="relative pb-24 lg:pb-32" data-gallery={kind}>
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+        <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+          <span className="accent-diamond">◆</span> {label}
+        </p>
+        <div className="grid grid-cols-12 gap-3 sm:gap-4">
+          {items.map((src, i) => {
+            const isVideo = src.toLowerCase().endsWith('.mp4');
+            const cell = BENTO_PATTERN[i % BENTO_PATTERN.length];
+            return (
+              <figure
+                key={`${src}-${i}`}
+                className={`relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] ${cell.cls} ${cell.aspect}`}
+              >
+                {isVideo ? (
+                  <video
+                    className="block h-full w-full object-cover"
+                    src={src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={src}
+                    alt={`${title} — ${label} ${i + 1}`}
+                    className="block h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <figcaption className="pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/65">
+                  <span className="text-[var(--accent)]">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>{' '}
+                  / {String(total).padStart(2, '0')}
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -216,7 +336,23 @@ export default function ProjectDetail({ slug }: { slug: string }) {
     () => projects.findIndex((p) => p.id === slug),
     [projects, slug]
   );
-  const project = projects[index];
+  // The i18n JSON contains a heterogeneous shape per project (some
+  // include `moodboard`, `experiments`, `bento`, etc., others don't),
+  // so we cast to a single wide shape with optional fields once and
+  // let the JSX rely on `?.` to skip missing pieces gracefully.
+  type ProjectShape = (typeof projects)[number] & {
+    moodboard?: readonly string[];
+    experiments?: readonly string[];
+    simpleBento?: boolean;
+    bentoGallery?: boolean;
+    bento?: {
+      moodboard?: string;
+      breakdown?: string;
+      frame02?: string;
+      frame03?: string;
+    };
+  };
+  const project = projects[index] as ProjectShape | undefined;
   const next = projects[(index + 1) % projects.length];
 
   if (!project) return null;
@@ -361,93 +497,148 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* Bento — Assignment / Solution / Process / Context with visual cells */}
+        {/* Bento — Assignment / Solution / Process / Context with visual
+            cells. When the project flag `simpleBento` is on (Batara
+            etc.) the visual cells are dropped and the text blocks
+            stretch to fill the row so the story stays clean. */}
         <section className="pb-24 lg:pb-32">
           <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
-            <div className="grid grid-cols-12 gap-3 sm:gap-4">
-              <BentoText
-                idx="01"
-                label={t.project.assignment_label}
-                body={project.assignment}
-                className="col-span-12 lg:col-span-8"
-              />
-              <BentoVisual
-                label="Moodboard"
-                caption="01 / Reference"
-                aspect="aspect-[4/5] lg:aspect-auto lg:min-h-[360px]"
-                className="col-span-12 lg:col-span-4 lg:row-span-2"
-              />
+            {project.simpleBento ? (
+              <div className="grid grid-cols-12 gap-3 sm:gap-4">
+                <BentoText
+                  idx="01"
+                  label={t.project.assignment_label}
+                  body={project.assignment}
+                  className="col-span-12"
+                />
+                <BentoText
+                  idx="02"
+                  label={t.project.solution_label}
+                  body={project.solution}
+                  className="col-span-12 lg:col-span-7"
+                />
+                <BentoText
+                  idx="03"
+                  label={t.project.context_label}
+                  body={project.context}
+                  className="col-span-12 lg:col-span-5"
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-12 gap-3 sm:gap-4">
+                <BentoText
+                  idx="01"
+                  label={t.project.assignment_label}
+                  body={project.assignment}
+                  className="col-span-12 lg:col-span-8"
+                />
+                <BentoVisual
+                  label="Moodboard"
+                  caption="01 / Reference"
+                  aspect="aspect-[4/5] lg:aspect-auto lg:min-h-[360px]"
+                  className="col-span-12 lg:col-span-4 lg:row-span-2"
+                  src={project.bento?.moodboard}
+                />
 
-              <BentoText
-                idx="02"
-                label={t.project.solution_label}
-                body={project.solution}
-                className="col-span-12 lg:col-span-8"
-              />
+                <BentoText
+                  idx="02"
+                  label={t.project.solution_label}
+                  body={project.solution}
+                  className="col-span-12 lg:col-span-8"
+                />
 
-              <BentoVisual
-                label="Breakdown"
-                caption="Process — Frame 01"
-                aspect="aspect-[16/7]"
-                className="col-span-12 lg:col-span-7"
-                big
-              />
-              <BentoVisual
-                label="Frame"
-                caption="Process — Frame 02"
-                aspect="aspect-square"
-                className="col-span-6 lg:col-span-5"
-              />
+                <BentoVisual
+                  label="Breakdown"
+                  caption="Process — Frame 01"
+                  aspect="aspect-[16/7]"
+                  className="col-span-12 lg:col-span-7"
+                  big
+                  src={project.bento?.breakdown}
+                />
+                <BentoVisual
+                  label="Frame"
+                  caption="Process — Frame 02"
+                  aspect="aspect-square"
+                  className="col-span-6 lg:col-span-5"
+                  src={project.bento?.frame02}
+                />
 
-              <BentoText
-                idx="03"
-                label={t.project.context_label}
-                body={project.context}
-                className="col-span-12 lg:col-span-7"
-              />
-              <BentoVisual
-                label="Frame"
-                caption="Process — Frame 03"
-                aspect="aspect-square lg:aspect-auto lg:min-h-full"
-                className="col-span-6 lg:col-span-5"
-              />
-            </div>
+                <BentoText
+                  idx="03"
+                  label={t.project.context_label}
+                  body={project.context}
+                  className="col-span-12 lg:col-span-7"
+                />
+                <BentoVisual
+                  label="Frame"
+                  caption="Process — Frame 03"
+                  aspect="aspect-square lg:aspect-auto lg:min-h-full"
+                  className="col-span-6 lg:col-span-5"
+                  src={project.bento?.frame03}
+                />
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Moodboard — reference images and references collected before the
-            project even starts. Rendered as a masonry-ish column flow so the
-            mixed aspect ratios stack without forced cropping. */}
+        {/* Moodboard / experiments / gallery sections. Each project can
+            opt into the bento layout (varied cell sizes on a 12-col
+            grid) with the `bentoGallery` flag — used for portfolio
+            projects with rich Behance galleries (ThyName, Hoodi,
+            Parfume) where the single-column scroll felt monotonous.
+            Other projects keep the original full-bleed column stack. */}
         {project.moodboard && project.moodboard.length > 0 ? (
-          <ProjectGallery
-            label={t.project.moodboard_label}
-            items={project.moodboard}
-            title={project.title}
-            kind="moodboard"
-          />
+          project.bentoGallery ? (
+            <BentoGallery
+              label={t.project.moodboard_label}
+              items={project.moodboard}
+              title={project.title}
+              kind="moodboard"
+            />
+          ) : (
+            <ProjectGallery
+              label={t.project.moodboard_label}
+              items={project.moodboard}
+              title={project.title}
+              kind="moodboard"
+            />
+          )
         ) : null}
 
-        {/* Experiments — extra explorations and look tests that sit alongside
-            the final gallery but aren't part of the published cut. */}
         {project.experiments && project.experiments.length > 0 ? (
-          <ProjectGallery
-            label={t.project.experiments_label}
-            items={project.experiments}
-            title={project.title}
-            kind="experiments"
-          />
+          project.bentoGallery ? (
+            <BentoGallery
+              label={t.project.experiments_label}
+              items={project.experiments}
+              title={project.title}
+              kind="experiments"
+            />
+          ) : (
+            <ProjectGallery
+              label={t.project.experiments_label}
+              items={project.experiments}
+              title={project.title}
+              kind="experiments"
+            />
+          )
         ) : null}
 
-        {/* Final gallery — every imported render / loop in the same order
-            the project ships on its source (behance.net, deliverable, etc).
-            Stacked single-column to preserve the original framing. */}
         {project.gallery && project.gallery.length > 0 ? (
-          <ProjectGallery
-            label={t.project.gallery_label}
-            items={project.gallery}
-            title={project.title}
-            kind="gallery"
-          />
+          project.bentoGallery ? (
+            <BentoGallery
+              label={t.project.gallery_label}
+              items={project.gallery}
+              title={project.title}
+              kind="gallery"
+            />
+          ) : (
+            <ProjectGallery
+              label={t.project.gallery_label}
+              items={project.gallery}
+              title={project.title}
+              kind="gallery"
+            />
+          )
         ) : null}
 
         {/* Closing render — full bleed */}
