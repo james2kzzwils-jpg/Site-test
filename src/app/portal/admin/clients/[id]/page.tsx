@@ -35,6 +35,18 @@ async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
   return `${proto}://${host}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
 }
 
+// Resolve the origin (scheme + host) for the current deploy. Used by
+// the test-login flow which bypasses Supabase's /auth/v1/verify
+// redirect-chain and points the browser straight at our callback with
+// a token_hash to verify server-side.
+async function resolveOrigin(): Promise<string> {
+  const h = await headers();
+  const proto =
+    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  return `${proto}://${host}`;
+}
+
 async function requireAdmin() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -102,10 +114,20 @@ async function inviteMemberAction(formData: FormData) {
 }
 
 // Generate a one-shot magic link for an existing member email — but
-// instead of emailing it, return the action_link directly in the URL
-// so the admin can copy/paste it into a private browser window. This
-// is the recommended path for testing because it doesn't burn the
-// Supabase "magic links per hour" budget.
+// instead of emailing it, return a URL directly into our own callback
+// so the admin can copy/paste it into a private browser window. We
+// deliberately *don't* use the `action_link` Supabase returns from
+// generateLink: that link is an implicit-flow magic link that goes
+// through `/auth/v1/verify` and bounces back to our callback with the
+// access_token in the URL *fragment* (`#access_token=…`). Fragments
+// never reach the server, so our SSR callback can't read the session
+// and the user lands on /portal/login?error=missing_code.
+//
+// Instead, we take the `hashed_token` from the same response and hand
+// it to our own callback as a query param (`?token_hash=…&type=…`).
+// The callback verifies the token via supabase.auth.verifyOtp({...})
+// server-side, which sets the auth cookies on the response. This is
+// the officially recommended Supabase SSR pattern.
 async function generateTestLoginAction(formData: FormData) {
   'use server';
   await requireAdmin();
@@ -115,14 +137,13 @@ async function generateTestLoginAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  // Derive the post-verify redirect from the live request so we never
-  // hardcode a host. This always lands on the current portal origin
-  // — production, staging, or localhost — regardless of what the
-  // Supabase "Site URL" setting is. NOTE: the resolved URL must still
-  // be on the Supabase project's allow-list (Authentication → URL
-  // Configuration → Additional Redirect URLs); otherwise Supabase
-  // silently falls back to the default Site URL.
+  // We still pass the absolute callback URL as redirectTo so it shows
+  // up on Supabase's allow-list trace and so the link Supabase emails
+  // out (for the regular magic-link flow) stays self-consistent. For
+  // the test-login flow we build the URL ourselves below, but having
+  // the redirect on the link is harmless.
   const redirectTo = await resolveAuthCallbackUrl();
+  const origin = await resolveOrigin();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',
@@ -130,11 +151,20 @@ async function generateTestLoginAction(formData: FormData) {
     options: { redirectTo },
   });
 
-  if (error || !data?.properties?.action_link) {
+  if (error || !data?.properties?.hashed_token) {
     redirect(`/portal/admin/clients/${clientId}?err=test_link_failed`);
   }
 
-  const link = data.properties.action_link;
+  // Build the URL that goes directly to our callback. The callback
+  // will call verifyOtp({ token_hash, type: 'magiclink' }) and set
+  // session cookies, then redirect onward to /portal.
+  const callbackParams = new URLSearchParams({
+    token_hash: data.properties.hashed_token,
+    type: 'magiclink',
+    redirect: '/portal',
+  });
+  const link = `${origin}/auth/callback?${callbackParams.toString()}`;
+
   const params = new URLSearchParams({
     test_link: link,
     test_link_email: email,
