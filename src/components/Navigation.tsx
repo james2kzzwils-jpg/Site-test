@@ -57,7 +57,14 @@ export default function Navigation() {
             </button>
           ))}
 
-          <div className="ml-4 flex items-center gap-1 rounded-full border border-white/10 p-1">
+          <button
+            onClick={() => scrollTo('#contact')}
+            className="rounded-full bg-cyan-400 px-5 py-2 font-mono text-xs font-medium text-black uppercase tracking-wider transition-all hover:bg-cyan-300"
+          >
+            {t.hero.cta_contact}
+          </button>
+
+          <div className="ml-2 flex items-center gap-1 rounded-full border border-white/10 p-1">
             {(['en', 'ru'] as const).map((lang) => (
               <button
                 key={lang}
@@ -104,6 +111,14 @@ export default function Navigation() {
                 {t.nav[item.key]}
               </button>
             ))}
+
+            <button
+              onClick={() => scrollTo('#contact')}
+              className="mt-2 rounded-full bg-cyan-400 px-6 py-3 font-mono text-sm font-medium text-black uppercase tracking-wider transition-all hover:bg-cyan-300"
+            >
+              {t.hero.cta_contact}
+            </button>
+
             <div className="mt-4 flex items-center gap-2">
               {(['en', 'ru'] as const).map((lang) => (
                 <button
