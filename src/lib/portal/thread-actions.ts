@@ -8,7 +8,9 @@
 // Three actions:
 //   postCommentAction      - either side adds a comment to the
 //                            currently-open round; opens a round if
-//                            none exists yet
+//                            none exists yet. Returns { ok, commentId }
+//                            so the caller can bind subsequent attachment
+//                            inserts to the new comment id (B2 gap #1).
 //   closeRoundAction       - admin closes the open round on a stage
 //                            (clears the way for the next round)
 //   finalizeAttachmentAction
@@ -56,7 +58,7 @@ function pathsFor(opts: {
 /**
  * Find the currently-open round on a stage, or open one if there isn't
  * one yet. The new round inherits its `billable` flag from the policy:
- * round 1 is included on stages 1–4, every other round is billable.
+ * round 1 is included on stages 1-4, every other round is billable.
  *
  * Returns the round id and its (computed) round index.
  */
@@ -101,32 +103,51 @@ async function ensureOpenRound(
   return { id: created.id, index: created.index };
 }
 
+export type PostCommentResult =
+  | { ok: true; commentId: string }
+  | { ok: false; error: string };
+
 /**
  * Posts a comment under the active round on a stage. Lazily opens the
  * round if needed (so the first comment from either side starts round
  * 1 automatically). Returns the created comment id so the client can
- * follow up with attachment uploads.
+ * bind any subsequent attachment inserts to this specific comment
+ * (rather than to the stage as a whole - that was B2 gap #1).
  */
-export async function postCommentAction(formData: FormData) {
+export async function postCommentAction(
+  formData: FormData
+): Promise<PostCommentResult> {
   const projectId = String(formData.get('project_id') ?? '');
   const stageId = String(formData.get('stage_id') ?? '');
   const stageKindRaw = String(formData.get('stage_kind') ?? '');
   const body = String(formData.get('body') ?? '').trim();
   const clientIdRaw = String(formData.get('client_id') ?? '');
 
-  if (!projectId || !stageId || !stageKindRaw || !body) return;
+  if (!projectId || !stageId || !stageKindRaw || !body) {
+    return { ok: false, error: 'missing params' };
+  }
   const stageKind = stageKindRaw as StageKind;
 
   const { supabase, profile } = await requireProfile();
 
   const round = await ensureOpenRound(supabase, stageId, stageKind);
 
-  await supabase.from('comments').insert({
-    round_id: round.id,
-    author_id: profile.id,
-    author_role: profile.role,
-    body,
-  });
+  const { data: inserted, error: insertError } = await supabase
+    .from('comments')
+    .insert({
+      round_id: round.id,
+      author_id: profile.id,
+      author_role: profile.role,
+      body,
+    })
+    .select('id')
+    .single();
+  if (insertError || !inserted) {
+    return {
+      ok: false,
+      error: insertError?.message ?? 'comment insert failed',
+    };
+  }
 
   const { clientView, adminView } = pathsFor({
     clientId: clientIdRaw || null,
@@ -134,11 +155,13 @@ export async function postCommentAction(formData: FormData) {
   });
   revalidatePath(clientView);
   if (adminView) revalidatePath(adminView);
+
+  return { ok: true, commentId: inserted.id };
 }
 
 /**
  * Admin-only: closes the currently-open round on a stage so the next
- * comment opens round N+1. We don't expose this to clients — only the
+ * comment opens round N+1. We don't expose this to clients - only the
  * studio side decides when feedback is incorporated.
  */
 export async function closeRoundAction(formData: FormData) {
@@ -169,7 +192,7 @@ export async function closeRoundAction(formData: FormData) {
  * The client uploads bytes directly to Supabase Storage via PUT, then
  * calls `finalizeAttachmentAction` to register the metadata row.
  *
- * Path layout: `<project_id>/<random_id>/<filename>` — keeping the
+ * Path layout: `<project_id>/<random_id>/<filename>` - keeping the
  * project id as the leading folder lets us write a single storage RLS
  * policy that's tied to project membership.
  */
@@ -183,7 +206,7 @@ export async function createUploadUrlAction(formData: FormData) {
   const { supabase } = await requireProfile();
 
   // We let the storage RLS policy decide whether the caller may write
-  // to <project_id>/... — no need to recheck membership here.
+  // to <project_id>/... - no need to recheck membership here.
   const random =
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
@@ -209,7 +232,7 @@ export async function createUploadUrlAction(formData: FormData) {
  * After the client PUTs the bytes into Supabase Storage, register the
  * metadata row so we can render the attachment in the thread. We rely
  * on the attachments RLS to enforce that the caller is allowed to add
- * this row — see 0002_rls_policies.sql.
+ * this row - see 0002_rls_policies.sql.
  */
 export async function finalizeAttachmentAction(formData: FormData) {
   const projectId = String(formData.get('project_id') ?? '');
