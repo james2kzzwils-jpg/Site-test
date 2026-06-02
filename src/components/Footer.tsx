@@ -2,6 +2,14 @@
 
 import { useLanguage } from '@/i18n/LanguageContext';
 
+const SOCIAL_LINKS = [
+  { name: 'Behance', href: 'https://www.behance.net/2kzz' },
+  { name: 'Vimeo', href: 'https://vimeo.com/1166636825' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/andrey-epov-cg' },
+  { name: 'Instagram', href: 'https://www.instagram.com/2kzz___/' },
+  { name: 'Telegram', href: 'https://t.me/aepov_2kzz' },
+] as const;
+
 export default function Footer() {
   const { t } = useLanguage();
 
@@ -18,31 +26,18 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-6">
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Behance
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Vimeo
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="#"
-              className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
-            >
-              Telegram
-            </a>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+            {SOCIAL_LINKS.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
+              >
+                {link.name}
+              </a>
+            ))}
           </div>
         </div>
 
