@@ -94,7 +94,7 @@ export interface StageThreadLabels {
 
 interface StageThreadProps {
   projectId: string;
-  clientId: string | null; // null on client side — only admins know the parent client
+  clientId: string | null;
   stageId: string;
   stageKind: StageKind;
   rounds: ThreadRound[];
@@ -102,7 +102,6 @@ interface StageThreadProps {
   labels: StageThreadLabels;
 }
 
-// Pending file in the composer (queued, not yet uploaded).
 interface PendingFile {
   id: string;
   file: File;
@@ -125,8 +124,6 @@ export default function StageThread({
   const [viewer, setViewer] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Sort rounds: oldest at the top, newest at the bottom. Open round
-  // (if any) is always the last one.
   const sortedRounds = [...rounds].sort((a, b) => a.index - b.index);
   const openRound = sortedRounds.find((r) => r.closed_at === null) ?? null;
   const nextRoundIndex =
@@ -134,7 +131,6 @@ export default function StageThread({
     (sortedRounds.length === 0 ? 1 : sortedRounds[sortedRounds.length - 1].index + 1);
   const nextRoundBillable = isRoundBillable(stageKind, nextRoundIndex);
 
-  // Revoke preview URLs on unmount / change so we don't leak blob URLs.
   useEffect(() => {
     return () => {
       pending.forEach((p) => {
@@ -147,7 +143,7 @@ export default function StageThread({
   const addFiles = useCallback((files: FileList | File[]) => {
     const accepted: PendingFile[] = [];
     for (const file of Array.from(files)) {
-      if (file.size > 25 * 1024 * 1024) continue; // 25 MB cap
+      if (file.size > 25 * 1024 * 1024) continue;
       const isImage = file.type.startsWith('image/');
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       accepted.push({
@@ -177,7 +173,6 @@ export default function StageThread({
       if (it.kind === 'file') {
         const f = it.getAsFile();
         if (f) {
-          // Give clipboard images a friendly name with a timestamp.
           const ext = (f.type.split('/')[1] ?? 'png').toLowerCase();
           const named = new File([f], `clipboard-${Date.now()}.${ext}`, {
             type: f.type,
@@ -214,8 +209,6 @@ export default function StageThread({
       setUploadError(signed.error ?? labels.uploadFailed);
       return null;
     }
-    // Use fetch PUT directly to the signed URL. Supabase signed upload
-    // URLs accept anonymous PUT with the file body.
     const putResp = await fetch(signed.signedUrl, {
       method: 'PUT',
       headers: { 'Content-Type': file.type || 'application/octet-stream' },
@@ -241,8 +234,8 @@ export default function StageThread({
       setUploadError(null);
 
       // 1) Post the comment first so we have a comment_id to attach
-      //    files to. (If there's no body but only attachments, fall
-      //    back to a single-space body so the row is non-null.)
+      //    files to. If body is empty but attachments exist, use a
+      //    non-breaking space so the row stays non-null.
       const commentBody = body.trim().length > 0 ? body.trim() : '\u00A0';
       const commentFd = new FormData();
       commentFd.set('project_id', projectId);
@@ -250,19 +243,23 @@ export default function StageThread({
       commentFd.set('stage_kind', stageKind);
       commentFd.set('body', commentBody);
       if (clientId) commentFd.set('client_id', clientId);
-      await postCommentAction(commentFd);
+      const commentResult = await postCommentAction(commentFd);
+      if (!commentResult.ok) {
+        setUploadError(commentResult.error ?? labels.uploadFailed);
+        return;
+      }
+      const newCommentId = commentResult.commentId;
 
-      // 2) Upload + finalize each attachment in sequence. We don't
-      //    have the new comment id here (server actions don't return
-      //    it), so attachments are bound to the stage and surface in
-      //    the most-recent comment client-side via author+timestamp
-      //    pairing on revalidation.
+      // 2) Upload + finalize each attachment in sequence, binding
+      //    every attachment row to the comment id we just got back
+      //    from postCommentAction (B2 gap #1 fix).
       for (const p of pending) {
         const up = await uploadOne(p.file);
         if (!up) continue;
         const fin = new FormData();
         fin.set('project_id', projectId);
         fin.set('stage_id', stageId);
+        fin.set('comment_id', newCommentId);
         fin.set('storage_path', up.storagePath);
         fin.set('filename', up.filename);
         fin.set('mime', up.mime);
@@ -312,13 +309,8 @@ export default function StageThread({
         </ol>
       )}
 
-      {/* Admin-only: close the open round (lets the next comment open
-          round N+1). */}
       {role === 'admin' && openRound ? (
-        <form
-          action={closeRoundAction}
-          className="self-start"
-        >
+        <form action={closeRoundAction} className="self-start">
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="stage_id" value={stageId} />
           {clientId ? <input type="hidden" name="client_id" value={clientId} /> : null}
@@ -331,7 +323,6 @@ export default function StageThread({
         </form>
       ) : null}
 
-      {/* Composer */}
       <form
         onSubmit={onSubmit}
         onDrop={onDrop}
@@ -478,9 +469,6 @@ function CommentRow({
     dateStyle: 'short',
     timeStyle: 'short',
   });
-  // Prefer the resolved display name when the loader could fetch it
-  // (admin reader, or self). Always tag the side with a coloured pill
-  // so it's obvious who is speaking even when the name is missing.
   const roleLabel = isStudio ? labels.studio : labels.client;
   return (
     <li className="flex flex-col gap-2">
@@ -560,7 +548,7 @@ function AttachmentTile({
           controls
           className="block max-h-48 max-w-full border border-[var(--hairline)]"
           preload="metadata"
-        />
+        >
       </li>
     );
   }
