@@ -14,7 +14,6 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { nextStageKind, type StageKind } from '@/lib/portal/stages';
 
 async function requireProfile() {
   const supabase = await createSupabaseServerClient();
@@ -30,33 +29,33 @@ function pathsFor(projectId: string) {
 }
 
 /**
- * Client approves the current stage's deliverable. We then either
- * move the project to the next stage, or archive it if we were on
- * Final. The DB-side approval flip keeps the stage row honest so the
- * admin UI lights up the next step automatically.
+ * Client approves the current stage's deliverable.
+ *
+ * Unlike the old behaviour (which set state=approved and immediately
+ * advanced project.status), we now set state=client_approved as an
+ * intermediate gate. The admin then reviews and explicitly confirms
+ * payment / delivery before advancing to the next stage.
+ *
+ * The stage row is marked with client_approved + approved_at so the
+ * admin UI can clearly show what the client has signed off.
  */
 export async function clientApproveStageAction(formData: FormData) {
-  const projectId = String(formData.get('project_id') ?? '');
-  const stageId = String(formData.get('stage_id') ?? '');
-  const stageKindRaw = String(formData.get('stage_kind') ?? '');
-  if (!projectId || !stageId || !stageKindRaw) return;
-  const kind = stageKindRaw as StageKind;
+  const projectId = String(formData.get('project_id') || '');
+  const stageId = String(formData.get('stage_id') || '');
+  if (!projectId || !stageId) return;
 
   const { supabase } = await requireProfile();
 
   await supabase
     .from('stages')
     .update({
-      state: 'approved',
+      state: 'client_approved',
       approved_at: new Date().toISOString(),
     })
     .eq('id', stageId);
 
-  const nextKind = nextStageKind(kind);
-  await supabase
-    .from('projects')
-    .update({ status: nextKind ?? 'archived' })
-    .eq('id', projectId);
+  // NOTE: project.status is NOT advanced here — that happens when
+  // the admin calls confirmAndAdvanceAction.
 
   revalidatePath(pathsFor(projectId));
 }
@@ -67,8 +66,8 @@ export async function clientApproveStageAction(formData: FormData) {
  * revision round via the thread action layer.
  */
 export async function clientRequestChangesAction(formData: FormData) {
-  const projectId = String(formData.get('project_id') ?? '');
-  const stageId = String(formData.get('stage_id') ?? '');
+  const projectId = String(formData.get('project_id') || '');
+  const stageId = String(formData.get('stage_id') || '');
   if (!projectId || !stageId) return;
 
   const { supabase } = await requireProfile();
