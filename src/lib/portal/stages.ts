@@ -19,6 +19,7 @@ export type ProjectStatus = StageKind | 'archived';
 export type StageState =
   | 'pending'
   | 'in_review'
+  | 'client_approved'
   | 'changes_requested'
   | 'approved';
 
@@ -42,6 +43,15 @@ export const STAGE_LABELS: Record<StageKind, string> = {
   final: 'Final',
 };
 
+// Longer labels for the redesigned stage-stepper circles.
+export const STAGE_LONG_LABELS: Record<StageKind, string> = {
+  discovery: 'Discovery Call',
+  mood: 'Concept Creation',
+  animatic: 'Rough Animatic',
+  lookdev: 'Color / Mood Comp',
+  final: 'Final Render',
+};
+
 // Returns the next stage kind after `current`, or null when `current`
 // is the last stage (the caller should move project.status to
 // 'archived' in that case).
@@ -51,19 +61,29 @@ export function nextStageKind(current: StageKind): StageKind | null {
   return STAGE_ORDER[idx + 1];
 }
 
+// Returns the previous stage kind before `current`, or null if already
+// at the first stage.
+export function prevStageKind(current: StageKind): StageKind | null {
+  const idx = STAGE_ORDER.indexOf(current);
+  if (idx <= 0) return null;
+  return STAGE_ORDER[idx - 1];
+}
+
 // Renders the visual state for a stage given the project status. We
 // keep this pure so both server and client components can call it.
 export type StageDisplayState =
-  | 'approved'   // stage.state === 'approved'
-  | 'current'    // stage.kind === project.status (and not approved)
-  | 'past'       // earlier than the current stage but not approved yet
-  | 'future';    // later than the current stage
+  | 'approved'         // stage.state === 'approved'
+  | 'client_approved'  // client approved but admin hasn't confirmed yet
+  | 'current'          // stage.kind === project.status (and not approved)
+  | 'past'             // earlier than the current stage but not approved yet
+  | 'future';          // later than the current stage
 
 export function computeDisplayState(
   stage: StageRow,
   projectStatus: ProjectStatus
 ): StageDisplayState {
   if (stage.state === 'approved') return 'approved';
+  if (stage.state === 'client_approved') return 'client_approved';
   if (projectStatus === 'archived') return 'past';
 
   const currentIdx = STAGE_ORDER.indexOf(projectStatus as StageKind);
