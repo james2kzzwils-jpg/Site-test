@@ -11,6 +11,10 @@ import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
+function SectionSpacer() {
+  return <div className="h-24 lg:h-40" aria-hidden="true" />;
+}
+
 export default function Home() {
   return (
     <LanguageProvider>
@@ -18,26 +22,17 @@ export default function Home() {
         <Navigation />
         <main className="bg-[#0a0a0a]">
           <Hero />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent" />
-          </div>
+          <SectionSpacer />
           <Works />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionSpacer />
           <Services />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionSpacer />
           <Shop />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-          </div>
+          <SectionSpacer />
           <About />
-          <div className="mx-auto max-w-7xl">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          </div>
+          <SectionSpacer />
           <Contact />
+          <SectionSpacer />
           <Footer />
         </main>
       </SmoothScroll>

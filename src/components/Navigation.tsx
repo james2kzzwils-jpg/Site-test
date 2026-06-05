@@ -10,7 +10,7 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -22,39 +22,37 @@ export default function Navigation() {
     { key: 'contact', href: '#contact' },
   ] as const;
 
-  const scrollTo = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileOpen(false);
-    }
-  };
-
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
         isScrolled
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5'
+          ? 'bg-[#0a0a0a]/80 backdrop-blur-2xl'
           : 'bg-transparent'
       }`}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="font-mono text-sm tracking-widest text-white/90 uppercase hover:text-cyan-400 transition-colors"
+      <nav className="mx-auto flex max-w-[1400px] items-center justify-between px-8 py-7 lg:px-16 lg:py-8">
+        <a
+          href="#"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          className="text-[18px] font-semibold tracking-[-0.02em] text-white transition-opacity duration-300 hover:opacity-70"
         >
-          JCL<span className="text-cyan-400">_</span>
-        </button>
+          JAMES CREATIVE LABS
+        </a>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-10 md:flex">
           {navItems.map((item) => (
-            <button
+            <a
               key={item.key}
-              onClick={() => scrollTo(item.href)}
-              className="font-mono text-xs tracking-wider text-white/50 uppercase transition-colors hover:text-cyan-400"
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.querySelector(item.href);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white"
             >
               {t.nav[item.key]}
-            </button>
+            </a>
           ))}
 
           <button
@@ -69,13 +67,13 @@ export default function Navigation() {
               <button
                 key={lang}
                 onClick={() => setLocale(lang as Locale)}
-                className={`rounded-full px-3 py-1 font-mono text-xs uppercase transition-all ${
+                className={`rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-300 ${
                   locale === lang
-                    ? 'bg-cyan-400/20 text-cyan-400'
-                    : 'text-white/40 hover:text-white/70'
+                    ? 'bg-white text-[#0a0a0a]'
+                    : 'text-white/30 hover:text-white/60'
                 }`}
               >
-                {lang}
+                {lang.toUpperCase()}
               </button>
             ))}
           </div>
@@ -83,32 +81,57 @@ export default function Navigation() {
 
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="flex flex-col gap-1.5 md:hidden"
+          className="flex flex-col gap-2 md:hidden"
           aria-label="Toggle menu"
         >
           <span
-            className={`block h-px w-6 bg-white transition-all ${
-              isMobileOpen ? 'translate-y-[3.5px] rotate-45' : ''
+            className={`block h-[1.5px] w-6 bg-white transition-all duration-300 ${
+              isMobileOpen ? 'translate-y-[5px] rotate-45' : ''
             }`}
           />
           <span
-            className={`block h-px w-6 bg-white transition-all ${
-              isMobileOpen ? '-translate-y-[3.5px] -rotate-45' : ''
+            className={`block h-[1.5px] w-6 bg-white transition-all duration-300 ${
+              isMobileOpen ? '-translate-y-[5px] -rotate-45' : ''
             }`}
           />
         </button>
       </nav>
 
-      {isMobileOpen && (
-        <div className="absolute inset-x-0 top-full border-b border-white/5 bg-[#0a0a0a]/95 backdrop-blur-xl md:hidden">
-          <div className="flex flex-col gap-4 px-6 py-8">
-            {navItems.map((item) => (
+      <div
+        className={`absolute inset-x-0 top-full overflow-hidden bg-[#0a0a0a]/95 backdrop-blur-2xl transition-all duration-500 md:hidden ${
+          isMobileOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="flex flex-col gap-2 px-8 py-8">
+          {navItems.map((item) => (
+            <a
+              key={item.key}
+              href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.querySelector(item.href);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                  setIsMobileOpen(false);
+                }
+              }}
+              className="py-4 text-left text-[18px] text-white/50 transition-colors duration-300 hover:text-white"
+            >
+              {t.nav[item.key]}
+            </a>
+          ))}
+          <div className="mt-6 flex items-center gap-3 border-t border-white/[0.06] pt-6">
+            {(['en', 'ru'] as const).map((lang) => (
               <button
-                key={item.key}
-                onClick={() => scrollTo(item.href)}
-                className="font-mono text-sm tracking-wider text-white/60 uppercase text-left transition-colors hover:text-cyan-400"
+                key={lang}
+                onClick={() => setLocale(lang as Locale)}
+                className={`rounded-full px-6 py-3 text-[14px] font-medium transition-all duration-300 ${
+                  locale === lang
+                    ? 'bg-white text-[#0a0a0a]'
+                    : 'bg-white/[0.05] text-white/30'
+                }`}
               >
-                {t.nav[item.key]}
+                {lang.toUpperCase()}
               </button>
             ))}
 
@@ -136,7 +159,7 @@ export default function Navigation() {
             </div>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

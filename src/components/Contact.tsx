@@ -11,7 +11,7 @@ export default function Contact() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1 }
+      { threshold: 0.02 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -22,87 +22,83 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="relative py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid gap-16 lg:grid-cols-2">
+    <section id="contact" ref={sectionRef} className="py-40 lg:py-56">
+      <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
+        <div
+          className={`mb-20 transition-all duration-1000 ${
+            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+          }`}
+        >
+          <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
+            {t.contact.title}
+          </h2>
+          <p className="mt-8 max-w-md text-[16px] leading-[1.7] text-white/25">
+            {t.contact.subtitle}
+          </p>
+        </div>
+
+        <div className="grid gap-20 lg:grid-cols-[1fr_1.2fr] lg:gap-32">
           <div
-            className={`transition-all duration-700 ${
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            className={`transition-all duration-1000 delay-200 ${
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
-            <span className="font-mono text-xs tracking-widest text-cyan-400 uppercase">
-              {'// '}{t.nav.contact}
-            </span>
-            <h2 className="mt-4 font-mono text-4xl font-bold text-white sm:text-5xl">
-              {t.contact.title}
-            </h2>
-            <p className="mt-4 max-w-md font-mono text-sm leading-relaxed text-white/40">
-              {t.contact.subtitle}
-            </p>
-
-            <div className="mt-12 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                  <span className="font-mono text-xs text-cyan-400">@</span>
-                </div>
-                <div>
-                  <p className="font-mono text-sm text-white">{t.contact.info.email}</p>
-                </div>
+            <div className="space-y-10">
+              <div>
+                <p className="mb-2 text-[12px] tracking-wide text-white/15 uppercase">Email</p>
+                <p className="text-[16px] text-white/50">{t.contact.info.email}</p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                  <span className="font-mono text-xs text-cyan-400">TG</span>
-                </div>
-                <div>
-                  <p className="font-mono text-sm text-white">{t.contact.info.telegram}</p>
-                </div>
+              <div>
+                <p className="mb-2 text-[12px] tracking-wide text-white/15 uppercase">Telegram</p>
+                <p className="text-[16px] text-white/50">{t.contact.info.telegram}</p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                  <span className="font-mono text-xs text-cyan-400">◎</span>
-                </div>
-                <div>
-                  <p className="font-mono text-sm text-white">{t.contact.info.location}</p>
-                </div>
+              <div>
+                <p className="mb-2 text-[12px] tracking-wide text-white/15 uppercase">Location</p>
+                <p className="text-[16px] text-white/50">{t.contact.info.location}</p>
               </div>
             </div>
           </div>
 
           <form
             onSubmit={handleSubmit}
-            className={`space-y-6 transition-all duration-700 delay-200 ${
-              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            className={`space-y-10 transition-all duration-1000 delay-300 ${
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-wider text-white/40">
+              <label htmlFor="contactName" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.name}
               </label>
               <input
+                id="contactName"
                 type="text"
-                className="w-full rounded-xl border border-white/10 bg-[#111] px-4 py-3 font-mono text-sm text-white placeholder-white/20 outline-none transition-colors focus:border-cyan-400/30"
+                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.name}
               />
             </div>
 
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-wider text-white/40">
+              <label htmlFor="contactEmail" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.email}
               </label>
               <input
+                id="contactEmail"
                 type="email"
-                className="w-full rounded-xl border border-white/10 bg-[#111] px-4 py-3 font-mono text-sm text-white placeholder-white/20 outline-none transition-colors focus:border-cyan-400/30"
+                className="w-full border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.email}
               />
             </div>
 
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-wider text-white/40">
+              <label htmlFor="contactProjectType" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.project_type}
               </label>
-              <select className="w-full appearance-none rounded-xl border border-white/10 bg-[#111] px-4 py-3 font-mono text-sm text-white/60 outline-none transition-colors focus:border-cyan-400/30">
+              <select
+                id="contactProjectType"
+                className="w-full appearance-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white/40 outline-none transition-colors duration-300 focus:border-cyan-400/60 focus:text-cyan-50"
+              >
                 {Object.values(t.contact.form.project_types).map((type) => (
-                  <option key={type} className="bg-[#111]">
+                  <option key={type} className="bg-[#0a0a0a] text-white">
                     {type}
                   </option>
                 ))}
@@ -110,22 +106,26 @@ export default function Contact() {
             </div>
 
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-wider text-white/40">
+              <label htmlFor="contactMessage" className="mb-3 block text-[12px] tracking-wide text-white/15 uppercase">
                 {t.contact.form.message}
               </label>
               <textarea
-                rows={5}
-                className="w-full resize-none rounded-xl border border-white/10 bg-[#111] px-4 py-3 font-mono text-sm text-white placeholder-white/20 outline-none transition-colors focus:border-cyan-400/30"
+                id="contactMessage"
+                rows={4}
+                className="w-full resize-none border-b border-white/[0.06] bg-transparent pb-4 text-[16px] text-white outline-none transition-colors duration-300 placeholder:text-white/10 focus:border-cyan-400/60 focus:text-cyan-50"
                 placeholder={t.contact.form.message}
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-cyan-400 py-4 font-mono text-sm font-medium text-black transition-all hover:bg-cyan-300"
-            >
-              {t.contact.form.send}
-            </button>
+            <div className="pt-6">
+              <button
+                type="submit"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-14 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)] sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
+              >
+                <span className="relative z-10">{t.contact.form.send}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              </button>
+            </div>
           </form>
         </div>
       </div>

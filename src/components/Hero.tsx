@@ -1,78 +1,68 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
 import { useLanguage } from '@/i18n/LanguageContext';
-
-const Scene3D = dynamic(() => import('./Scene3D'), { ssr: false });
 
 export default function Hero() {
   const { t } = useLanguage();
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const els = [titleRef.current, subtitleRef.current];
-    els.forEach((el, i) => {
-      if (!el) return;
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
+    const el = containerRef.current;
+    if (!el) return;
+    const children = el.querySelectorAll('[data-reveal]');
+    children.forEach((child, i) => {
+      const htmlEl = child as HTMLElement;
+      htmlEl.style.opacity = '0';
+      htmlEl.style.transform = 'translateY(40px)';
       setTimeout(() => {
-        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-      }, 300 + i * 200);
+        htmlEl.style.transition = 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)';
+        htmlEl.style.opacity = '1';
+        htmlEl.style.transform = 'translateY(0)';
+      }, 300 + i * 150);
     });
   }, []);
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      <Scene3D />
+    <section className="relative flex min-h-screen items-end overflow-hidden pb-[14vh]">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/[0.03] via-transparent to-violet-500/[0.03]" />
+        <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+      </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-        <div className="mb-6 inline-block rounded-full border border-cyan-400/20 bg-cyan-400/5 px-4 py-1.5">
-          <span className="font-mono text-xs tracking-widest text-cyan-400 uppercase">
-            James Creative Labs
-          </span>
-        </div>
+      <div ref={containerRef} className="relative z-10 mx-auto w-full max-w-[1400px] px-8 lg:px-16">
+        <p data-reveal className="mb-10 text-[12px] tracking-[0.3em] text-white/20 uppercase">
+          James Creative Labs
+        </p>
 
-        <h1 ref={titleRef} className="mb-6">
-          <span className="block font-mono text-5xl font-bold tracking-tight text-white sm:text-7xl lg:text-8xl">
+        <h1 data-reveal className="mb-14 max-w-[900px]">
+          <span className="block text-[clamp(2.8rem,7.5vw,7rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white">
             {t.hero.title_line1}
           </span>
-          <span className="block font-mono text-5xl font-bold tracking-tight text-cyan-400 sm:text-7xl lg:text-8xl">
+          <span className="block text-[clamp(2.8rem,7.5vw,7rem)] font-semibold leading-[0.95] tracking-[-0.03em] text-white/20">
             {t.hero.title_line2}
           </span>
         </h1>
 
-        <p
-          ref={subtitleRef}
-          className="mx-auto mb-10 max-w-2xl font-mono text-sm leading-relaxed text-white/40 sm:text-base"
-        >
+        <p data-reveal className="mb-20 max-w-lg text-[16px] leading-[1.8] text-white/30">
           {t.hero.subtitle}
         </p>
 
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div data-reveal className="flex flex-wrap items-center gap-8">
           <button
             onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative overflow-hidden rounded-full bg-cyan-400 px-8 py-3 font-mono text-sm font-medium text-black transition-all hover:bg-cyan-300"
+            className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-14 py-7 text-[18px] font-semibold text-[#0a0a0a] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(0,240,255,0.2)] sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
           >
-            <span className="relative z-10">{t.hero.cta_works}</span>
+            <span className="relative z-10 whitespace-nowrap">{t.hero.cta_works}</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </button>
           <button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-            className="rounded-full border border-white/10 px-8 py-3 font-mono text-sm text-white/70 transition-all hover:border-cyan-400/30 hover:text-cyan-400"
+            className="inline-flex items-center justify-center rounded-2xl border-2 border-white/20 px-14 py-7 text-[18px] font-semibold text-white/60 transition-all duration-500 hover:scale-[1.02] hover:border-white/40 hover:text-white sm:px-20 sm:py-8 sm:text-[22px] lg:min-w-[280px] lg:px-24 lg:py-9 lg:text-[24px]"
           >
-            {t.hero.cta_contact}
+            <span className="whitespace-nowrap">{t.hero.cta_contact}</span>
           </button>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2">
-        <span className="font-mono text-[10px] tracking-widest text-white/20 uppercase">
-          {t.hero.scroll}
-        </span>
-        <div className="h-8 w-px animate-pulse bg-gradient-to-b from-cyan-400/50 to-transparent" />
       </div>
     </section>
   );
