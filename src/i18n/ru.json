@@ -2,7 +2,11 @@
   "brand": {
     "monogram": "A",
     "name": "Epov Creative Lab's",
-    "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
+    "roles": [
+      "3D Motion Designer",
+      "CG Generalist",
+      "Houdini FX Artist"
+    ]
   },
   "nav": {
     "works": "Работы",
@@ -18,7 +22,7 @@
     "kicker": "Портфолио — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Когда эстетика — не цель, а естественный результат грамотного технического процесса. Houdini, Blender, After Effects, DaVinci Resolve.",
+    "subtitle": "Когда эстетика — не цель, а естественный результат грамотного технического процесса.",
     "cta_works": "Проекты",
     "cta_contact": "Начать проект",
     "scroll": "Листай ниже",
@@ -28,142 +32,316 @@
   "works": {
     "section_label": "Проекты",
     "title": "Проекты",
-    "subtitle": "Подборка проектов: процедурная анимация, продуктовая визуализация, симуляции жидкостей и тканей, инструменты пайплайна.",
+    "subtitle": "",
     "filters": {
       "all": "Все",
       "animation": "Анимация",
       "product_viz": "Визуализация",
       "simulations": "Симуляции",
-      "tools": "Инструменты"
+      "motion_design": "Моушн-дизайн"
     },
     "view_project": "Открыть проект",
     "projects": [
       {
-        "id": "houdini-vellum",
-        "title": "Динамика тканей",
-        "client": "Atelier Nord",
-        "year": "2024",
-        "category": "simulations",
-        "tags": ["Houdini", "Vellum", "Симуляция"],
-        "outputs": ["Режиссура", "Симуляция", "Lookdev", "Композитинг"],
-        "description": "Процедурная симуляция ткани с динамическим ветром и системой столкновений для кампании модного бренда.",
-        "assignment": "Atelier Nord попросили снять фильм, в котором ткань живёт сама по себе — без съёмочной площадки. Задача — перевести характер их ремесла на полностью процедурный язык: осязаемый, но безусловно цифровой.",
-        "solution": "Одежда пересобрана через Vellum-сольвер, поверх лёг ветер, управляемый атрибутным шумом, столкновения настроены под призрачные тела. Lookdev под референсы 1:1, финиш в After Effects с одной мягкой коррекцией.",
-        "context": "60-секундный hero и десять вертикальных нарезок для ритейла. Каждый кадр рендерится из одного источника — направление меняется только камерой.",
-        "collaborators": [
-          { "role": "Режиссура и 3D", "name": "Epov" },
-          { "role": "Звуковой дизайн", "name": "Field Mute" },
-          { "role": "Продюсер", "name": "North Studio" }
+        "id": "cosmos",
+        "title": "Космос. Москва",
+        "client": "Правительство Москвы",
+        "year": "Август 2025",
+        "category": "animation",
+        "cover": "/works/cosmos/cover.jpg",
+        "gallery": [
+          "/works/cosmos/01.mp4",
+          "/works/cosmos/02.mp4"
         ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+        "tags": [
+          "Unreal Engine",
+          "3D",
+          "Городской проект"
+        ],
+        "outputs": [
+          "3D-сцена",
+          "Сборка сцены",
+          "Шейдинг и лайтинг",
+          "Анимация"
+        ],
+        "description": "3D-сцена в Unreal Engine для культурной программы правительства Москвы — для павильона «Космос» в одном из городских парков. Сцена крутится на LED-потолке павильона: посетители запрокидывают голову и смотрят, как над ними плывёт спокойный непрерывный космический ландшафт.",
+        "assignment": "Собрать спокойный, погружающий лупающийся ролик под LED-потолок — достаточно сильный, чтобы прохожий остановился и посмотрел вверх, и при этом мягкий, чтобы держать внимание минутами без шума и видимой повторяемости.",
+        "solution": "Собрано от и до в Unreal Engine: сборка сцены, композиция ассетов, шейдинг, лайтинг и анимация — всё живёт в одном проекте. Реалтайм-рендер ускоряет итерации; луп водится камерой так, чтобы потолочный формат читался под любым углом, с которого посетитель смотрит вверх.",
+        "context": "Сделано для павильона «Космос» в одном из московских парков, лето 2025, в рамках культурной программы города. Роль автора: сборка сцены, ассеты и шейдинг, лайтинг и анимация — саунд-дизайн делался отдельной командой.",
+        "collaborators": [
+          {
+            "role": "Режиссура и 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        },
+        "published_at": "2025-08"
       },
       {
-        "id": "product-render",
-        "title": "Запуск продукта",
-        "client": "Consumer Tech (NDA)",
+        "id": "parfume-simulation",
+        "title": "Парфюм. Симуляция",
+        "client": "Личный проект",
+        "year": "2025",
+        "category": "simulations",
+        "cover": "/works/parfume-simulation/cover.jpg",
+        "gallery": [
+          "/works/parfume-simulation/01.jpg",
+          "/works/parfume-simulation/02.jpg",
+          "/works/parfume-simulation/03.jpg",
+          "/works/parfume-simulation/04.jpg",
+          "/works/parfume-simulation/05.jpg",
+          "/works/parfume-simulation/06.jpg",
+          "/works/parfume-simulation/07.jpg"
+        ],
+        "tags": [
+          "Houdini",
+          "Blender",
+          "Симуляция"
+        ],
+        "outputs": [
+          "Симуляция жидкости",
+          "Моделинг",
+          "Lookdev",
+          "Композ"
+        ],
+        "description": "Продуктовая визуализация флакона парфюма: симуляция потока, отражения на стекле, мягкое студийное освещение.",
+        "assignment": "Сделать так, чтобы статичный флакон смотрелся как живой материал — без съёмки, без реквизита. Картинка должна работать в продуктовом ритейле и в социальных сетях одновременно.",
+        "solution": "Houdini-сольвер для жидкости и брызг, Blender для финального шейдинга и рендера, DaVinci Resolve — для итогового грейда. Один сетап даёт серию ракурсов из одного источника.",
+        "context": "Выложен на Behance в 2025, переиспользован как тестовый стенд для продуктовых лупов в портфолио.",
+        "collaborators": [
+          {
+            "role": "Режиссура и 3D",
+            "name": "Epov"
+          }
+        ],
+        "links": {
+          "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/parfume-simulation/moodboard.jpg",
+          "breakdown": "/works/parfume-simulation/01.jpg",
+          "frame02": "/works/parfume-simulation/04.jpg",
+          "frame03": "/works/parfume-simulation/06.jpg"
+        },
+        "published_at": "2025-04"
+      },
+      {
+        "id": "hoodi-cloth",
+        "title": "Hoodi",
+        "client": "Личный проект",
         "year": "2024",
         "category": "product_viz",
-        "tags": ["Blender", "After Effects", "Композитинг"],
-        "outputs": ["Моделинг", "Lookdev", "Анимация", "Композитинг"],
-        "description": "Продуктовая визуализация уровня keynote: полный пайплайн от моделинга до финального композита.",
-        "assignment": "Бренду нужен был лонч-фильм, который выдержит врезку в живую keynote-съёмку. Геометрия — под макро. Свет — без штампа. Композ — поддерживаемый малой командой.",
-        "solution": "Моделинг в Blender с USD-референсом 1:1 к инженерному CAD. Lookdev на тонкоплёночном/щёточном стеке, общем для всей линейки. Финиш в After Effects в спокойном бродкаст-грейде.",
-        "context": "Использовалось в keynote, hero-цикле продуктовой страницы и глобальной ритейл-навигации. Восемь SKU из одного графа шотов.",
+        "cover": "/works/hoodi-cloth/cover.png",
+        "gallery": [
+          "/works/hoodi-cloth/01.jpg",
+          "/works/hoodi-cloth/02.png",
+          "/works/hoodi-cloth/03.jpg",
+          "/works/hoodi-cloth/04.jpg",
+          "/works/hoodi-cloth/05.jpg",
+          "/works/hoodi-cloth/06.jpg",
+          "/works/hoodi-cloth/07.jpg",
+          "/works/hoodi-cloth/08.jpg",
+          "/works/hoodi-cloth/09.jpg",
+          "/works/hoodi-cloth/10.jpg"
+        ],
+        "tags": [
+          "Blender",
+          "Marvelous Designer",
+          "Cloth"
+        ],
+        "outputs": [
+          "Моделинг одежды",
+          "Симуляция ткани",
+          "Lookdev"
+        ],
+        "description": "3D-визуализация худи с полным моделированием изделия и симуляцией ткани. Работа заменяет фотосессию — характер материала, складки, посадка и свет собираются и рендерятся целиком на CG.",
+        "assignment": "Перевести продуктовое фото худи в чистый CG — материал, складки, посадка. Сохранить читаемый крой и характер ткани при любом приближении.",
+        "solution": "Базовый паттерн собирается в Marvelous Designer и дорабатывается в Blender; симуляция послойная — силуэт остаётся чистым, а мелкие складки и швы — ощутимыми. Лукдев на физических картах ткани.",
+        "context": "Сетап переиспользуется как шаблон для продуктовой графики apparel-брендов — одна сцена, меняются паттерны изделия и карты лукдева.",
         "collaborators": [
-          { "role": "Режиссура и 3D", "name": "Epov" },
-          { "role": "Дизайн", "name": "In-house Brand" },
-          { "role": "Продюсер", "name": "Studio Standard" }
+          {
+            "role": "3D и симуляция",
+            "name": "Epov"
+          }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "particle-systems",
-        "title": "Вселенная частиц",
-        "client": "Northwind Capital",
-        "year": "2023",
-        "category": "animation",
-        "tags": ["Houdini", "Частицы", "Motion Design"],
-        "outputs": ["Режиссура", "Симуляция", "Motion Design"],
-        "description": "Процедурная система частиц — органичная, управляемая данными моушн-графика для бренд-фильма финтеха.",
-        "assignment": "Northwind хотели абстрактное движение, ощущение живого индекса — населённое, спокойное, не случайное. По брифу — никаких прямых отсылок к трейдингу.",
-        "solution": "Один сетап частиц в Houdini управляется атрибутными объёмами и кураторским набором аттракторов. Каждый кадр — та же симуляция, сдвинутая по времени, поэтому монтаж — на таймлайне, а не в сольвере.",
-        "context": "90-секундный мастер плюс библиотека лупов для сценических экранов, соцсетей и сайта. Один сцен-файл отгрузил 4 года кампании.",
-        "collaborators": [
-          { "role": "Режиссура и 3D", "name": "Epov" },
-          { "role": "Бренд", "name": "North & Co." }
+          "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
+        },
+        "experiments": [
+          "/works/hoodi-cloth/experiment.jpg",
+          "/works/hoodi-cloth/ref-motion.jpg"
         ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/hoodi-cloth/moodboard.jpg",
+          "breakdown": "/works/hoodi-cloth/experiment.jpg",
+          "frame02": "/works/hoodi-cloth/01.jpg",
+          "frame03": "/works/hoodi-cloth/05.jpg"
+        },
+        "published_at": "2024-11"
       },
       {
-        "id": "fluid-sim",
-        "title": "Жидкий металл",
-        "client": "Marque Automotive",
-        "year": "2023",
-        "category": "simulations",
-        "tags": ["Houdini", "FLIP", "Рендеринг"],
-        "outputs": ["Симуляция", "Lookdev", "Свет", "Рендер"],
-        "description": "Симуляция металлической жидкости с разработкой шейдеров для рекламы автомобильного бренда.",
-        "assignment": "Автомобиль выходил на рынок, и агентство хотело, чтобы кузов будто отливался из ртути. Картинка должна читаться и на телефоне, и на LED-стене 30 м.",
-        "solution": "FLIP-сим направляется коллайдер-проксями финальной геометрии; натяжение и кривизна управляют тонкоплёночным шейдером по измеренной BRDF. Композ — одной матовой яркостной панелью.",
-        "context": "45-секундный hero и три бренд-идента. Кэш симуляции переиспользован как B-roll для всей линейки.",
-        "collaborators": [
-          { "role": "Режиссура и 3D", "name": "Epov" },
-          { "role": "Агентство", "name": "Studio M" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "trim-tool",
-        "title": "Сборщик трим-текстур",
-        "client": "Внутренний пайплайн",
-        "year": "2024",
-        "category": "tools",
-        "tags": ["Python", "Пайплайн", "Автоматизация"],
-        "outputs": ["R&D", "Пайплайн", "Тулинг"],
-        "description": "Инструмент пайплайна для автоматической сборки трим-атласов — минус 80% ручной работы.",
-        "assignment": "Авторская сборка трим-листов была самой дорогой ручной операцией в архвиз-пайплайне. Бриф — устранить её.",
-        "solution": "Python-сервис принимает исходники, нормализует паддинг и разрешение и отдаёт текстурный сет с метой. Houdini и Blender читают один и тот же JSON — сборщик трогать никому не надо.",
-        "context": "Принят в трёх студиях. Текущая сборка собирает 64-канальные атласы меньше чем за три минуты.",
-        "collaborators": [
-          { "role": "Tooling", "name": "Epov" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "motion-reel",
-        "title": "Годовой Motion Reel",
-        "client": "Epov Creative Lab's",
+        "id": "thyname-animation",
+        "title": "ThyName. Анимация",
+        "client": "ThyName",
         "year": "2024",
         "category": "animation",
-        "tags": ["Blender", "After Effects", "DaVinci Resolve"],
-        "outputs": ["Режиссура", "Монтаж", "Звуковой дизайн"],
-        "description": "Сборник работ за год — полный цикл motion design и CG в 90 секунд.",
-        "assignment": "Сложить год работы в 90 секунд, не потеряв технический почерк каждого проекта — не столько reel, сколько дегустация.",
-        "solution": "Выборки приведены в один спокойный грейд. Звук — медленный пульс, под который каждый кадр читается отдельно. Темп — для просмотра без звука.",
-        "context": "Висит в верху страницы works — единственный авто-плей на сайте. Обновляется раз в год.",
+        "cover": "/works/thyname-animation/cover.png",
+        "gallery": [
+          "/works/thyname-animation/01.jpg",
+          "/works/thyname-animation/02.jpg",
+          "/works/thyname-animation/03.mp4",
+          "/works/thyname-animation/04.jpg",
+          "/works/thyname-animation/05.jpg",
+          "/works/thyname-animation/06.mp4",
+          "/works/thyname-animation/07.jpg",
+          "/works/thyname-animation/08.jpg",
+          "/works/thyname-animation/09.mp4",
+          "/works/thyname-animation/10.jpg",
+          "/works/thyname-animation/11.jpg",
+          "/works/thyname-animation/12.mp4",
+          "/works/thyname-animation/13.png",
+          "/works/thyname-animation/14.png",
+          "/works/thyname-animation/15.mp4",
+          "/works/thyname-animation/16.png",
+          "/works/thyname-animation/17.png",
+          "/works/thyname-animation/18.mp4",
+          "/works/thyname-animation/19.png",
+          "/works/thyname-animation/20.png",
+          "/works/thyname-animation/21.jpg"
+        ],
+        "tags": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ],
+        "outputs": [
+          "3D-анимация",
+          "Процедурная анимация",
+          "Lookdev",
+          "Композ"
+        ],
+        "description": "Короткое анимационное исследование на процедурных сетапах в Houdini и финале в Blender — двенадцать лупящихся моушн-этюдов, где типографика, геометрия и движение работают как единый скульптурный материал.",
+        "assignment": "Собрать персональный анимационный рил, который нагружает процедурный пайплайн — движение, которое масштабируется по лупам, сценам и стилистикам без пересборки риги под каждый кадр.",
+        "solution": "Houdini тянет процедурный риггинг, рост и динамику; Blender отвечает за лукдев и финальный рендер. Каждый шот переиспользует один граф нод с перебором параметров — визуальное разнообразие приходит из данных, не из ручной сборки.",
+        "context": "Опубликовано на Behance как ThyName Animation, 2024. Пайплайн идёт дальше — в процедурную типографику, R&D моушн-графики и клиентские анимационные тесты.",
         "collaborators": [
-          { "role": "Режиссура и монтаж", "name": "Epov" },
-          { "role": "Звуковой дизайн", "name": "Field Mute" }
+          {
+            "role": "Режиссура и 3D",
+            "name": "Epov"
+          }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+          "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/thyname-animation/13.png",
+          "breakdown": "/works/thyname-animation/03.mp4",
+          "frame02": "/works/thyname-animation/06.mp4",
+          "frame03": "/works/thyname-animation/15.mp4"
+        },
+        "published_at": "2024-09"
+      },
+      {
+        "id": "metallplace",
+        "title": "MetallPlace",
+        "client": "MetallPlace",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/metallplace/cover.jpg",
+        "gallery": [
+          "/works/metallplace/01.mp4",
+          "/works/metallplace/02.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Explainer"
+        ],
+        "outputs": [
+          "Бренд-луп",
+          "Лекция-объяснение",
+          "Монтаж и грейд"
+        ],
+        "description": "Две моушн-работы для информационного портала metallplace.ru — короткий бренд-луп для диджитал-тачпоинтов и длинный лекционный кат для внутреннего обучения. Одна визуальная система, очень разная длительность.",
+        "assignment": "Перевести бренд-кит портала в два формата: короткий луп для соцсетей и LED партнёров, и лекционный кат, который объясняет продукт поставщикам и покупателям на MetallConf и внутренних сессиях.",
+        "solution": "Оба ролика живут на одном 2D-наборе в After Effects — палитра, типографическая система, кривые движения. Бренд-луп идёт плотно и ритмично; лекционный кат — дышит, оставляет место под закадровый голос и проводит зрителя через продуктовые фичи портала от первого экрана до последнего.",
+        "context": "Используется в публичных каналах портала, в ключевых деках MetallConf 2023 и на внутреннем продуктовом онбординге для новых поставщиков и покупателей.",
+        "collaborators": [
+          {
+            "role": "Режиссура и 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/metallplace/moodboard-1.jpg",
+          "/works/metallplace/moodboard-3.jpg",
+          "/works/metallplace/moodboard-4.jpg",
+          "/works/metallplace/moodboard-5.jpg",
+          "/works/metallplace/moodboard-6.jpg",
+          "/works/metallplace/moodboard-2.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "breakdown": "/works/metallplace/still-7.jpg",
+          "frame02": "/works/metallplace/still-15.jpg",
+          "frame03": "/works/metallplace/lecture-25.jpg"
+        },
+        "published_at": "2024-06"
+      },
+      {
+        "id": "batara-travel",
+        "title": "Batara Travel",
+        "client": "Batara Travel",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/batara-travel/cover.jpg",
+        "gallery": [
+          "/works/batara-travel/01.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Motion Design"
+        ],
+        "outputs": [
+          "2D-анимация",
+          "Бренд-моушн",
+          "Композ"
+        ],
+        "description": "2D-моушн для туристического агентства — покадровая бренд-история, собранная в After Effects.",
+        "assignment": "Перевести айдентику агентства в короткий лупающийся ролик — чтобы он читался и в социальных лентах, и на LED-экранах партнёров.",
+        "solution": "Лейаут, анимация и финальный грейд живут в After Effects. Ритм спокойный, чтобы типографика и направления оставались главными героями.",
+        "context": "Используется агентством в социальных каналах и в офлайн-презентациях.",
+        "collaborators": [
+          {
+            "role": "Режиссура и 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "simpleBento": true,
+        "published_at": "2024-02"
       }
     ]
   },
@@ -175,32 +353,63 @@
       {
         "number": "01",
         "title": "Процедурная анимация и симуляции",
+        "price": "от 15 000 ₽ / от $200",
         "description": "Сложные симуляции в Houdini и Embergen — Vellum-ткани, FLIP-жидкости, частицы, волюметрика дыма и огня. Каждый эффект арт-директабелен и оптимизирован под продакшн.",
-        "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
+        "tools": [
+          "Houdini",
+          "Vellum",
+          "FLIP",
+          "Particles",
+          "Embergen"
+        ]
       },
       {
         "number": "02",
         "title": "Полный цикл создания роликов",
+        "price": "от 25 000 ₽ / от $400",
         "description": "От концепта и шейдинга в Blender до финального композитинга в After Effects и цветокоррекции в DaVinci Resolve. Сквозная интеграция на каждом этапе.",
-        "tools": ["Blender", "After Effects", "DaVinci Resolve"]
+        "tools": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ]
       },
       {
         "number": "03",
         "title": "Продуктовая визуализация",
+        "price": "от 10 000 ₽ / от $150",
         "description": "Высокотехнологичный контент для продуктовых, упаковочных и техно-брендов. Фотореалистичные кадры, динамичные ревилы и AI-концептинг — точностью.",
-        "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
+        "tools": [
+          "Blender",
+          "Cycles",
+          "Octane",
+          "Nano Banana"
+        ]
       },
       {
         "number": "04",
         "title": "Технические решения и автоматизация",
+        "price": "от 15 000 ₽ / от $200",
         "description": "Кастомные инструменты пайплайна, HDA, скрипты автоматизации и лёгкие веб-утилиты — убираем рутину из 3D-продакшна.",
-        "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Пайплайн"]
+        "tools": [
+          "Python",
+          "JavaScript",
+          "HTML",
+          "CSS",
+          "HDAs",
+          "Пайплайн"
+        ]
       },
       {
         "number": "05",
         "title": "Консультации по 3D-графике и менторство",
+        "price": "от 2 000 ₽/час / от $25/ч",
         "description": "Менторство один-на-один для художников и студий: направление, технические разборы, дорожная карта и фокус роста.",
-        "tools": ["Менторство", "Разборы", "Дорожная карта"]
+        "tools": [
+          "Менторство",
+          "Разборы",
+          "Дорожная карта"
+        ]
       }
     ]
   },
@@ -210,10 +419,18 @@
     "subtitle": "Проверенные в продакшне промпты и скрипты — от продуктовых рендеров до веб-дизайна.",
     "categories": {
       "all": "Все",
+      "product": "Продукт",
       "prompts": "Промпты",
       "scripts": "Скрипты"
     },
     "products": [
+      {
+        "id": "portfolio-site-build",
+        "title": "Сайт-портфолио + CRM-портал",
+        "category": "product",
+        "price": "По запросу",
+        "description": "Editorial-сайт студии и закрытый клиентский портал: пайплайн-стадии, NDA, раунды правок. Сделано на этом же шаблоне."
+      },
       {
         "id": "product-viz-prompts",
         "title": "Промпты для продуктовой визуализации",
@@ -248,62 +465,98 @@
     "approach_label": "Подход",
     "approach_title": "Как я работаю с клиентом",
     "deliverable_label": "На выходе",
+    "understanding_label": "Понимание",
+    "result_label": "Результат",
+    "rounds_note": "На каждом этапе один раунд правок включён в стоимость — кроме финала. Каждый следующий раунд работы оплачиваемый.",
     "approach_steps": [
       {
         "number": "01",
         "title": "Discovery",
         "description": "Созвон-знакомство: цели, задачи, аудитория, бюджет и сроки.",
-        "deliverable": "Письменный бриф: цели, аудитория, объём, бюджет и сроки — с ним уже можно действовать."
+        "deliverable": "Письменный бриф: цели, аудитория, объём, бюджет и сроки — с ним уже можно действовать.",
+        "mutual_pct": 50,
+        "result_pct": 20
       },
       {
         "number": "02",
         "title": "Мудборд и референсы",
         "description": "Визуальный ресёрч и нейроматик. Фиксируем настроение до любой анимации.",
-        "deliverable": "Утверждённый мудборд с референс-кадрами, в которых будет жить фильм."
+        "deliverable": "Утверждённый мудборд с референс-кадрами, в которых будет жить фильм.",
+        "mutual_pct": 60,
+        "result_pct": 30
       },
       {
         "number": "03",
         "title": "Аниматик",
         "description": "Монтаж в черновике — тайминги, ритм, камера. Согласуем cut до lookdev'а.",
-        "deliverable": "Согласованный cut: тайминги, ритм и камера зафиксированы до дорогого lookdev'а."
+        "deliverable": "Согласованный cut: тайминги, ритм и камера зафиксированы до дорогого lookdev'а.",
+        "mutual_pct": 70,
+        "result_pct": 50
       },
       {
         "number": "04",
         "title": "Lookdev и свет",
         "description": "Шейдинг, свет, эффекты и превью-рендеры с композом — на согласование.",
-        "deliverable": "Превью-рендеры с композом — видно, как каждый кадр будет читаться на финале."
+        "deliverable": "Превью-рендеры с композом — видно, как каждый кадр будет читаться на финале.",
+        "mutual_pct": 90,
+        "result_pct": 80
       },
       {
         "number": "05",
         "title": "Финальный рендер",
         "description": "Финал: мастер с грейдом + нарезки под каждую платформу. Проект задокументирован.",
-        "deliverable": "Мастер с грейдом + нарезки под каждую платформу, все исходники задокументированы."
+        "deliverable": "Мастер с грейдом + нарезки под каждую платформу, все исходники задокументированы.",
+        "mutual_pct": 100,
+        "result_pct": 100
       }
     ],
     "toolkit_label": "Инструменты",
-    "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
+    "tools": [
+      "Houdini",
+      "Blender",
+      "Unreal Engine",
+      "Embergen",
+      "Cycles",
+      "Octane",
+      "After Effects",
+      "DaVinci Resolve",
+      "Photoshop",
+      "Illustrator",
+      "Figma",
+      "Cavalry",
+      "Python",
+      "Nano Banana",
+      "Higgsfield",
+      "Veo",
+      "Gemini"
+    ]
   },
   "contact": {
     "section_label": "Контакт",
     "title": "Поработаем вместе",
-    "subtitle": "Есть проект? Давайте обсудим — режиссура, симуляция или полный продакшн.",
+    "subtitle": "Есть идея. Давайте обсудим. Всё просчитаем и сделаем этот мир прекраснее.",
     "form": {
       "name": "Имя",
       "email": "Email",
-      "project_type": "Тип проекта",
+      "project_type": "Тип идеи",
       "project_types": {
-        "services": "Проектные услуги",
-        "strategic": "Стратегический дизайн",
+        "services": "Проект",
         "consultation": "Консультация",
+        "strategic": "Стратегический дизайн",
         "other": "Другое"
       },
-      "message": "Расскажите о проекте",
-      "send": "Отправить"
+      "message": "Расскажите о идее",
+      "send": "Отправить",
+      "sending": "Отправляем…",
+      "sent": "Отправлено",
+      "error": "Что-то пошло не так",
+      "rate_limited": "Уже отправляли — попробуйте позже",
+      "validation": "Заполните, пожалуйста, все поля"
     },
     "info": {
-      "email": "placeholder@example.com",
-      "telegram": "@placeholder_handle",
-      "location": "Город уточняется"
+      "email": "cggeneralistandrey@gmail.com",
+      "telegram": "@aepov_2kzz",
+      "location": "Москва, проспект 60-летия Октября, 11"
     }
   },
   "project": {
@@ -311,6 +564,9 @@
     "assignment_label": "Задача",
     "solution_label": "Решение и процесс",
     "context_label": "Контекст",
+    "moodboard_label": "Мудборд",
+    "experiments_label": "Эксперименты",
+    "gallery_label": "Галерея",
     "collaborators_label": "Команда",
     "back_to_works": "Все проекты",
     "next_project": "Следующий проект"

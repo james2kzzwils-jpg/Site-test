@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import AmbientParticles, { type HighlightRect } from './AmbientParticles';
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -59,6 +60,7 @@ function FilterPill({
 export default function Works() {
   const { t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [highlight, setHighlight] = useState<HighlightRect | null>(null);
   const { ref, shown } = useReveal<HTMLElement>();
 
   const total = t.works.projects.length;
@@ -80,13 +82,32 @@ export default function Works() {
     [t.works.projects, activeFilter]
   );
 
+  // Translate a hovered card's viewport-relative rect into coordinates
+  // local to the section, so the AmbientParticles canvas (which is
+  // pinned to the section) can pull particles toward it.
+  const handleCardEnter = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    const section = ref.current;
+    if (!section) return;
+    const tr = target.getBoundingClientRect();
+    const sr = section.getBoundingClientRect();
+    setHighlight({
+      x: tr.left - sr.left,
+      y: tr.top - sr.top,
+      w: tr.width,
+      h: tr.height,
+    });
+  };
+  const handleCardLeave = () => setHighlight(null);
+
   return (
     <section
       id="works"
       ref={ref}
       className="relative py-32 lg:py-44"
     >
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+      <AmbientParticles highlight={highlight} count={260} seed={101} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         {/* Section header */}
         <div
           className={`mb-16 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${
@@ -100,9 +121,11 @@ export default function Works() {
             <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
               {t.works.title}
             </h2>
-            <p className="mt-7 max-w-md text-[15px] leading-[1.7] text-[var(--foreground)]/45">
-              {t.works.subtitle}
-            </p>
+            {t.works.subtitle && (
+              <p className="mt-7 max-w-md text-[15px] leading-[1.7] text-[var(--foreground)]/45">
+                {t.works.subtitle}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
@@ -139,12 +162,14 @@ export default function Works() {
                   shown ? 'reveal is-in' : 'reveal'
                 }`}
                 style={{ transitionDelay: `${120 + i * 90}ms` }}
+                onMouseEnter={handleCardEnter}
+                onMouseLeave={handleCardLeave}
                 data-cursor="view"
                 data-cursor-label={t.works.view_project}
               >
-                {/* Hover preview — soft placeholder render fading in from
-                    the right at ~20% opacity. Replace with real cover art
-                    by populating project.cover later. */}
+                {/* Hover preview — shows the project cover at low opacity
+                    fading in from the right. We mask the left edge so the
+                    project title stays legible on top of the imagery. */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] opacity-0 transition-opacity duration-500 group-hover:opacity-100 lg:block"
@@ -156,16 +181,41 @@ export default function Works() {
                   }}
                 >
                   <div className="relative h-full w-full overflow-hidden bg-[var(--foreground)]/[0.02]">
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 opacity-30"
-                      style={{
-                        backgroundImage:
-                          'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
-                        backgroundSize: '48px 48px',
-                      }}
-                    />
-                    <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.18]">
+                    {project.cover ? (
+                      // Plain <img> rather than next/image: the parent
+                      // size is animated and small (right half of a row),
+                      // so next/image's optimisation cost outweighs the
+                      // bandwidth saved here.
+                      //
+                      // Metallplace's cover is a portrait composition
+                      // where the laptop sits in the upper third, so
+                      // we anchor that one near the top instead of the
+                      // default vertical centre — otherwise the
+                      // visible crop on the hover preview hides the
+                      // recognisable "MetallPlace.ru" portal frame.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={project.cover}
+                        alt=""
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover opacity-65"
+                        style={{
+                          objectPosition:
+                            project.id === 'metallplace' ? 'center 22%' : undefined,
+                        }}
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 opacity-30"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
+                          backgroundSize: '48px 48px',
+                        }}
+                      />
+                    )}
+                    <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.22] mix-blend-screen">
                       {idx}
                     </span>
                     <span className="absolute bottom-3 left-6 font-mono text-[9px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">

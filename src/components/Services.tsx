@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
+import AmbientParticles, { type HighlightRect } from './AmbientParticles';
 
 // Each clip is paired with its service by item number. Videos live in
 // /public/services and are H.264 yuv420p with no audio, ~720p, ≈1-2MB each.
@@ -18,15 +19,22 @@ function ServiceRow({
   service,
   index,
   isVisible,
+  onHover,
 }: {
-  service: { number: string; title: string; description: string; tools: string[] };
+  service: { number: string; title: string; description: string; tools: string[]; price?: string };
   index: number;
   isVisible: boolean;
+  onHover?: (el: HTMLElement | null) => void;
 }) {
-  const [open, setOpen] = useState(index === 0);
+  const rowRef = useRef<HTMLDivElement>(null);
+  // Every row starts collapsed — the hover preview alone is enough of an
+  // invitation to click through.
+  const [open, setOpen] = useState(false);
   // We mount the <video> the first time the panel opens and leave it
   // mounted afterwards so re-opening is instant.
-  const [hasOpened, setHasOpened] = useState(index === 0);
+  const [hasOpened, setHasOpened] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const previewRef = useRef<HTMLVideoElement>(null);
 
   const handleToggle = useCallback(() => {
     setOpen((prev) => {
@@ -38,29 +46,98 @@ function ServiceRow({
 
   const videoSrc = SERVICE_VIDEOS[service.number];
 
+  // Hover preview: only play while the row is collapsed AND the pointer
+  // is inside it. When the row is opened the full video below takes
+  // over, so we hide the preview to avoid duplicate playback.
+  const showPreview = hovering && !open && Boolean(videoSrc);
+
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    if (showPreview) {
+      el.play().catch(() => {
+        /* autoplay blocked — ignore */
+      });
+    } else {
+      el.pause();
+    }
+  }, [showPreview]);
+
   return (
     <div
+      ref={rowRef}
       className={`group transition-all duration-1000 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       }`}
       style={{ transitionDelay: `${200 + index * 110}ms` }}
+      onMouseEnter={() => {
+        setHovering(true);
+        onHover?.(rowRef.current);
+      }}
+      onMouseLeave={() => {
+        setHovering(false);
+        onHover?.(null);
+      }}
     >
       <button
         onClick={handleToggle}
-        className="flex w-full items-center gap-6 border-t border-[var(--hairline)] py-9 text-left lg:gap-14 lg:py-11"
+        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 text-left lg:gap-14 lg:py-11"
         data-cursor="hover"
       >
-        <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+        {/* Hover-only video preview — sits behind the title at ~50%
+            opacity. Hidden when the row is expanded. Right side only
+            so the title stays legible. */}
+        {videoSrc ? (
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block ${
+              showPreview ? 'opacity-50' : 'opacity-0'
+            } transition-opacity duration-500`}
+          >
+            <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_100%)]">
+              <video
+                ref={previewRef}
+                className="h-full w-full object-cover"
+                src={videoSrc}
+                style={{
+                  // The Product-Viz preview is a tall hoodie composition —
+                  // the figure sits in the upper half of the frame, so we
+                  // anchor it near the top instead of centering, otherwise
+                  // the cropped row hides the actual product. ~20px-equivalent
+                  // shift via `object-position` percentage.
+                  objectPosition:
+                    service.number === '03' ? 'center 28%' : undefined,
+                }}
+                muted
+                loop
+                playsInline
+                preload="none"
+              />
+            </span>
+            <span className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-transparent to-transparent" />
+          </span>
+        ) : null}
+
+        <span className="relative shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
           <span className="text-[var(--accent)]">({service.number})</span>
         </span>
 
-        <h3 className="flex-1 font-display text-[clamp(1.3rem,2.6vw,2rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 group-hover:text-[var(--foreground)]">
+        <h3 className="relative flex-1 font-display text-[clamp(1.3rem,2.6vw,2rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 group-hover:text-[var(--foreground)]">
           {service.title}
         </h3>
 
+        {/* Indicative starting price — shown when the row provides one.
+            Sits between the title and the toggle so it's the first
+            thing the visitor reads next to the service name. */}
+        {service.price ? (
+          <span className="relative hidden shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 group-hover:text-[var(--accent)] md:inline-block">
+            {service.price}
+          </span>
+        ) : null}
+
         <span
           aria-hidden="true"
-          className={`shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
+          className={`relative shrink-0 font-mono text-[18px] transition-[transform,color] duration-500 ${
             open ? 'rotate-45 text-[var(--accent)]' : 'text-[var(--foreground)]/35'
           }`}
         >
@@ -78,6 +155,15 @@ function ServiceRow({
             <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
               {service.description}
             </p>
+            {/* Price echo inside the expanded panel — needed because the
+                inline pill on the title row is hidden on mobile widths,
+                and we still want a clear "from N ₽ / from $M" anchor on
+                small screens. */}
+            {service.price ? (
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--accent)] md:hidden">
+                {service.price}
+              </p>
+            ) : null}
             <div className="flex flex-wrap items-start gap-2">
               {service.tools.map((tool) => (
                 <span
@@ -124,6 +210,7 @@ export default function Services() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
+  const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -136,9 +223,28 @@ export default function Services() {
     return () => obs.disconnect();
   }, []);
 
+  // Translate a hovered row's DOM rect into section-local coordinates
+  // so the AmbientParticles canvas (which is pinned to the section)
+  // can brighten particles in the row's neighbourhood.
+  const handleRowHover = (el: HTMLElement | null) => {
+    if (!el || !sectionRef.current) {
+      setHighlight(null);
+      return;
+    }
+    const tr = el.getBoundingClientRect();
+    const sr = sectionRef.current.getBoundingClientRect();
+    setHighlight({
+      x: tr.left - sr.left,
+      y: tr.top - sr.top,
+      w: tr.width,
+      h: tr.height,
+    });
+  };
+
   return (
-    <section id="services" ref={sectionRef} className="py-32 lg:py-44">
-      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+    <section id="services" ref={sectionRef} className="relative py-32 lg:py-44">
+      <AmbientParticles highlight={highlight} count={220} seed={202} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           className={`mb-20 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${
             shown ? 'reveal is-in' : 'reveal'
@@ -164,6 +270,7 @@ export default function Services() {
               service={service}
               index={i}
               isVisible={shown}
+              onHover={handleRowHover}
             />
           ))}
           <div className="border-t border-[var(--hairline)]" />

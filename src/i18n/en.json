@@ -2,7 +2,11 @@
   "brand": {
     "monogram": "A",
     "name": "Epov Creative Lab's",
-    "roles": ["3D Motion Designer", "CG Generalist", "Houdini FX Artist"]
+    "roles": [
+      "3D Motion Designer",
+      "CG Generalist",
+      "Houdini FX Artist"
+    ]
   },
   "nav": {
     "works": "Works",
@@ -18,7 +22,7 @@
     "kicker": "Portfolio — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process — built in Houdini, Blender, After Effects and DaVinci Resolve.",
+    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process.",
     "cta_works": "Projects",
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
@@ -28,142 +32,316 @@
   "works": {
     "section_label": "Projects",
     "title": "Projects",
-    "subtitle": "A curated index of procedural animation, product visualization, fluid and cloth simulations, and pipeline tools.",
+    "subtitle": "",
     "filters": {
       "all": "All",
       "animation": "Animation",
       "product_viz": "Product Viz",
       "simulations": "Simulations",
-      "tools": "Tools"
+      "motion_design": "Motion Design"
     },
     "view_project": "View Project",
     "projects": [
       {
-        "id": "houdini-vellum",
-        "title": "Fabric Dynamics",
-        "client": "Atelier Nord",
-        "year": "2024",
-        "category": "simulations",
-        "tags": ["Houdini", "Vellum", "Simulation"],
-        "outputs": ["Direction", "Simulation", "Lookdev", "Compositing"],
-        "description": "Procedural cloth simulation with dynamic wind forces and collision systems for a fashion brand campaign.",
-        "assignment": "Atelier Nord asked for a film that captured fabric in motion without cinematography on set. The brief was to translate the soul of their craft into a fully procedural language — touchable, but unmistakably digital.",
-        "solution": "We rebuilt the garment as a Vellum cloth solver, layered wind forces driven by attribute noise, and trained the collision passes to behave like ghosted bodies. Lookdev was matched 1:1 to studio reference, and the comp finished in After Effects with a single soft grade.",
-        "context": "Delivered as a 60-second hero film and ten 9:16 cutdowns for retail screens. Every shot is rendered from the same source — direction shifts only happen at the camera level.",
-        "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Sound Design", "name": "Field Mute" },
-          { "role": "Producer", "name": "North Studio" }
+        "id": "cosmos",
+        "title": "Cosmos. Moscow",
+        "client": "Moscow Government",
+        "year": "August 2025",
+        "category": "animation",
+        "cover": "/works/cosmos/cover.jpg",
+        "gallery": [
+          "/works/cosmos/01.mp4",
+          "/works/cosmos/02.mp4"
         ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+        "tags": [
+          "Unreal Engine",
+          "3D",
+          "Public space"
+        ],
+        "outputs": [
+          "3D scene",
+          "Scene assembly",
+          "Shading & lighting",
+          "Animation"
+        ],
+        "description": "A 3D Unreal Engine scene built for the City of Moscow's cultural programme — specifically the Cosmos pavilion in one of the city parks. The piece plays on the pavilion's LED ceiling: visitors tilt their heads back and watch space drift overhead in a continuous, calm loop.",
+        "assignment": "Build a calm, immersive looping piece for an overhead LED ceiling — strong enough to pull a passer-by into stopping and looking up, soft enough to sustain attention for minutes without becoming noisy or repetitive.",
+        "solution": "Built end-to-end in Unreal Engine: scene assembly, asset composition, shading, lighting, and animation all live in the same project file. Real-time rendering keeps iteration fast; the loop is camera-driven so the ceiling format reads naturally even when visitors look up from any angle.",
+        "context": "Made for the Cosmos pavilion at a Moscow city park, summer 2025, as part of the city's cultural programme. Authored role: scene assembly, asset and shading work, lighting, and animation — sound design was handled separately.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/cosmos/moodboard.jpg",
+          "/works/cosmos/process-1.jpg",
+          "/works/cosmos/process-3.jpg",
+          "/works/cosmos/process-5.jpg",
+          "/works/cosmos/process-2.jpg",
+          "/works/cosmos/process-4.jpg",
+          "/works/cosmos/process-6.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/cosmos/moodboard.jpg",
+          "breakdown": "/works/cosmos/process-1.jpg",
+          "frame02": "/works/cosmos/process-3.jpg",
+          "frame03": "/works/cosmos/process-5.jpg"
+        },
+        "published_at": "2025-08"
       },
       {
-        "id": "product-render",
-        "title": "Tech Product Launch",
-        "client": "Confidential — Consumer Tech",
+        "id": "parfume-simulation",
+        "title": "Parfume. Simulation",
+        "client": "Personal",
+        "year": "2025",
+        "category": "simulations",
+        "cover": "/works/parfume-simulation/cover.jpg",
+        "gallery": [
+          "/works/parfume-simulation/01.jpg",
+          "/works/parfume-simulation/02.jpg",
+          "/works/parfume-simulation/03.jpg",
+          "/works/parfume-simulation/04.jpg",
+          "/works/parfume-simulation/05.jpg",
+          "/works/parfume-simulation/06.jpg",
+          "/works/parfume-simulation/07.jpg"
+        ],
+        "tags": [
+          "Houdini",
+          "Blender",
+          "Simulation"
+        ],
+        "outputs": [
+          "Fluid simulation",
+          "Modeling",
+          "Lookdev",
+          "Compositing"
+        ],
+        "description": "Product visualization of a perfume bottle — flow simulation, glass reflections, soft studio light.",
+        "assignment": "Make a static bottle feel like a living material — without a shoot, without props. The image had to read in product retail and in social feeds at the same time.",
+        "solution": "Houdini solver handles fluid and splash, Blender finishes shading and rendering, DaVinci Resolve carries the grade. One setup delivers a series of angles from a single source.",
+        "context": "Published on Behance in 2025 — reused as a testbed for product-loop renders in the portfolio.",
+        "collaborators": [
+          {
+            "role": "Direction & 3D",
+            "name": "Epov"
+          }
+        ],
+        "links": {
+          "behance": "https://www.behance.net/gallery/220247091/3D-product-visualization-Parfume-Simulation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/parfume-simulation/moodboard.jpg",
+          "breakdown": "/works/parfume-simulation/01.jpg",
+          "frame02": "/works/parfume-simulation/04.jpg",
+          "frame03": "/works/parfume-simulation/06.jpg"
+        },
+        "published_at": "2025-04"
+      },
+      {
+        "id": "hoodi-cloth",
+        "title": "Hoodi",
+        "client": "Personal",
         "year": "2024",
         "category": "product_viz",
-        "tags": ["Blender", "After Effects", "Compositing"],
-        "outputs": ["Modeling", "Lookdev", "Animation", "Compositing"],
-        "description": "High-end product visualization for a consumer electronics launch. Full pipeline from modeling to final composite.",
-        "assignment": "A consumer tech brand needed a launch film that would survive being intercut with live keynote footage. Build geometry tight enough for macro shots, light it without studio cliché, and finish in a comp pipeline a small team could maintain.",
-        "solution": "Modeling was authored in Blender with USD references kept identical to the engineering CAD. Lookdev used a thin-film and brushed-metal stack reused across the SKU family. Compositing in After Effects wrapped everything in a calm, broadcast-safe grade.",
-        "context": "Used in launch keynote, product page hero loop, and global retail signage. Eight SKUs delivered from a single shot graph.",
+        "cover": "/works/hoodi-cloth/cover.png",
+        "gallery": [
+          "/works/hoodi-cloth/01.jpg",
+          "/works/hoodi-cloth/02.png",
+          "/works/hoodi-cloth/03.jpg",
+          "/works/hoodi-cloth/04.jpg",
+          "/works/hoodi-cloth/05.jpg",
+          "/works/hoodi-cloth/06.jpg",
+          "/works/hoodi-cloth/07.jpg",
+          "/works/hoodi-cloth/08.jpg",
+          "/works/hoodi-cloth/09.jpg",
+          "/works/hoodi-cloth/10.jpg"
+        ],
+        "tags": [
+          "Blender",
+          "Marvelous Designer",
+          "Cloth"
+        ],
+        "outputs": [
+          "Garment modeling",
+          "Cloth simulation",
+          "Lookdev"
+        ],
+        "description": "3D product visualization of a hoodie with full garment modeling and cloth simulation. The piece replaces a photo shoot — fabric character, folds, fit, and lighting are all built and rendered in CG.",
+        "assignment": "Translate a hoodie product photo into pure CG — material, folds, fit. Keep the cut recognisable and the fabric character intact at any zoom.",
+        "solution": "Base pattern is built in Marvelous Designer and groomed in Blender; the simulation is layered so the silhouette stays clean while micro-folds and seams stay tangible. Physically-based fabric maps drive the lookdev.",
+        "context": "The setup is reused as a template for product graphics for apparel brands — same scene, swap garment patterns and lookdev maps.",
         "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Design", "name": "In-house Brand" },
-          { "role": "Producer", "name": "Studio Standard" }
+          {
+            "role": "3D & Simulation",
+            "name": "Epov"
+          }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "particle-systems",
-        "title": "Particle Universe",
-        "client": "Northwind Capital",
-        "year": "2023",
-        "category": "animation",
-        "tags": ["Houdini", "Particles", "Motion Design"],
-        "outputs": ["Direction", "Simulation", "Motion Design"],
-        "description": "Procedural particle system creating organic, data-driven motion graphics for a fintech brand film.",
-        "assignment": "Northwind wanted abstract motion that felt like a living index — populated, calm, never random. The brief explicitly avoided any literal interpretation of trading or markets.",
-        "solution": "We built a single Houdini particle setup driven by attribute volumes and a hand-curated set of attractors. Each frame is the same simulation, time-shifted, so editing was done in the timeline instead of in solver space.",
-        "context": "Delivered as a 90-second master plus a library of loops for stage screens, social, and the brand site. The same scene file shipped four years of campaign assets.",
-        "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Brand", "name": "North & Co." }
+          "behance": "https://www.behance.net/gallery/207049177/3D-product-visualization-Hoodi-Cloth"
+        },
+        "experiments": [
+          "/works/hoodi-cloth/experiment.jpg",
+          "/works/hoodi-cloth/ref-motion.jpg"
         ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/hoodi-cloth/moodboard.jpg",
+          "breakdown": "/works/hoodi-cloth/experiment.jpg",
+          "frame02": "/works/hoodi-cloth/01.jpg",
+          "frame03": "/works/hoodi-cloth/05.jpg"
+        },
+        "published_at": "2024-11"
       },
       {
-        "id": "fluid-sim",
-        "title": "Liquid Metal",
-        "client": "Marque Automotive",
-        "year": "2023",
-        "category": "simulations",
-        "tags": ["Houdini", "FLIP", "Rendering"],
-        "outputs": ["Simulation", "Lookdev", "Lighting", "Rendering"],
-        "description": "Metallic fluid simulation with custom shader development for an automotive brand commercial.",
-        "assignment": "A new vehicle was inbound and the agency wanted the body to feel as if it cast itself out of mercury. The work had to read on a phone and on a 30-metre LED wall.",
-        "solution": "FLIP simulation was directed via collision proxies of the final geometry; surface tension and curvature drove a thin-film shader baked from a measured BRDF. Renders were composited with a single matte luminance pass.",
-        "context": "A 45-second hero spot and three brand idents. The simulation cache was reused as B-roll for the entire model line.",
-        "collaborators": [
-          { "role": "Direction & 3D", "name": "Epov" },
-          { "role": "Agency", "name": "Studio M" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "trim-tool",
-        "title": "Trim Texture Assembler",
-        "client": "Internal Tooling",
-        "year": "2024",
-        "category": "tools",
-        "tags": ["Python", "Pipeline", "Automation"],
-        "outputs": ["R&D", "Pipeline", "Tooling"],
-        "description": "Pipeline tool for automated trim texture assembly, reducing manual atlas work by 80%.",
-        "assignment": "Trim sheet authoring was the largest manual cost in a recurring archviz pipeline. The brief was to make it disappear.",
-        "solution": "A Python service ingests source artwork, normalises padding and resolution, and emits a texture set with metadata. Houdini and Blender both consume the same JSON, which means downstream artists never touch the assembler.",
-        "context": "Adopted across three studios. The current build assembles 64-channel atlases in under three minutes.",
-        "collaborators": [
-          { "role": "Tooling", "name": "Epov" }
-        ],
-        "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
-      },
-      {
-        "id": "motion-reel",
-        "title": "Annual Motion Reel",
-        "client": "Epov Creative Lab's",
+        "id": "thyname-animation",
+        "title": "ThyName. Animation",
+        "client": "ThyName",
         "year": "2024",
         "category": "animation",
-        "tags": ["Blender", "After Effects", "DaVinci Resolve"],
-        "outputs": ["Direction", "Editorial", "Sound Design"],
-        "description": "Compilation reel demonstrating a full production cycle across motion design and CG.",
-        "assignment": "Cut a year of work into 90 seconds without losing the technical signature of each project — the brief was less a reel and more a tasting menu.",
-        "solution": "Selections were graded into a single calm look. Sound design was built around a slow pulse that lets each shot read on its own. Edit was paced for muted playback.",
-        "context": "Lives at the top of the works page and is the only piece on the site that auto-plays. Updated annually.",
+        "cover": "/works/thyname-animation/cover.png",
+        "gallery": [
+          "/works/thyname-animation/01.jpg",
+          "/works/thyname-animation/02.jpg",
+          "/works/thyname-animation/03.mp4",
+          "/works/thyname-animation/04.jpg",
+          "/works/thyname-animation/05.jpg",
+          "/works/thyname-animation/06.mp4",
+          "/works/thyname-animation/07.jpg",
+          "/works/thyname-animation/08.jpg",
+          "/works/thyname-animation/09.mp4",
+          "/works/thyname-animation/10.jpg",
+          "/works/thyname-animation/11.jpg",
+          "/works/thyname-animation/12.mp4",
+          "/works/thyname-animation/13.png",
+          "/works/thyname-animation/14.png",
+          "/works/thyname-animation/15.mp4",
+          "/works/thyname-animation/16.png",
+          "/works/thyname-animation/17.png",
+          "/works/thyname-animation/18.mp4",
+          "/works/thyname-animation/19.png",
+          "/works/thyname-animation/20.png",
+          "/works/thyname-animation/21.jpg"
+        ],
+        "tags": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ],
+        "outputs": [
+          "3D animation",
+          "Procedural animation",
+          "Lookdev",
+          "Compositing"
+        ],
+        "description": "A short animated study built around procedural setups in Houdini and finished in Blender — twelve looping motion vignettes that treat type, geometry, and motion as a single sculpting material.",
+        "assignment": "Build a personal animation reel that stress-tests a procedural pipeline — motion that can scale across loops, scenes, and stylistic registers without rebuilding the rig every time.",
+        "solution": "Houdini drives the procedural rigging, growth, and dynamics; Blender carries lookdev and final render. Each shot reuses the same node graph with parameter overrides — the visual variety comes from data, not from manual scene work.",
+        "context": "Published on Behance as ThyName Animation, 2024. The pipeline rolls forward into procedural type, motion-graphics R&D, and client-facing animation tests.",
         "collaborators": [
-          { "role": "Direction & Edit", "name": "Epov" },
-          { "role": "Sound Design", "name": "Field Mute" }
+          {
+            "role": "Direction & 3D",
+            "name": "Epov"
+          }
         ],
         "links": {
-          "behance": "#",
-          "artstation": "#"
-        }
+          "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/thyname-animation/13.png",
+          "breakdown": "/works/thyname-animation/03.mp4",
+          "frame02": "/works/thyname-animation/06.mp4",
+          "frame03": "/works/thyname-animation/15.mp4"
+        },
+        "published_at": "2024-09"
+      },
+      {
+        "id": "metallplace",
+        "title": "MetallPlace",
+        "client": "MetallPlace",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/metallplace/cover.jpg",
+        "gallery": [
+          "/works/metallplace/01.mp4",
+          "/works/metallplace/02.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Explainer"
+        ],
+        "outputs": [
+          "Looping brand mark",
+          "Lecture explainer",
+          "Edit & grade"
+        ],
+        "description": "Two motion pieces for the metallplace.ru information portal — a tight brand loop for digital touchpoints and a long-form lecture cut for internal education. One visual system, two very different runtimes.",
+        "assignment": "Translate the portal's brand kit into two formats: a short loop that lives on social and partner LED screens, and a lecture cut that explains the product to suppliers and buyers at MetallConf and internal sessions.",
+        "solution": "Both pieces share the same 2D toolkit in After Effects — palette, typographic system, motion curves. The brand loop runs tight and rhythmic; the lecture cut breathes, leaves room for voiceover, and threads through the portal's product features end-to-end.",
+        "context": "Used in the portal's public channels, in MetallConf 2023 keynote decks, and in internal product onboarding for new suppliers and buyers.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "moodboard": [
+          "/works/metallplace/moodboard-1.jpg",
+          "/works/metallplace/moodboard-3.jpg",
+          "/works/metallplace/moodboard-4.jpg",
+          "/works/metallplace/moodboard-5.jpg",
+          "/works/metallplace/moodboard-6.jpg",
+          "/works/metallplace/moodboard-2.jpg"
+        ],
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "breakdown": "/works/metallplace/still-7.jpg",
+          "frame02": "/works/metallplace/still-15.jpg",
+          "frame03": "/works/metallplace/lecture-25.jpg"
+        },
+        "published_at": "2024-06"
+      },
+      {
+        "id": "batara-travel",
+        "title": "Batara Travel",
+        "client": "Batara Travel",
+        "year": "2024",
+        "category": "motion_design",
+        "cover": "/works/batara-travel/cover.jpg",
+        "gallery": [
+          "/works/batara-travel/01.mp4"
+        ],
+        "tags": [
+          "After Effects",
+          "2D",
+          "Motion Design"
+        ],
+        "outputs": [
+          "2D animation",
+          "Brand motion",
+          "Compositing"
+        ],
+        "description": "2D motion design for a travel agency — frame-by-frame brand storytelling assembled in After Effects.",
+        "assignment": "Translate the agency's identity into a short looping spot that reads on social feeds and on partner LED screens.",
+        "solution": "Layout, animation and final grade live in After Effects. The cut keeps a calm rhythm so the type and the destinations remain the lead actors.",
+        "context": "Used by the agency in social channels and inside their offline presentations.",
+        "collaborators": [
+          {
+            "role": "Direction & 2D",
+            "name": "Epov"
+          }
+        ],
+        "links": {},
+        "simpleBento": true,
+        "published_at": "2024-02"
       }
     ]
   },
@@ -175,32 +353,63 @@
       {
         "number": "01",
         "title": "Procedural Animation & Simulations",
+        "price": "from 15,000 ₽ / from $200",
         "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
-        "tools": ["Houdini", "Vellum", "FLIP", "Particles", "Embergen"]
+        "tools": [
+          "Houdini",
+          "Vellum",
+          "FLIP",
+          "Particles",
+          "Embergen"
+        ]
       },
       {
         "number": "02",
         "title": "Full Production Cycle",
+        "price": "from 25,000 ₽ / from $400",
         "description": "From concept and shading in Blender to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
-        "tools": ["Blender", "After Effects", "DaVinci Resolve"]
+        "tools": [
+          "Blender",
+          "After Effects",
+          "DaVinci Resolve"
+        ]
       },
       {
         "number": "03",
         "title": "Product Visualization",
+        "price": "from 10,000 ₽ / from $150",
         "description": "High-end content for product, packaging, and tech brands. Photorealistic stills, dynamic reveals, and AI-assisted concepting that communicate value through visual precision.",
-        "tools": ["Blender", "Cycles", "Octane", "Nano Banana"]
+        "tools": [
+          "Blender",
+          "Cycles",
+          "Octane",
+          "Nano Banana"
+        ]
       },
       {
         "number": "04",
         "title": "Technical Solutions & Automation",
+        "price": "from 15,000 ₽ / from $200",
         "description": "Custom pipeline tools, HDA development, automation scripts and lightweight web utilities that remove repetitive work from 3D production.",
-        "tools": ["Python", "JavaScript", "HTML", "CSS", "HDAs", "Pipeline"]
+        "tools": [
+          "Python",
+          "JavaScript",
+          "HTML",
+          "CSS",
+          "HDAs",
+          "Pipeline"
+        ]
       },
       {
         "number": "05",
         "title": "3D Graphics Consulting & Mentorship",
+        "price": "from 2,000 ₽/hour / from $25/h",
         "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
-        "tools": ["Mentorship", "Reviews", "Roadmap"]
+        "tools": [
+          "Mentorship",
+          "Reviews",
+          "Roadmap"
+        ]
       }
     ]
   },
@@ -210,10 +419,18 @@
     "subtitle": "Production-tested prompts and scripts to accelerate creative work — from product renders to web design.",
     "categories": {
       "all": "All",
+      "product": "Product",
       "prompts": "Prompts",
       "scripts": "Scripts"
     },
     "products": [
+      {
+        "id": "portfolio-site-build",
+        "title": "Portfolio + Client Portal Build",
+        "category": "product",
+        "price": "On request",
+        "description": "Editorial studio portfolio with a closed-area client CRM — pipeline stages, NDA gating, review rounds. Built on this very template."
+      },
       {
         "id": "product-viz-prompts",
         "title": "Product Visualization Prompts",
@@ -248,62 +465,98 @@
     "approach_label": "Approach",
     "approach_title": "How I Work With Clients",
     "deliverable_label": "You Get",
+    "understanding_label": "Mutual understanding",
+    "result_label": "Result",
+    "rounds_note": "One revision round is included on every stage — except the final. Each following round of work is billable.",
     "approach_steps": [
       {
         "number": "01",
         "title": "Discovery",
         "description": "Kickoff call to align on goals, scope, audience, budget and timeline.",
-        "deliverable": "A written brief covering goals, audience, scope, budget and timeline — ready to act on."
+        "deliverable": "A written brief covering goals, audience, scope, budget and timeline — ready to act on.",
+        "mutual_pct": 50,
+        "result_pct": 20
       },
       {
         "number": "02",
         "title": "Moodboard & References",
         "description": "Visual research and neural references. We lock the mood before any animation.",
-        "deliverable": "An approved moodboard with the exact reference frames the film will live in."
+        "deliverable": "An approved moodboard with the exact reference frames the film will live in.",
+        "mutual_pct": 60,
+        "result_pct": 30
       },
       {
         "number": "03",
         "title": "Animatic",
         "description": "Low-fi edit — timing, rhythm and camera work. You approve the cut before lookdev.",
-        "deliverable": "An approved cut: timing, rhythm and camera framing locked before any expensive lookdev."
+        "deliverable": "An approved cut: timing, rhythm and camera framing locked before any expensive lookdev.",
+        "mutual_pct": 70,
+        "result_pct": 50
       },
       {
         "number": "04",
         "title": "Lookdev & Lighting",
         "description": "Shading, lighting, FX and preview renders with comp passes — sent over for sign-off.",
-        "deliverable": "Composited preview renders showing exactly how every shot will read at final quality."
+        "deliverable": "Composited preview renders showing exactly how every shot will read at final quality.",
+        "mutual_pct": 90,
+        "result_pct": 80
       },
       {
         "number": "05",
         "title": "Final Render",
         "description": "Graded master plus cut-downs for every platform. Documented project files included.",
-        "deliverable": "A graded master plus cut-downs for every platform, with documented project files."
+        "deliverable": "A graded master plus cut-downs for every platform, with documented project files.",
+        "mutual_pct": 100,
+        "result_pct": 100
       }
     ],
     "toolkit_label": "Toolkit",
-    "tools": ["Houdini", "Blender", "Embergen", "Cycles", "Octane", "After Effects", "DaVinci Resolve", "Python", "Nano Banana", "Veo", "Gemini"]
+    "tools": [
+      "Houdini",
+      "Blender",
+      "Unreal Engine",
+      "Embergen",
+      "Cycles",
+      "Octane",
+      "After Effects",
+      "DaVinci Resolve",
+      "Photoshop",
+      "Illustrator",
+      "Figma",
+      "Cavalry",
+      "Python",
+      "Nano Banana",
+      "Higgsfield",
+      "Veo",
+      "Gemini"
+    ]
   },
   "contact": {
     "section_label": "Contact",
     "title": "Let's Work Together",
-    "subtitle": "Have a project in mind? Let's discuss how to solve it — creative direction, simulation, or full production.",
+    "subtitle": "Got an idea? Let's talk it through. We'll plan it all and make this world a touch more beautiful.",
     "form": {
       "name": "Name",
       "email": "Email",
-      "project_type": "Project Type",
+      "project_type": "Type of Idea",
       "project_types": {
-        "services": "Project Services",
-        "strategic": "Strategic Design",
+        "services": "Project",
         "consultation": "Consultation",
+        "strategic": "Strategic Design",
         "other": "Other"
       },
-      "message": "Tell me about your project",
-      "send": "Send Message"
+      "message": "Tell me about your idea",
+      "send": "Send Message",
+      "sending": "Sending…",
+      "sent": "Sent",
+      "error": "Something went wrong",
+      "rate_limited": "Already sent — try again later",
+      "validation": "Please fill in all fields"
     },
     "info": {
-      "email": "placeholder@example.com",
-      "telegram": "@placeholder_handle",
-      "location": "Location TBA"
+      "email": "cggeneralistandrey@gmail.com",
+      "telegram": "@aepov_2kzz",
+      "location": "Moscow, 60-letiya Oktyabrya Prospekt, 11"
     }
   },
   "project": {
@@ -311,6 +564,9 @@
     "assignment_label": "Assignment",
     "solution_label": "Solution & Process",
     "context_label": "Context",
+    "moodboard_label": "Moodboard",
+    "experiments_label": "Experiments",
+    "gallery_label": "Gallery",
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
     "next_project": "Next Project"
