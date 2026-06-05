@@ -2,6 +2,14 @@
 
 import { useLanguage } from '@/i18n/LanguageContext';
 
+const SOCIAL_LINKS = [
+  { name: 'Behance', href: 'https://www.behance.net/2kzz' },
+  { name: 'Vimeo', href: 'https://vimeo.com/1166636825' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/andrey-epov-cg' },
+  { name: 'Instagram', href: 'https://www.instagram.com/2kzz___/' },
+  { name: 'Telegram', href: 'https://t.me/aepov_2kzz' },
+] as const;
+
 export default function Footer() {
   const { t } = useLanguage();
 
@@ -18,56 +26,18 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
-            <p className="mb-5 text-[12px] font-medium tracking-[0.1em] text-white/15 uppercase">
-              Navigation
-            </p>
-            <div className="flex flex-col gap-3">
-              {['works', 'services', 'shop', 'about', 'contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.querySelector(`#${item}`)?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60"
-                >
-                  {t.nav[item as keyof typeof t.nav]}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-5 text-[12px] font-medium tracking-[0.1em] text-white/15 uppercase">
-              Social
-            </p>
-            <div className="flex flex-col gap-3">
-              {['Behance', 'Vimeo', 'LinkedIn', 'Telegram'].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60"
-                >
-                  {social}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-5 text-[12px] font-medium tracking-[0.1em] text-white/15 uppercase">
-              Contact
-            </p>
-            <div className="flex flex-col gap-3">
-              <a href="mailto:hello@jamescreativelabs.com" className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60">
-                hello@jamescreativelabs.com
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+            {SOCIAL_LINKS.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-white/30 uppercase tracking-wider transition-colors hover:text-cyan-400"
+              >
+                {link.name}
               </a>
-              <a href="https://t.me/jamescreativelabs" className="text-[14px] text-white/30 transition-colors duration-300 hover:text-white/60">
-                @jamescreativelabs
-              </a>
-            </div>
+            ))}
           </div>
         </div>
 
