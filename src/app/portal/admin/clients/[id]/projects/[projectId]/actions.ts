@@ -194,7 +194,7 @@ export async function resetProjectAction(formData: FormData) {
     .eq('project_id', projectId);
   await supabase
     .from('projects')
-    .update({ status: STAGE_ORDER[0] })
+    .update({ status: STAGE_ORDAR[0] })
     .eq('id', projectId);
 
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
@@ -219,7 +219,7 @@ export async function updateProjectMetaAction(formData: FormData) {
   const update: Record<string, unknown> = {
     brief: brief.length > 0 ? brief : null,
     currency,
-    dueDate,
+    due_date,
   };
   if (budgetRaw === '') {
     update.budget_cents = null;

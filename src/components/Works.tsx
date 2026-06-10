@@ -1,170 +1,283 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import AmbientParticles, { type HighlightRect } from './AmbientParticles';
 
-const gradients = [
-  'from-slate-800/40 via-gray-900/30 to-zinc-800/40',
-  'from-zinc-800/40 via-neutral-900/30 to-stone-800/40',
-  'from-gray-800/40 via-slate-900/30 to-zinc-800/40',
-  'from-neutral-800/40 via-zinc-900/30 to-gray-800/40',
-  'from-stone-800/40 via-gray-900/30 to-slate-800/40',
-  'from-zinc-800/40 via-stone-900/30 to-neutral-800/40',
-];
-
-function ProjectCard({
-  project,
-  index,
-  gradient,
-}: {
-  project: { id: string; title: string; category: string; tags: string[]; description: string };
-  index: number;
-  gradient: string;
-}) {
-  const cardRef = useRef<HTMLButtonElement>(null);
-  const [offset, setOffset] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-
-  const handleScroll = useCallback(() => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    const progress = (windowHeight - rect.top) / (windowHeight + rect.height);
-    setOffset((progress - 0.5) * 50);
-  }, []);
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.1 }
+    if (!ref.current) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setShown(true);
+      },
+      { threshold: 0.04 }
     );
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
+    obs.observe(ref.current);
+    return () => obs.disconnect();
   }, []);
 
-  const isHero = index === 0;
+  return { ref, shown };
+}
 
+function FilterPill({
+  active,
+  label,
+  count,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  count: number;
+  onClick: () => void;
+}) {
   return (
     <button
-      ref={cardRef}
-      type="button"
-      className={`group relative w-full overflow-hidden rounded-3xl text-left transition-all duration-1000 hover:scale-[1.01] ${
-        isHero ? 'col-span-full' : ''
-      } ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
-      style={{ transitionDelay: `${index * 100}ms` }}
+      onClick={onClick}
+      className={`hover-line inline-flex items-baseline gap-1.5 pb-1 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
+        active
+          ? 'is-active text-[var(--foreground)]'
+          : 'text-[var(--foreground)]/40 hover:text-[var(--foreground)]/70'
+      }`}
+      data-cursor="hover"
     >
-      <div
-        className="relative overflow-hidden"
-        style={{ height: isHero ? '560px' : '480px' }}
+      {label}
+      <span
+        className={`text-[10px] transition-colors duration-300 ${
+          active ? 'text-[var(--accent)]' : 'text-[var(--foreground)]/40'
+        }`}
       >
-        <div
-          className={`absolute inset-x-0 h-[130%] bg-gradient-to-br ${gradient}`}
-          style={{ transform: `translateY(${offset}px)`, top: '-15%' }}
-        />
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="select-none text-[clamp(6rem,15vw,12rem)] font-bold leading-none text-white/[0.03] transition-all duration-700 group-hover:text-white/[0.06]">
-            {String(index + 1).padStart(2, '0')}
-          </span>
-        </div>
-
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/90 via-[#0a0a0a]/20 to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 p-10 lg:p-12">
-          <div className="mb-4 flex flex-wrap gap-3">
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-xl bg-white/[0.08] px-6 py-3 text-[14px] tracking-wide text-white/50 backdrop-blur-sm transition-colors duration-300 group-hover:bg-white/[0.12]"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <h3 className="text-[clamp(1.5rem,3vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.02em] text-white transition-colors duration-500 group-hover:text-cyan-400">
-            {project.title}
-          </h3>
-          {isHero && (
-            <p className="mt-4 max-w-lg text-[14px] leading-[1.7] text-white/30">
-              {project.description}
-            </p>
-          )}
-        </div>
-      </div>
+        ({count})
+      </span>
     </button>
   );
 }
 
 export default function Works() {
   const { t } = useLanguage();
-  const [activeFilter, setActiveFilter] = useState('all');
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [highlight, setHighlight] = useState<HighlightRect | null>(null);
+  const { ref, shown } = useReveal<HTMLElement>();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.02 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const total = t.works.projects.length;
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: total };
+    for (const p of t.works.projects) {
+      c[p.category] = (c[p.category] ?? 0) + 1;
+    }
+    return c;
+  }, [t.works.projects, total]);
 
   const filterKeys = Object.keys(t.works.filters) as Array<keyof typeof t.works.filters>;
-  const projects = t.works.projects.filter(
-    (p) => activeFilter === 'all' || p.category === activeFilter
+
+  const filtered = useMemo(
+    () =>
+      activeFilter === 'all'
+        ? t.works.projects
+        : t.works.projects.filter((p) => p.category === activeFilter),
+    [t.works.projects, activeFilter]
   );
 
+  // Translate a hovered card's viewport-relative rect into coordinates
+  // local to the section, so the AmbientParticles canvas (which is
+  // pinned to the section) can pull particles toward it.
+  const handleCardEnter = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    const section = ref.current;
+    if (!section) return;
+    const tr = target.getBoundingClientRect();
+    const sr = section.getBoundingClientRect();
+    setHighlight({
+      x: tr.left - sr.left,
+      y: tr.top - sr.top,
+      w: tr.width,
+      h: tr.height,
+    });
+  };
+  const handleCardLeave = () => setHighlight(null);
+
   return (
-    <section id="works" ref={sectionRef} className="py-40 lg:py-56">
-      <div className="mx-auto max-w-[1400px] px-8 lg:px-16">
+    <section
+      id="works"
+      ref={ref}
+      className="relative py-32 lg:py-44"
+    >
+      <AmbientParticles highlight={highlight} count={260} seed={101} />
+      <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+        {/* Section header */}
         <div
-          className={`mb-20 transition-all duration-1000 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+          className={`mb-16 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${
+            shown ? 'reveal is-in' : 'reveal'
           }`}
         >
-          <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold leading-[1] tracking-[-0.03em] text-white">
-            {t.works.title}
-          </h2>
-          <p className="mt-8 max-w-lg text-[16px] leading-[1.7] text-white/25">
-            {t.works.subtitle}
-          </p>
-        </div>
+          <div className="max-w-2xl">
+            <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+              <span className="accent-diamond">◆</span> {t.works.section_label}
+            </p>
+            <h2 className="font-display text-[clamp(2.6rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em] text-[var(--foreground)]">
+              {t.works.title}
+            </h2>
+            {t.works.subtitle && (
+              <p className="mt-7 max-w-md text-[15px] leading-[1.7] text-[var(--foreground)]/45">
+                {t.works.subtitle}
+              </p>
+            )}
+          </div>
 
-        <div
-          className={`mb-24 flex flex-wrap gap-4 sm:gap-5 lg:gap-6 transition-all duration-1000 delay-200 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
-        >
-          {filterKeys.map((key) => (
-            <button
-              key={key}
-              onClick={() => setActiveFilter(key)}
-              className={`relative rounded-full px-12 py-5 text-[16px] font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] sm:px-16 sm:py-7 sm:text-[20px] lg:px-20 lg:py-8 lg:text-[24px] ${
-                activeFilter === key
-                  ? 'bg-white text-[#0a0a0a] shadow-[0_4px_24px_rgba(255,255,255,0.15)] scale-100'
-                  : 'border border-white/15 bg-transparent text-white/40 hover:border-white/30 hover:text-white/70 hover:bg-white/[0.04] hover:shadow-[0_2px_16px_rgba(255,255,255,0.06)]'
-              }`}
-            >
-              <span className="whitespace-nowrap">{t.works.filters[key]}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-2">
-          {projects.map((project, i) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              index={i}
-              gradient={gradients[i % gradients.length]}
+          <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
+            <FilterPill
+              label={t.works.filters.all}
+              count={counts.all ?? 0}
+              active={activeFilter === 'all'}
+              onClick={() => setActiveFilter('all')}
             />
-          ))}
+            {filterKeys
+              .filter((k) => k !== 'all')
+              .map((k) => (
+                <FilterPill
+                  key={k}
+                  label={t.works.filters[k]}
+                  count={counts[k] ?? 0}
+                  active={activeFilter === k}
+                  onClick={() => setActiveFilter(k)}
+                />
+              ))}
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="border-t border-[var(--hairline)]">
+          {filtered.map((project, i) => {
+            const idx = String(i + 1).padStart(2, '0');
+            const tot = String(total).padStart(2, '0');
+            return (
+              <Link
+                key={project.id}
+                href={`/works/${project.id}`}
+                className={`group relative block overflow-hidden border-b border-[var(--hairline)] transition-[background-color] duration-500 hover:bg-[var(--foreground)]/[0.015] ${
+                  shown ? 'reveal is-in' : 'reveal'
+                }`}
+                style={{ transitionDelay: `${120 + i * 90}ms` }}
+                onMouseEnter={handleCardEnter}
+                onMouseLeave={handleCardLeave}
+                data-cursor="view"
+                data-cursor-label={t.works.view_project}
+              >
+                {/* Hover preview — shows the project cover at low opacity
+                    fading in from the right. We mask the left edge so the
+                    project title stays legible on top of the imagery. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] opacity-0 transition-opacity duration-500 group-hover:opacity-100 lg:block"
+                  style={{
+                    WebkitMaskImage:
+                      'linear-gradient(to left, #000 35%, transparent 100%)',
+                    maskImage:
+                      'linear-gradient(to left, #000 35%, transparent 100%)',
+                  }}
+                >
+                  <div className="relative h-full w-full overflow-hidden bg-[var(--foreground)]/[0.02]">
+                    {project.cover ? (
+                      // Plain <img> rather than next/image: the parent
+                      // size is animated and small (right half of a row),
+                      // so next/image's optimisation cost outweighs the
+                      // bandwidth saved here.
+                      //
+                      // Metallplace's cover is a portrait composition
+                      // where the laptop sits in the upper third, so
+                      // we anchor that one near the top instead of the
+                      // default vertical centre — otherwise the
+                      // visible crop on the hover preview hides the
+                      // recognisable "MetallPlace.ru" portal frame.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={project.cover}
+                        alt=""
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover opacity-65"
+                        style={{
+                          objectPosition:
+                            project.id === 'metallplace' ? 'center 22%' : undefined,
+                        }}
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 opacity-30"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
+                          backgroundSize: '48px 48px',
+                        }}
+                      />
+                    )}
+                    <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.22] mix-blend-screen">
+                      {idx}
+                    </span>
+                    <span className="absolute bottom-3 left-6 font-mono text-[9px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">
+                      <span className="accent-diamond">◆</span> Preview
+                    </span>
+                  </div>
+                </div>
+
+                <div className="relative z-10 grid grid-cols-[auto_1fr_auto] items-center gap-6 py-7 sm:gap-10 sm:py-9 lg:gap-14 lg:py-10">
+                  {/* Number */}
+                  <span className="font-mono text-[11px] tabular-nums tracking-[0.16em] text-[var(--foreground)]/35 transition-colors duration-500 group-hover:text-[var(--accent)]">
+                    {idx}
+                    <span className="text-[var(--foreground)]/20">/{tot}</span>
+                  </span>
+
+                  {/* Title + tags */}
+                  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-baseline sm:gap-8">
+                    <h3 className="font-display text-[clamp(1.8rem,4.6vw,3.2rem)] font-medium leading-[1] tracking-[-0.025em] text-[var(--foreground)]/85 transition-[transform,color] duration-500 group-hover:translate-x-2 group-hover:text-[var(--accent)]">
+                      {project.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
+                      {project.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-[var(--hairline)] px-3 py-[5px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Year + arrow */}
+                  <div className="flex items-center gap-4">
+                    <span className="hidden font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/35 md:inline">
+                      {project.client}
+                    </span>
+                    <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                      {project.year}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="text-[18px] text-[var(--foreground)]/40 transition-[transform,color] duration-500 group-hover:translate-x-1 group-hover:text-[var(--accent)]"
+                    >
+                      →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Bottom meta */}
+        <div className="mt-10 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/35">
+          <span>
+            <span className="text-[var(--accent)]">
+              ({String(filtered.length).padStart(2, '0')})
+            </span>{' '}
+            {t.works.section_label}
+          </span>
+          <span>↑ index</span>
         </div>
       </div>
     </section>

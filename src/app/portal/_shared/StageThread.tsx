@@ -548,7 +548,7 @@ function AttachmentTile({
           controls
           className="block max-h-48 max-w-full border border-[var(--hairline)]"
           preload="metadata"
-        ></video> {/* <-- ТЕГ ЗАКРЫТ КОРРЕКТНО */}
+        >
       </li>
     );
   }

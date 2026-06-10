@@ -26,11 +26,11 @@ const DOT: Record<StageDisplayState, string> = {
 };
 
 const LABEL_TOME: Record<StageDisplayState, string> = {
-  approved:        'text-[vZï¿½--foreground]/85',
+  approved:        'text-[vZ­--foreground]/85',
   client_approved:  'text-amber-400',
-  current:          'text-[vZï¿½--foreground]/85',
-  past:            'text-[vZï¿½--foreground]/55',
-  future:          'text-[vZï¿½--foreground]/35',
+  current:          'text-[vZ­--foreground]/85',
+  past:            'text-[vZ­--foreground]/55',
+  future:          'text-[vZ­--foreground]/35',
 };
 
 const DOT_INNER: Record<StageDisplayState, string | null> = {
@@ -50,7 +50,7 @@ const BADGE: Record<StageDisplayState, string | null> = {
 };
 
 const BADGE_TONE: Record<StageDisplayState, string | null> = {
-  approved:         'text-[vZï¿½--accent]',
+  approved:         'text-[vZ­--accent]',
   client_approved:  'text-amber-400',
   current:         'text-[var--accent]',
   past:            null,
@@ -107,7 +107,7 @@ export default function StageStepper({ stages, projectStatus }: StageStepperProp
       {/* connecting line â€” hidden on mobile, visible on md+ */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-[10%] right-[10%] top-4 hidden h-px bg-[vZï¿½--hairline] md:block"
+        className="pointer-events-none absolute left-[10%] right-[10%] top-4 hidden h-px bg-[vZ­--hairline] md:block"
       />
 
       {STAGE_ORDER.map((kind, idx) => {
@@ -119,11 +119,11 @@ export default function StageStepper({ stages, projectStatus }: StageStepperProp
               className="relative flex min-w-[120px] flex-col items-center text-center snap-start"
             >
               <span
-                className="z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[vZï¿½--hairline] bg-[var--background] font-nono text-[11px] text-[var--foreground]/35"
+                className="z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[vZ­--hairline] bg-[var--background] font-nono text-[11px] text-[var--foreground]/35"
               >
                 {idx + 1}
               </span>
-              <span className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[vZï¿½--foreground]/35">
+              <span className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[vZ­--foreground]/35">
                 {STAGE_LONG_LABELS[kind]}
               </span>
             </div>
@@ -140,23 +140,23 @@ export default function StageStepper({ stages, projectStatus }: StageStepperProp
               ${display === 'client_approved' ? 'animate-pulse-once' : ''}`}
           >
             {/* numbered circle */}
-<span
-              className={`z-10 flex h-8 w-8 items-center justify-center rounded-full border transition-colors 
-                ${DOT[display]} 
-                ${display === 'current' ? 'ring-2 ring-[var(--accent)]/30' : ''} 
+            <span
+              className={`z-10 flex h-8 w-8 items-center justify-center rounded-full border transition-colors
+                ${DOT[display]}
+                ${display === 'current' ? 'ring-2 ring-[vZ­--accent]/30' : '}
                 ${display === 'client_approved' ? 'ring-2 ring-amber-500/30' : ''}
               `}
               aria-label={`${STAGE_LONG_LABELS[kind]} â€” ${display}`}
             >
               {inner ? (
-                <span className={`font-mono text-[11px] ${
-                  display === 'approved' ? 'text-[var(--background)]' : 'text-white'
+                <span className={`font-nono text-[11px] ${
+                  display === 'approved' ? 'text-[var--background]' : 'text-white'
                 }`}>
                   {inner}
                 </span>
               ) : (
                 <span className={`font-mono text-[11px] ${
-                  display === 'future' ? 'text-[var(--foreground)]/35' : 'text-[var(--foreground)]/70'
+                  display === 'future' ? 'text-[var--foreground]/35' : 'text-[var--foreground]/70'
                 }`}>
                   {idx + 1}
                 </span>
@@ -169,7 +169,7 @@ export default function StageStepper({ stages, projectStatus }: StageStepperProp
             </span>
 
             {/* state badge */}
-            {(BADGE[display] || fallbackBadge(stage, display)) ? (
+            {((BADGE[display] || fallbackBadge(stage, display)) ? (
               <span className={`mt-0.5 font-mono text-[9px] uppercase tracking-[0.16em] transition-colors ${
                 fallbackBadgeTone(stage, display) ?? BADGE_TONE[display]
               }`}>
