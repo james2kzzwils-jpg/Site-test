@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage, type Locale } from '@/i18n/LanguageContext';
+import { SHOW_SHOP } from '@/lib/features';
 
 interface NavigationProps {
   /** When true, the brand link goes to "/" instead of scrolling to top. */
@@ -23,7 +24,7 @@ export default function Navigation({ rooted = false }: NavigationProps) {
   const navItems = [
     { key: 'works', href: '#works' },
     { key: 'services', href: '#services' },
-    { key: 'shop', href: '#shop' },
+    ...(SHOW_SHOP ? [{ key: 'shop', href: '#shop' }] : []),
     { key: 'about', href: '#about' },
     { key: 'contact', href: '#contact' },
   ] as const;
