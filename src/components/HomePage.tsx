@@ -10,6 +10,7 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { SHOW_SHOP } from '@/lib/features';
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -34,7 +35,7 @@ export default function HomePage() {
 
         <Works />
         <Services />
-        <Shop />
+        {SHOW_SHOP && <Shop />}
         <About />
         <Contact />
         <Footer />
