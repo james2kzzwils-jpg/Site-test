@@ -210,7 +210,7 @@ return (
                 </div>
               </div>
 
-              <div className="relative z-10 grid grid-cols-[auto_1fr_auto] items-center gap-6 py-7 sm:gap-10 sm:py-9 lg:gap-14 lg:py-10">
+              <div className="relative z-10 grid grid-cols-[auto_1fr_auto] items-center gap-6 py-7 pr-3 sm:gap-10 sm:py-9 lg:gap-14 lg:py-10 lg:pr-10">
                 {/* Number */}
                 <span className="font-mono text-[11px] tabular-nums tracking-[0.16em] text-[var(--foreground)]/35 transition-colors duration-500 group-hover:text-[var(--accent)]">
                   {idx}

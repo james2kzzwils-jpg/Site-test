@@ -81,7 +81,7 @@ function ServiceRow({
     >
       <button
         onClick={handleToggle}
-        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 pr-2 text-left lg:gap-14 lg:py-11 lg:pr-8"
+        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 pr-3 text-left lg:gap-14 lg:py-11 lg:pr-10"
         data-cursor="hover"
       >
         {/* Hover-only video preview — sits behind the title at ~50%
