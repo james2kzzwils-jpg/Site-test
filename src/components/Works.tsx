@@ -104,7 +104,7 @@ return (
   <section
     id="works"
     ref={ref}
-    className="relative py-32 lg:py-44"
+    className="relative py-24 lg:py-36"
   >
     <AmbientParticles highlight={highlight} count={260} seed={101} />
     <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
@@ -218,15 +218,15 @@ return (
                 </span>
 
                 {/* Title + tags */}
-                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-baseline sm:gap-8">
-                  <h3 className="font-display text-[clamp(1.8rem,4.6vw,3.2rem)] font-medium leading-[1] tracking-[-0.025em] text-[var(--foreground)]/85 transition-[transform,color] duration-500 group-hover:translate-x-2 group-hover:text-[var(--accent)]">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+                  <h3 className="font-display text-[clamp(1.8rem,4.6vw,3.2rem)] font-medium leading-[1] tracking-[-0.025em] text-[var(--foreground)]/85 transition-[transform,color] duration-500 group-hover:translate-x-2 group-hover:text-[var(--accent)] min-[1400px]:w-[31rem] min-[1400px]:shrink-0">
                     {project.title}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
                     {project.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-[var(--hairline)] px-3 py-[5px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55"
+                        className="shrink-0 whitespace-nowrap rounded-full border border-[var(--hairline)] px-3 py-[5px] font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55"
                       >
                         {tag}
                       </span>

@@ -54,7 +54,7 @@ export default function Footer() {
                   [
                     ['Behance', 'https://www.behance.net/2kzz'],
                     ['Vimeo', 'https://vimeo.com/1166636825'],
-                    ['LinkedIn', 'https://www.linkedin.com/feed/'],
+                    ['LinkedIn', 'https://www.linkedin.com/in/andrey-epov-cg'],
                     ['Telegram', 'https://t.me/aepov_2kzz'],
                     ['Instagram', 'https://www.instagram.com/2kzz___/'],
                   ] as const

@@ -353,7 +353,7 @@
       {
         "number": "01",
         "title": "Procedural Animation & Simulations",
-        "price": "from 15,000 ₽ / from $200",
+        "price": "from 15,000 ₽ / from $250",
         "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
         "tools": [
           "Houdini",
@@ -403,7 +403,7 @@
       {
         "number": "05",
         "title": "3D Graphics Consulting & Mentorship",
-        "price": "from 2,000 ₽/hour / from $25/h",
+        "price": "from 1,500 ₽/h / from $30/h",
         "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
         "tools": [
           "Mentorship",
@@ -465,7 +465,7 @@
     "approach_label": "Approach",
     "approach_title": "How I Work With Clients",
     "deliverable_label": "You Get",
-    "understanding_label": "Mutual understanding",
+    "understanding_label": "Alignment",
     "result_label": "Result",
     "rounds_note": "One revision round is included on every stage — except the final. Each following round of work is billable.",
     "approach_steps": [
@@ -575,6 +575,6 @@
     "brand": "Epov Creative Lab's",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
-    "available": "Available for selected projects, 2026"
+    "available": "Open to collaboration, 2026"
   }
 }

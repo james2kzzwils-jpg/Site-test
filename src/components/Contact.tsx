@@ -121,7 +121,7 @@ export default function Contact() {
   const showAccent = state === 'sent';
 
   return (
-    <section id="contact" ref={sectionRef} className="py-32 lg:py-44">
+    <section id="contact" ref={sectionRef} className="py-24 lg:py-36">
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div className={shown ? 'reveal is-in' : 'reveal'}>
           <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">

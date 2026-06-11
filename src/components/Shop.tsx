@@ -38,7 +38,7 @@ export default function Shop() {
   );
 
   return (
-    <section id="shop" ref={sectionRef} className="py-32 lg:py-44">
+    <section id="shop" ref={sectionRef} className="py-24 lg:py-36">
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           className={`mb-16 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between ${

@@ -21,7 +21,7 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="py-32 lg:py-44">
+    <section id="about" ref={sectionRef} className="py-24 lg:py-36">
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <p
           className={`mb-10 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45 ${
@@ -109,10 +109,10 @@ export default function About() {
                   <div className="relative mt-auto flex flex-col gap-4 border-t border-[var(--hairline)] pt-5">
                   <div>
                     <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                      <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
                         {t.about.understanding_label}
                       </span>
-                      <span className="font-display text-[18px] font-medium tracking-[-0.01em] text-[var(--foreground)]">
+                      <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--foreground)]">
                         {step.mutual_pct}%
                       </span>
                     </div>
@@ -125,10 +125,10 @@ export default function About() {
                   </div>
                   <div>
                     <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                      <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
                         → {t.about.result_label}
                       </span>
-                      <span className="font-display text-[18px] font-medium tracking-[-0.01em] text-[var(--accent)]">
+                      <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--accent)]">
                         {step.result_pct}%
                       </span>
                     </div>
