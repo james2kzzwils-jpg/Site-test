@@ -81,7 +81,7 @@ function ServiceRow({
     >
       <button
         onClick={handleToggle}
-        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 text-left lg:gap-14 lg:py-11"
+        className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 pr-2 text-left lg:gap-14 lg:py-11 lg:pr-8"
         data-cursor="hover"
       >
         {/* Hover-only video preview — sits behind the title at ~50%
@@ -94,7 +94,7 @@ function ServiceRow({
               showPreview ? 'opacity-50' : 'opacity-0'
             } transition-opacity duration-500`}
           >
-            <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_100%)]">
+            <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_82%,transparent_100%)]">
               <video
                 ref={previewRef}
                 className="h-full w-full object-cover"
@@ -118,7 +118,7 @@ function ServiceRow({
           </span>
         ) : null}
 
-        <span className="relative shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+        <span className="relative inline-block w-[3rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] tabular-nums text-[var(--foreground)]/40 lg:w-[3.25rem]">
           <span className="text-[var(--accent)]">({service.number})</span>
         </span>
 
