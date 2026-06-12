@@ -48,7 +48,7 @@
         "client": "Moscow Government",
         "year": "August 2025",
         "category": "animation",
-        "cover": "/works/cosmos/cover.jpg",
+        "cover": "/works/cosmos/cover.webp",
         "gallery": [
           "/works/cosmos/01.mp4",
           "/works/cosmos/02.mp4"
@@ -65,9 +65,9 @@
           "Animation"
         ],
         "description": "A 3D Unreal Engine scene built for the City of Moscow's cultural programme — specifically the Cosmos pavilion in one of the city parks. The piece plays on the pavilion's LED ceiling: visitors tilt their heads back and watch space drift overhead in a continuous, calm loop.",
-        "assignment": "Build a calm, immersive looping piece for an overhead LED ceiling — strong enough to pull a passer-by into stopping and looking up, soft enough to sustain attention for minutes without becoming noisy or repetitive.",
-        "solution": "Built end-to-end in Unreal Engine: scene assembly, asset composition, shading, lighting, and animation all live in the same project file. Real-time rendering keeps iteration fast; the loop is camera-driven so the ceiling format reads naturally even when visitors look up from any angle.",
-        "context": "Made for the Cosmos pavilion at a Moscow city park, summer 2025, as part of the city's cultural programme. Authored role: scene assembly, asset and shading work, lighting, and animation — sound design was handled separately.",
+        "assignment": "Create a meditative, looping video canvas on a cosmos theme for an overhead LED ceiling. The challenge: contrasty enough to make a passer-by stop and look up, yet soft enough to hold attention for minutes without feeling monotonous or noisy.",
+        "solution": "Built entirely inside Unreal Engine, uniting scene assembly, shading, lighting and animation in a single real-time pipeline. Camera and procedural motion are tuned so the loop point stays hidden and the piece can run endlessly with no visible repetition.",
+        "context": "The result is a hypnotic, seamless ambient piece that pulls foot traffic and increases dwell time on location. Thanks to the UE build, the scene is ready for fast customization of color, scale or branding integration.",
         "collaborators": [
           {
             "role": "Direction & 2D",
@@ -76,20 +76,30 @@
         ],
         "links": {},
         "moodboard": [
-          "/works/cosmos/moodboard.jpg",
-          "/works/cosmos/process-1.jpg",
-          "/works/cosmos/process-3.jpg",
-          "/works/cosmos/process-5.jpg",
-          "/works/cosmos/process-2.jpg",
-          "/works/cosmos/process-4.jpg",
-          "/works/cosmos/process-6.jpg"
+          "/works/cosmos/frame-01.webp",
+          "/works/cosmos/frame-02.webp",
+          "/works/cosmos/frame-03.webp",
+          "/works/cosmos/frame-04.webp",
+          "/works/cosmos/frame-05.webp",
+          "/works/cosmos/frame-06.webp",
+          "/works/cosmos/frame-07.webp",
+          "/works/cosmos/frame-08.webp",
+          "/works/cosmos/frame-09.webp",
+          "/works/cosmos/frame-10.webp",
+          "/works/cosmos/frame-11.webp",
+          "/works/cosmos/frame-12.webp",
+          "/works/cosmos/frame-13.webp",
+          "/works/cosmos/frame-14.webp",
+          "/works/cosmos/frame-15.webp",
+          "/works/cosmos/frame-16.webp",
+          "/works/cosmos/frame-17.webp"
         ],
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/cosmos/moodboard.jpg",
-          "breakdown": "/works/cosmos/process-1.jpg",
-          "frame02": "/works/cosmos/process-3.jpg",
-          "frame03": "/works/cosmos/process-5.jpg"
+          "moodboard": "/works/cosmos/frame-01.webp",
+          "breakdown": "/works/cosmos/frame-07.webp",
+          "frame02": "/works/cosmos/frame-12.webp",
+          "frame03": "/works/cosmos/frame-16.webp"
         },
         "published_at": "2025-08"
       },
@@ -99,15 +109,19 @@
         "client": "Personal",
         "year": "2025",
         "category": "simulations",
-        "cover": "/works/parfume-simulation/cover.jpg",
+        "cover": "/works/parfume-simulation/cover.webp",
         "gallery": [
-          "/works/parfume-simulation/01.jpg",
-          "/works/parfume-simulation/02.jpg",
-          "/works/parfume-simulation/03.jpg",
-          "/works/parfume-simulation/04.jpg",
-          "/works/parfume-simulation/05.jpg",
-          "/works/parfume-simulation/06.jpg",
-          "/works/parfume-simulation/07.jpg"
+          "/works/parfume-simulation/01.webp",
+          "/works/parfume-simulation/02.webp",
+          "/works/parfume-simulation/vid-01.mp4",
+          "/works/parfume-simulation/03.webp",
+          "/works/parfume-simulation/04.webp",
+          "/works/parfume-simulation/vid-02.mp4",
+          "/works/parfume-simulation/05.webp",
+          "/works/parfume-simulation/06.webp",
+          "/works/parfume-simulation/vid-03.mp4",
+          "/works/parfume-simulation/07.webp",
+          "/works/parfume-simulation/vid-04.mp4"
         ],
         "tags": [
           "Houdini",
@@ -120,10 +134,10 @@
           "Lookdev",
           "Compositing"
         ],
-        "description": "Product visualization of a perfume bottle — flow simulation, glass reflections, soft studio light.",
-        "assignment": "Make a static bottle feel like a living material — without a shoot, without props. The image had to read in product retail and in social feeds at the same time.",
-        "solution": "Houdini solver handles fluid and splash, Blender finishes shading and rendering, DaVinci Resolve carries the grade. One setup delivers a series of angles from a single source.",
-        "context": "Published on Behance in 2025 — reused as a testbed for product-loop renders in the portfolio.",
+        "description": "Photoreal, 'living' visualization of a perfume bottle — procedural cloth and soft-body simulation, premium lighting, and a series of seamless loops.",
+        "assignment": "Bring a static perfume bottle to life as a photoreal, 'living' material using 3D alone — no shoot, no physical props. The visuals had to work in premium product retail and in social feeds, with cinematic environmental motion that emphasizes the product's form and character.",
+        "solution": "Production spans three systems: complex procedural cloth and soft-body simulations in Houdini, final shading, premium lighting and render in Blender, and the final grade in DaVinci Resolve. The procedural setup instantly generates a whole series of angles and seamless loops from a single source.",
+        "context": "The output is a flexible visual system and a series of seamless loops with photoreal material and fabric behavior. The engineered pipeline delivers premium commercial visuals and lets the scene be re-customized for other products in the line without rebuilding from scratch.",
         "collaborators": [
           {
             "role": "Direction & 3D",
@@ -135,10 +149,10 @@
         },
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/parfume-simulation/moodboard.jpg",
-          "breakdown": "/works/parfume-simulation/01.jpg",
-          "frame02": "/works/parfume-simulation/04.jpg",
-          "frame03": "/works/parfume-simulation/06.jpg"
+          "moodboard": "/works/parfume-simulation/01.webp",
+          "breakdown": "/works/parfume-simulation/vid-01.mp4",
+          "frame02": "/works/parfume-simulation/vid-03.mp4",
+          "frame03": "/works/parfume-simulation/04.webp"
         },
         "published_at": "2025-04"
       },
@@ -148,18 +162,16 @@
         "client": "Personal",
         "year": "2024",
         "category": "product_viz",
-        "cover": "/works/hoodi-cloth/cover.png",
+        "cover": "/works/hoodi-cloth/cover.webp",
         "gallery": [
-          "/works/hoodi-cloth/01.jpg",
-          "/works/hoodi-cloth/02.png",
-          "/works/hoodi-cloth/03.jpg",
-          "/works/hoodi-cloth/04.jpg",
-          "/works/hoodi-cloth/05.jpg",
-          "/works/hoodi-cloth/06.jpg",
-          "/works/hoodi-cloth/07.jpg",
-          "/works/hoodi-cloth/08.jpg",
-          "/works/hoodi-cloth/09.jpg",
-          "/works/hoodi-cloth/10.jpg"
+          "/works/hoodi-cloth/01.webp",
+          "/works/hoodi-cloth/02.webp",
+          "/works/hoodi-cloth/03.webp",
+          "/works/hoodi-cloth/04.webp",
+          "/works/hoodi-cloth/05.webp",
+          "/works/hoodi-cloth/06.webp",
+          "/works/hoodi-cloth/07.webp",
+          "/works/hoodi-cloth/08.webp"
         ],
         "tags": [
           "Blender",
@@ -192,56 +204,42 @@
         "bento": {
           "moodboard": "/works/hoodi-cloth/moodboard.jpg",
           "breakdown": "/works/hoodi-cloth/experiment.jpg",
-          "frame02": "/works/hoodi-cloth/01.jpg",
-          "frame03": "/works/hoodi-cloth/05.jpg"
+          "frame02": "/works/hoodi-cloth/01.webp",
+          "frame03": "/works/hoodi-cloth/05.webp"
         },
         "published_at": "2024-11"
       },
       {
         "id": "thyname-animation",
-        "title": "ThyName. Animation",
+        "title": "ThyName. Worship Visuals",
         "client": "ThyName",
         "year": "2024",
         "category": "animation",
         "cover": "/works/thyname-animation/cover.png",
         "gallery": [
-          "/works/thyname-animation/01.jpg",
-          "/works/thyname-animation/02.jpg",
-          "/works/thyname-animation/03.mp4",
-          "/works/thyname-animation/04.jpg",
-          "/works/thyname-animation/05.jpg",
-          "/works/thyname-animation/06.mp4",
-          "/works/thyname-animation/07.jpg",
-          "/works/thyname-animation/08.jpg",
-          "/works/thyname-animation/09.mp4",
-          "/works/thyname-animation/10.jpg",
-          "/works/thyname-animation/11.jpg",
-          "/works/thyname-animation/12.mp4",
-          "/works/thyname-animation/13.png",
-          "/works/thyname-animation/14.png",
-          "/works/thyname-animation/15.mp4",
-          "/works/thyname-animation/16.png",
-          "/works/thyname-animation/17.png",
-          "/works/thyname-animation/18.mp4",
-          "/works/thyname-animation/19.png",
-          "/works/thyname-animation/20.png",
-          "/works/thyname-animation/21.jpg"
+          "/works/thyname-animation/start.mp4",
+          "/works/thyname-animation/dary.mp4",
+          "/works/thyname-animation/direct.mp4",
+          "/works/thyname-animation/speaking.mp4",
+          "/works/thyname-animation/pray.mp4",
+          "/works/thyname-animation/end.mp4",
+          "/works/thyname-animation/final.mp4"
         ],
         "tags": [
+          "Houdini",
           "Blender",
-          "After Effects",
-          "DaVinci Resolve"
+          "After Effects"
         ],
         "outputs": [
-          "3D animation",
+          "Stage visuals",
           "Procedural animation",
-          "Lookdev",
-          "Compositing"
+          "Modular system",
+          "Seasonal adaptation"
         ],
-        "description": "A short animated study built around procedural setups in Houdini and finished in Blender — twelve looping motion vignettes that treat type, geometry, and motion as a single sculpting material.",
-        "assignment": "Build a personal animation reel that stress-tests a procedural pipeline — motion that can scale across loops, scenes, and stylistic registers without rebuilding the rig every time.",
-        "solution": "Houdini drives the procedural rigging, growth, and dynamics; Blender carries lookdev and final render. Each shot reuses the same node graph with parameter overrides — the visual variety comes from data, not from manual scene work.",
-        "context": "Published on Behance as ThyName Animation, 2024. The pipeline rolls forward into procedural type, motion-graphics R&D, and client-facing animation tests.",
+        "description": "End-to-end stage visuals for church worship services and recurring Bible marathons — a single dynamic visual system that seamlessly bridges transitions between speakers, carries the mission, and scales with ease. Event motto: 'Praising Thy Name — we find our own names.'",
+        "assignment": "Hold the room's attention and cut the cost of constantly refreshing content. Speaker changes created technical pauses that broke the emotional rhythm and scattered attention; events run year-round, so the visuals had to adapt by season without rebuilding the scene from scratch.",
+        "solution": "The concept centers on a faceless figure running through life: interacting with the space it slows, rises, and finally takes form — a direct translation of the mission, 'every runner finds their name.' The pipeline splits into four modular blocks (Prologue, Intro, Thematic inserts, Finale) that flex in length to match the live timing and seamlessly fill any pause. Animation splines and the character stay fixed; atmosphere and season change only through light, particle systems and procedural environment — updates at minimal cost.",
+        "context": "Visual and technical pauses between speakers were fully removed; the graphics hold attention through scene changes and became part of the overall narrative. The result is a scalable base that adapts content to any season or format quickly and with minimal render.",
         "collaborators": [
           {
             "role": "Direction & 3D",
@@ -253,10 +251,10 @@
         },
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/thyname-animation/13.png",
-          "breakdown": "/works/thyname-animation/03.mp4",
-          "frame02": "/works/thyname-animation/06.mp4",
-          "frame03": "/works/thyname-animation/15.mp4"
+          "moodboard": "/works/thyname-animation/start.mp4",
+          "breakdown": "/works/thyname-animation/pray.mp4",
+          "frame02": "/works/thyname-animation/speaking.mp4",
+          "frame03": "/works/thyname-animation/end.mp4"
         },
         "published_at": "2024-09"
       },
@@ -292,17 +290,8 @@
           }
         ],
         "links": {},
-        "moodboard": [
-          "/works/metallplace/moodboard-1.jpg",
-          "/works/metallplace/moodboard-3.jpg",
-          "/works/metallplace/moodboard-4.jpg",
-          "/works/metallplace/moodboard-5.jpg",
-          "/works/metallplace/moodboard-6.jpg",
-          "/works/metallplace/moodboard-2.jpg"
-        ],
-        "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "moodboard": "/works/metallplace/still-3.jpg",
           "breakdown": "/works/metallplace/still-7.jpg",
           "frame02": "/works/metallplace/still-15.jpg",
           "frame03": "/works/metallplace/lecture-25.jpg"
