@@ -48,7 +48,7 @@
         "client": "Правительство Москвы",
         "year": "Август 2025",
         "category": "animation",
-        "cover": "/works/cosmos/cover.jpg",
+        "cover": "/works/cosmos/cover.webp",
         "gallery": [
           "/works/cosmos/01.mp4",
           "/works/cosmos/02.mp4"
@@ -65,9 +65,9 @@
           "Анимация"
         ],
         "description": "3D-сцена в Unreal Engine для культурной программы правительства Москвы — для павильона «Космос» в одном из городских парков. Сцена крутится на LED-потолке павильона: посетители запрокидывают голову и смотрят, как над ними плывёт спокойный непрерывный космический ландшафт.",
-        "assignment": "Собрать спокойный, погружающий лупающийся ролик под LED-потолок — достаточно сильный, чтобы прохожий остановился и посмотрел вверх, и при этом мягкий, чтобы держать внимание минутами без шума и видимой повторяемости.",
-        "solution": "Собрано от и до в Unreal Engine: сборка сцены, композиция ассетов, шейдинг, лайтинг и анимация — всё живёт в одном проекте. Реалтайм-рендер ускоряет итерации; луп водится камерой так, чтобы потолочный формат читался под любым углом, с которого посетитель смотрит вверх.",
-        "context": "Сделано для павильона «Космос» в одном из московских парков, лето 2025, в рамках культурной программы города. Роль автора: сборка сцены, ассеты и шейдинг, лайтинг и анимация — саунд-дизайн делался отдельной командой.",
+        "assignment": "Создать медитативное зацикленное видеополотно на тему космоса для потолочного LED-экрана. Главный вызов — сделать ролик достаточно контрастным, чтобы заставить прохожего остановиться и поднять голову, но при этом мягким для долгого восприятия. Визуальный ряд должен удерживать внимание минутами без ощущения монотонности и шума.",
+        "solution": "Проект полностью реализован внутри Unreal Engine, что позволило объединить сборку сцены, шейдинг, лайтинг и анимацию в едином реалтайм-пайплайне. Анимация камеры и процедурных элементов настроена так, чтобы точка склейки была скрыта, а видео могло крутиться бесконечно без видимых повторений.",
+        "context": "Создан гипнотический бесшовный эмбиент-контент, который эффективно привлекает трафик и увеличивает время нахождения посетителей в локации. Благодаря сборке в UE, сцена полностью готова к быстрой кастомизации цвета, масштаба или интеграции брендинга.",
         "collaborators": [
           {
             "role": "Режиссура и 2D",
@@ -76,20 +76,30 @@
         ],
         "links": {},
         "moodboard": [
-          "/works/cosmos/moodboard.jpg",
-          "/works/cosmos/process-1.jpg",
-          "/works/cosmos/process-3.jpg",
-          "/works/cosmos/process-5.jpg",
-          "/works/cosmos/process-2.jpg",
-          "/works/cosmos/process-4.jpg",
-          "/works/cosmos/process-6.jpg"
+          "/works/cosmos/frame-01.webp",
+          "/works/cosmos/frame-02.webp",
+          "/works/cosmos/frame-03.webp",
+          "/works/cosmos/frame-04.webp",
+          "/works/cosmos/frame-05.webp",
+          "/works/cosmos/frame-06.webp",
+          "/works/cosmos/frame-07.webp",
+          "/works/cosmos/frame-08.webp",
+          "/works/cosmos/frame-09.webp",
+          "/works/cosmos/frame-10.webp",
+          "/works/cosmos/frame-11.webp",
+          "/works/cosmos/frame-12.webp",
+          "/works/cosmos/frame-13.webp",
+          "/works/cosmos/frame-14.webp",
+          "/works/cosmos/frame-15.webp",
+          "/works/cosmos/frame-16.webp",
+          "/works/cosmos/frame-17.webp"
         ],
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/cosmos/moodboard.jpg",
-          "breakdown": "/works/cosmos/process-1.jpg",
-          "frame02": "/works/cosmos/process-3.jpg",
-          "frame03": "/works/cosmos/process-5.jpg"
+          "moodboard": "/works/cosmos/frame-01.webp",
+          "breakdown": "/works/cosmos/frame-07.webp",
+          "frame02": "/works/cosmos/frame-12.webp",
+          "frame03": "/works/cosmos/frame-16.webp"
         },
         "published_at": "2025-08"
       },
@@ -99,15 +109,19 @@
         "client": "Личный проект",
         "year": "2025",
         "category": "simulations",
-        "cover": "/works/parfume-simulation/cover.jpg",
+        "cover": "/works/parfume-simulation/cover.webp",
         "gallery": [
-          "/works/parfume-simulation/01.jpg",
-          "/works/parfume-simulation/02.jpg",
-          "/works/parfume-simulation/03.jpg",
-          "/works/parfume-simulation/04.jpg",
-          "/works/parfume-simulation/05.jpg",
-          "/works/parfume-simulation/06.jpg",
-          "/works/parfume-simulation/07.jpg"
+          "/works/parfume-simulation/01.webp",
+          "/works/parfume-simulation/02.webp",
+          "/works/parfume-simulation/vid-01.mp4",
+          "/works/parfume-simulation/03.webp",
+          "/works/parfume-simulation/04.webp",
+          "/works/parfume-simulation/vid-02.mp4",
+          "/works/parfume-simulation/05.webp",
+          "/works/parfume-simulation/06.webp",
+          "/works/parfume-simulation/vid-03.mp4",
+          "/works/parfume-simulation/07.webp",
+          "/works/parfume-simulation/vid-04.mp4"
         ],
         "tags": [
           "Houdini",
@@ -120,10 +134,10 @@
           "Lookdev",
           "Композ"
         ],
-        "description": "Продуктовая визуализация флакона парфюма: симуляция потока, отражения на стекле, мягкое студийное освещение.",
-        "assignment": "Сделать так, чтобы статичный флакон смотрелся как живой материал — без съёмки, без реквизита. Картинка должна работать в продуктовом ритейле и в социальных сетях одновременно.",
-        "solution": "Houdini-сольвер для жидкости и брызг, Blender для финального шейдинга и рендера, DaVinci Resolve — для итогового грейда. Один сетап даёт серию ракурсов из одного источника.",
-        "context": "Выложен на Behance в 2025, переиспользован как тестовый стенд для продуктовых лупов в портфолио.",
+        "description": "Фотореалистичная «оживлённая» визуализация парфюмерного флакона — процедурные симуляции ткани и мягких тел, премиальный свет и серия бесшовных зацикленных роликов.",
+        "assignment": "Оживить статичный парфюмерный флакон и превратить его в фотореалистичный, «живой» материал исключительно средствами 3D-графики, без съёмок и физического реквизита. Визуальный ряд должен быть универсальным, чтобы эффективно работать в премиальном продуктовом ритейле и в социальных сетях. Главный вызов — создать кинематографичную динамику окружения, которая подчеркнёт форму и характер продукта.",
+        "solution": "Продакшен реализован на стыке трёх систем: сложные процедурные симуляции ткани и взаимодействия мягких тел просчитаны в Houdini, а финальный шейдинг, премиальная постановка света и рендер выполнены в Blender. Итоговая цветокоррекция и художественный грейдинг сделаны в DaVinci Resolve. Такой процедурный сетап позволяет из одного источника мгновенно генерировать серию разных ракурсов и зацикленных видео, полностью исключая рутину.",
+        "context": "Создана гибкая визуальная система и серия зацикленных видеороликов с фотореалистичным поведением материалов и тканей. Инженерный подход к пайплайну позволил получить премиальный коммерческий визуал и обеспечил возможность быстрой кастомизации сцены под другие продукты линейки без пересчёта с нуля.",
         "collaborators": [
           {
             "role": "Режиссура и 3D",
@@ -135,10 +149,10 @@
         },
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/parfume-simulation/moodboard.jpg",
-          "breakdown": "/works/parfume-simulation/01.jpg",
-          "frame02": "/works/parfume-simulation/04.jpg",
-          "frame03": "/works/parfume-simulation/06.jpg"
+          "moodboard": "/works/parfume-simulation/01.webp",
+          "breakdown": "/works/parfume-simulation/vid-01.mp4",
+          "frame02": "/works/parfume-simulation/vid-03.mp4",
+          "frame03": "/works/parfume-simulation/04.webp"
         },
         "published_at": "2025-04"
       },
@@ -148,18 +162,16 @@
         "client": "Личный проект",
         "year": "2024",
         "category": "product_viz",
-        "cover": "/works/hoodi-cloth/cover.png",
+        "cover": "/works/hoodi-cloth/cover.webp",
         "gallery": [
-          "/works/hoodi-cloth/01.jpg",
-          "/works/hoodi-cloth/02.png",
-          "/works/hoodi-cloth/03.jpg",
-          "/works/hoodi-cloth/04.jpg",
-          "/works/hoodi-cloth/05.jpg",
-          "/works/hoodi-cloth/06.jpg",
-          "/works/hoodi-cloth/07.jpg",
-          "/works/hoodi-cloth/08.jpg",
-          "/works/hoodi-cloth/09.jpg",
-          "/works/hoodi-cloth/10.jpg"
+          "/works/hoodi-cloth/01.webp",
+          "/works/hoodi-cloth/02.webp",
+          "/works/hoodi-cloth/03.webp",
+          "/works/hoodi-cloth/04.webp",
+          "/works/hoodi-cloth/05.webp",
+          "/works/hoodi-cloth/06.webp",
+          "/works/hoodi-cloth/07.webp",
+          "/works/hoodi-cloth/08.webp"
         ],
         "tags": [
           "Blender",
@@ -192,56 +204,42 @@
         "bento": {
           "moodboard": "/works/hoodi-cloth/moodboard.jpg",
           "breakdown": "/works/hoodi-cloth/experiment.jpg",
-          "frame02": "/works/hoodi-cloth/01.jpg",
-          "frame03": "/works/hoodi-cloth/05.jpg"
+          "frame02": "/works/hoodi-cloth/01.webp",
+          "frame03": "/works/hoodi-cloth/05.webp"
         },
         "published_at": "2024-11"
       },
       {
         "id": "thyname-animation",
-        "title": "ThyName. Анимация",
+        "title": "ThyName. Богослужения",
         "client": "ThyName",
         "year": "2024",
         "category": "animation",
         "cover": "/works/thyname-animation/cover.png",
         "gallery": [
-          "/works/thyname-animation/01.jpg",
-          "/works/thyname-animation/02.jpg",
-          "/works/thyname-animation/03.mp4",
-          "/works/thyname-animation/04.jpg",
-          "/works/thyname-animation/05.jpg",
-          "/works/thyname-animation/06.mp4",
-          "/works/thyname-animation/07.jpg",
-          "/works/thyname-animation/08.jpg",
-          "/works/thyname-animation/09.mp4",
-          "/works/thyname-animation/10.jpg",
-          "/works/thyname-animation/11.jpg",
-          "/works/thyname-animation/12.mp4",
-          "/works/thyname-animation/13.png",
-          "/works/thyname-animation/14.png",
-          "/works/thyname-animation/15.mp4",
-          "/works/thyname-animation/16.png",
-          "/works/thyname-animation/17.png",
-          "/works/thyname-animation/18.mp4",
-          "/works/thyname-animation/19.png",
-          "/works/thyname-animation/20.png",
-          "/works/thyname-animation/21.jpg"
+          "/works/thyname-animation/start.mp4",
+          "/works/thyname-animation/dary.mp4",
+          "/works/thyname-animation/direct.mp4",
+          "/works/thyname-animation/speaking.mp4",
+          "/works/thyname-animation/pray.mp4",
+          "/works/thyname-animation/end.mp4",
+          "/works/thyname-animation/final.mp4"
         ],
         "tags": [
+          "Houdini",
           "Blender",
-          "After Effects",
-          "DaVinci Resolve"
+          "After Effects"
         ],
         "outputs": [
-          "3D-анимация",
+          "Сценическое оформление",
           "Процедурная анимация",
-          "Lookdev",
-          "Композ"
+          "Модульная система",
+          "Сезонная адаптация"
         ],
-        "description": "Короткое анимационное исследование на процедурных сетапах в Houdini и финале в Blender — двенадцать лупящихся моушн-этюдов, где типографика, геометрия и движение работают как единый скульптурный материал.",
-        "assignment": "Собрать персональный анимационный рил, который нагружает процедурный пайплайн — движение, которое масштабируется по лупам, сценам и стилистикам без пересборки риги под каждый кадр.",
-        "solution": "Houdini тянет процедурный риггинг, рост и динамику; Blender отвечает за лукдев и финальный рендер. Каждый шот переиспользует один граф нод с перебором параметров — визуальное разнообразие приходит из данных, не из ручной сборки.",
-        "context": "Опубликовано на Behance как ThyName Animation, 2024. Пайплайн идёт дальше — в процедурную типографику, R&D моушн-графики и клиентские анимационные тесты.",
+        "description": "Комплексное сценическое оформление для церковных богослужений и регулярных библейских марафонов — единая динамическая визуальная система, которая бесшовно сопровождает переходы между служителями, поддерживает миссию проекта и легко масштабируется. Девиз события: «Прославляя Твоё Имя — обретаем свои имена».",
+        "assignment": "Удержать внимание зала и снизить стоимость регулярного обновления контента. На сменах спикеров возникали технические паузы — терялся эмоциональный ритм и рассеивалось внимание. При этом мероприятия идут круглый год, и визуал требовалось обновлять под сезоны без полной пересборки сцены с нуля.",
+        "solution": "В основу лёг образ безликого человека, бегущего по жизни: через взаимодействие с пространством он замедляется, поднимается выше и в финале обретает форму — прямая трансляция миссии «каждый бегущий обретает своё имя». Пайплайн разбит на четыре вариативных блока (Пролог, Вступление, Тематические вставки, Финал), которые подгоняются по длительности под тайминги живого события и бесшовно заполняют любые паузы. Анимационные сплайны и персонаж остаются неизменными, а атмосфера и сезонность меняются только через свет, системы частиц и процедурное окружение — обновление с минимальными затратами.",
+        "context": "Полностью устранены визуальные и технические паузы между выходами спикеров; графика удерживает внимание в моменты смены планов и стала частью общего нарратива. Создана масштабируемая база, позволяющая быстро и с минимальным рендером адаптировать контент под любые сезоны и форматы.",
         "collaborators": [
           {
             "role": "Режиссура и 3D",
@@ -253,10 +251,10 @@
         },
         "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/thyname-animation/13.png",
-          "breakdown": "/works/thyname-animation/03.mp4",
-          "frame02": "/works/thyname-animation/06.mp4",
-          "frame03": "/works/thyname-animation/15.mp4"
+          "moodboard": "/works/thyname-animation/start.mp4",
+          "breakdown": "/works/thyname-animation/pray.mp4",
+          "frame02": "/works/thyname-animation/speaking.mp4",
+          "frame03": "/works/thyname-animation/end.mp4"
         },
         "published_at": "2024-09"
       },
@@ -292,17 +290,8 @@
           }
         ],
         "links": {},
-        "moodboard": [
-          "/works/metallplace/moodboard-1.jpg",
-          "/works/metallplace/moodboard-3.jpg",
-          "/works/metallplace/moodboard-4.jpg",
-          "/works/metallplace/moodboard-5.jpg",
-          "/works/metallplace/moodboard-6.jpg",
-          "/works/metallplace/moodboard-2.jpg"
-        ],
-        "bentoGallery": true,
         "bento": {
-          "moodboard": "/works/metallplace/moodboard-1.jpg",
+          "moodboard": "/works/metallplace/still-3.jpg",
           "breakdown": "/works/metallplace/still-7.jpg",
           "frame02": "/works/metallplace/still-15.jpg",
           "frame03": "/works/metallplace/lecture-25.jpg"
