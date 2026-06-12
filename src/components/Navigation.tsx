@@ -74,7 +74,7 @@ export default function Navigation({ rooted = false }: NavigationProps) {
               className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 hover:text-[var(--foreground)]"
               data-cursor="hover"
             >
-              {t.nav[item.key]}
+              {t.nav[item.key as keyof typeof t.nav]}
             </a>
           ))}
 
@@ -128,7 +128,7 @@ export default function Navigation({ rooted = false }: NavigationProps) {
               onClick={() => setIsMobileOpen(false)}
               className="py-3 font-display text-[26px] leading-tight tracking-[-0.02em] text-[var(--foreground)]/80 transition-colors duration-300 hover:text-[var(--foreground)]"
             >
-              {t.nav[item.key]}
+              {t.nav[item.key as keyof typeof t.nav]}
             </a>
           ))}
           <div className="mt-6 flex items-center gap-2 border-t border-[var(--hairline)] pt-6">
