@@ -118,24 +118,37 @@ function PlanetGlow() {
         }}
       />
 
-      {/* Planet body. The first gradient is the lit hemisphere
-          (cool light coming from the upper-right star), the second is
-          the atmospheric rim, and the radial gradient on the body
-          itself produces the dark-to-mid transition that gives the
-          sphere its volume. Sits half off-canvas so the eye reads it
-          as something massive and far away. */}
+      {/* Soft atmospheric halo — a wide, low-opacity accent/cool bloom
+          spread over a broad band (no crisp ring) so the planet's edge
+          dissolves into the dark with a subtle iridescent shimmer
+          instead of a hard outline. */}
       <div
-        className="absolute bottom-[-160px] right-[-140px] h-[440px] w-[440px] rounded-full opacity-[0.85]"
+        className="absolute bottom-[-220px] right-[-200px] h-[560px] w-[560px] rounded-full opacity-[0.9]"
         style={{
           background: [
-            // Atmosphere rim — a thin, very soft accent halo right
-            // outside the planet's silhouette.
-            'radial-gradient(circle at 50% 50%, transparent 49%, rgba(212,255,0,0.18) 50%, rgba(212,255,0,0.04) 53%, transparent 56%)',
-            // Sub-surface light bleed near the lit horizon (upper-right).
-            'radial-gradient(circle at 78% 26%, rgba(245,243,238,0.16) 0%, rgba(245,243,238,0.05) 14%, transparent 30%)',
-            // Main body — dark sphere with a touch of warmth in the
-            // middle, fading to near-black on the unlit side.
-            'radial-gradient(circle at 50% 50%, rgba(35,38,30,0.95) 0%, rgba(20,22,18,0.95) 40%, rgba(8,8,8,0.95) 70%, rgba(0,0,0,0.95) 100%)',
+            // Cool side of the shimmer (upper-right, toward the star).
+            'radial-gradient(circle at 62% 30%, rgba(150,196,255,0.07) 0%, rgba(150,196,255,0.02) 30%, transparent 55%)',
+            // Warm accent bloom, broad and feathered — peaks gently and
+            // fades long so there is never a visible boundary.
+            'radial-gradient(circle at 50% 52%, transparent 38%, rgba(212,255,0,0.10) 56%, rgba(212,255,0,0.035) 70%, transparent 86%)',
+          ].join(', '),
+        }}
+      />
+
+      {/* Planet body. Lit sub-surface bleed on the upper-right horizon,
+          then a volumetric radial that fades its own alpha to fully
+          transparent before the geometric edge — so the eye reads a
+          massive far-away sphere with no hard silhouette anywhere. */}
+      <div
+        className="absolute bottom-[-160px] right-[-140px] h-[440px] w-[440px] rounded-full opacity-[0.9]"
+        style={{
+          background: [
+            // Sub-surface light bleed near the lit horizon (upper-right),
+            // with a faint accent tint for the iridescent feel.
+            'radial-gradient(circle at 76% 26%, rgba(245,243,238,0.14) 0%, rgba(212,255,0,0.05) 16%, transparent 34%)',
+            // Main body — warm-dark sphere whose opacity feathers out to
+            // zero by ~90% so it melts into the footer with no edge.
+            'radial-gradient(circle at 50% 50%, rgba(38,42,32,0.92) 0%, rgba(22,25,20,0.9) 34%, rgba(12,14,11,0.76) 56%, rgba(6,7,6,0.4) 74%, rgba(0,0,0,0) 90%)',
           ].join(', '),
         }}
       />
