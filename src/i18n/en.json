@@ -556,7 +556,23 @@
     "info": {
       "email": "cggeneralistandrey@gmail.com",
       "telegram": "@aepov_2kzz",
-      "location": "Moscow, 60-letiya Oktyabrya Prospekt, 11"
+      "location": "Moscow, 60-letiya Oktyabrya Prospekt, 11",
+      "calendly": "https://calendly.com/cggeneralistandrey/30min"
+    },
+    "actions": {
+      "label": "Pick your channel",
+      "telegram": {
+        "title": "Message on Telegram",
+        "desc": "Fastest reply"
+      },
+      "email": {
+        "title": "Send an email",
+        "desc": "For briefs & details"
+      },
+      "call": {
+        "title": "Book a call",
+        "desc": "30 min · Calendly"
+      }
     }
   },
   "project": {
