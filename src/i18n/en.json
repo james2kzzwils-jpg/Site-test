@@ -80,12 +80,10 @@
           "/works/cosmos/frame-02.webp",
           "/works/cosmos/frame-03.webp",
           "/works/cosmos/frame-04.webp",
-          "/works/cosmos/frame-05.webp",
           "/works/cosmos/frame-06.webp",
           "/works/cosmos/frame-07.webp",
           "/works/cosmos/frame-08.webp",
           "/works/cosmos/frame-09.webp",
-          "/works/cosmos/frame-10.webp",
           "/works/cosmos/frame-11.webp",
           "/works/cosmos/frame-12.webp",
           "/works/cosmos/frame-13.webp",
@@ -116,7 +114,6 @@
           "/works/parfume-simulation/vid-01.mp4",
           "/works/parfume-simulation/03.webp",
           "/works/parfume-simulation/04.webp",
-          "/works/parfume-simulation/vid-02.mp4",
           "/works/parfume-simulation/05.webp",
           "/works/parfume-simulation/06.webp",
           "/works/parfume-simulation/vid-03.mp4",
@@ -170,8 +167,7 @@
           "/works/hoodi-cloth/04.webp",
           "/works/hoodi-cloth/05.webp",
           "/works/hoodi-cloth/06.webp",
-          "/works/hoodi-cloth/07.webp",
-          "/works/hoodi-cloth/08.webp"
+          "/works/hoodi-cloth/07.webp"
         ],
         "tags": [
           "Blender",

@@ -763,7 +763,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
         type="button"
         onClick={scrollToTop}
         aria-label={t.project.back_to_works}
-        className={`fixed bottom-8 left-8 z-[60] flex h-12 w-12 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-[var(--background)]/85 font-mono text-[14px] text-[var(--foreground)]/80 backdrop-blur transition-[opacity,transform,background-color,border-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.08] hover:text-[var(--accent)] ${
+        className={`fixed bottom-11 left-11 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-[var(--accent)]/45 bg-[var(--background)]/90 font-mono text-[20px] leading-none text-[var(--accent)] shadow-[0_6px_24px_rgba(0,0,0,0.45)] backdrop-blur transition-[opacity,transform,background-color,border-color] duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.14] hover:text-[var(--accent)] ${
           showTop
             ? 'pointer-events-auto translate-y-0 opacity-100'
             : 'pointer-events-none translate-y-2 opacity-0'
