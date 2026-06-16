@@ -26,6 +26,7 @@ export default function Navigation({ rooted = false }: NavigationProps) {
     { key: 'services', href: '#services' },
     ...(SHOW_SHOP ? [{ key: 'shop', href: '#shop' }] : []),
     { key: 'about', href: '#about' },
+    { key: 'faq', href: '#faq' },
     { key: 'contact', href: '#contact' },
   ] as const;
 

@@ -13,6 +13,7 @@
     "services": "Services",
     "shop": "Shop",
     "about": "About",
+    "faq": "FAQ",
     "contact": "Contact"
   },
   "loader": {
@@ -571,6 +572,45 @@
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
     "next_project": "Next Project"
+  },
+  "faq": {
+    "section_label": "FAQ",
+    "title": "Questions Clients Ask",
+    "subtitle": "Straight answers on cost, timelines, the process and how we'd work together — for brands, founders and studios.",
+    "items": [
+      {
+        "q": "How much does a 3D product visualization or animation cost?",
+        "a": "Every project is priced individually, because the cost depends on the complexity of the simulations, the level of detail in the models and the runtime. Entry-level projects — for example product 3D visualization or short animation shots — start from 10,000 ₽ or $150. To get an accurate estimate and a timeline for your specific task, message me and we will discuss the details within the day."
+      },
+      {
+        "q": "How long does a 3D visualization or animation take?",
+        "a": "It depends on the scope. A single product render usually takes a few days, a short animated spot around 2–4 weeks, and a larger campaign with simulations or many scenes longer. After a short brief I give you a firm timeline with clear milestones, so you always know what's happening and when. If it's tied to a product launch, booking 4–8 weeks ahead leaves comfortable room for review rounds."
+      },
+      {
+        "q": "Why choose 3D visualization instead of a traditional photo or video shoot?",
+        "a": "With 3D you're not limited by the physical product, a location or shooting logistics. Once your product is built in 3D, it can be shown from any angle, in any color or material, in any environment — and reused across ads, your website, packaging and social media without a new shoot every time. It's especially valuable when the product doesn't exist yet, is expensive to ship, or needs many variations. You also get visuals that are impossible to film, like liquids, transformations or exploded views."
+      },
+      {
+        "q": "Can you create a 3D animation or ad for a new product launch?",
+        "a": "Yes — that's one of my core services. We start with a short call to align on the goal, audience, budget and deadline, then I show a moodboard and references for your sign-off before any animation begins. You approve the look early, see the timing in a draft, and receive a final polished video with versions cut for every platform (Instagram, YouTube, your website and so on). A clear process with defined review points, and no surprises at the end."
+      },
+      {
+        "q": "Do you work with studios and agencies as a freelance CG generalist or Houdini FX artist?",
+        "a": "Yes. I join studio and agency teams as an extra pair of experienced hands across the whole production — modeling, lighting, rendering and especially the complex effects and simulations (cloth, liquids, smoke, particles) that need a dedicated specialist. I deliver in the formats your team already uses, such as After Effects and DaVinci Resolve, and hand off clean, well-documented project files so your artists can pick up exactly where I left off."
+      },
+      {
+        "q": "What do you need from me to start a project?",
+        "a": "To get started, just a short description of what you want to achieve, any references or brand materials you have, your deadline and a rough budget. From there I scope the work, give you a clear timeline and price, and we agree on the review rounds before anything begins. You don't need any technical or 3D knowledge — my job is to turn your goals into a production plan and keep it understandable at every step."
+      },
+      {
+        "q": "What kinds of projects do you take on?",
+        "a": "Product visualization, animated commercials and explainer videos, effect-driven and procedural animation (simulations of cloth, liquids, smoke and particles), motion design, and pipeline or automation help for studios. If you have a product, brand or idea that needs to look great in 3D — or a studio that needs extra firepower to hit a deadline — that's exactly the kind of work I do. Not sure your project fits? Message me and I'll tell you honestly."
+      },
+      {
+        "q": "Why use CG instead of AI generators — or is it better to combine them?",
+        "a": "AI image and video generators are great for quick ideas, moodboards and references, but they struggle with control and accuracy. They can't reliably reproduce your exact product, logo, proportions or materials, they drift between frames and camera angles, and they rarely give you clean, high-resolution, editable output that you fully own. CG gives you that control: your product is built once and stays accurate from every angle, every revision is art-directable, and real simulations — liquids, cloth, smoke — behave physically correctly. In practice the strongest results come from combining the two: I use AI to speed up ideation, references and texture exploration, then build the final, brand-accurate and fully controllable result in CG. You get the speed of AI together with the precision and consistency of real production."
+      }
+    ]
   },
   "footer": {
     "brand": "Epov Creative Lab's",

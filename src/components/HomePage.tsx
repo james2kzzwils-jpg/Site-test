@@ -6,6 +6,7 @@ import Works from '@/components/Works';
 import Services from '@/components/Services';
 import Shop from '@/components/Shop';
 import About from '@/components/About';
+import Faq from '@/components/Faq';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
@@ -37,6 +38,7 @@ export default function HomePage() {
         <Services />
         {SHOW_SHOP && <Shop />}
         <About />
+        <Faq />
         <Contact />
         <Footer />
       </main>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import YandexMetrika from "@/components/YandexMetrika";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const interSans = Inter({
   variable: "--font-display",
@@ -16,7 +18,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Epov Creative Labs — 3D Motion Designer & CG Generalist",
+  metadataBase: new URL("https://aepovcg.pro"),
+  title: {
+    default: "Epov Creative Labs — 3D Motion Designer & CG Generalist",
+    template: "%s — Epov Creative Labs",
+  },
   description:
     "Epov Creative Labs — 3D Motion Designer and CG Generalist. Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
   keywords: [
@@ -30,6 +36,45 @@ export const metadata: Metadata = {
     "fluid simulation",
     "vellum cloth",
   ],
+  authors: [{ name: "Andrey Epov", url: "https://aepovcg.pro" }],
+  creator: "Andrey Epov",
+  publisher: "Epov Creative Labs",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Epov Creative Labs",
+    title: "Epov Creative Labs — 3D Motion Designer & CG Generalist",
+    description:
+      "Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
+    url: "https://aepovcg.pro",
+    images: [
+      {
+        url: "/works/cosmos/cover.webp",
+        width: 1200,
+        height: 630,
+        alt: "Epov Creative Labs — 3D Motion Design & CG",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Epov Creative Labs — 3D Motion Designer & CG Generalist",
+    description:
+      "Procedural animation in Houdini, product visualization, simulations and pipeline tools for brands and studios.",
+    images: ["/works/cosmos/cover.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +88,8 @@ export default function RootLayout({
       className={`${interSans.variable} ${jetbrainsMono.variable} antialiased`}
     >
       <body>
+        <GoogleAnalytics />
+        <YandexMetrika />
         <Providers>{children}</Providers>
       </body>
     </html>
