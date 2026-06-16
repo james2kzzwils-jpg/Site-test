@@ -605,6 +605,10 @@
       {
         "q": "What kinds of projects do you take on?",
         "a": "Product visualization, animated commercials and explainer videos, effect-driven and procedural animation (simulations of cloth, liquids, smoke and particles), motion design, and pipeline or automation help for studios. If you have a product, brand or idea that needs to look great in 3D — or a studio that needs extra firepower to hit a deadline — that's exactly the kind of work I do. Not sure your project fits? Message me and I'll tell you honestly."
+      },
+      {
+        "q": "Why use CG instead of AI generators — or is it better to combine them?",
+        "a": "AI image and video generators are great for quick ideas, moodboards and references, but they struggle with control and accuracy. They can't reliably reproduce your exact product, logo, proportions or materials, they drift between frames and camera angles, and they rarely give you clean, high-resolution, editable output that you fully own. CG gives you that control: your product is built once and stays accurate from every angle, every revision is art-directable, and real simulations — liquids, cloth, smoke — behave physically correctly. In practice the strongest results come from combining the two: I use AI to speed up ideation, references and texture exploration, then build the final, brand-accurate and fully controllable result in CG. You get the speed of AI together with the precision and consistency of real production."
       }
     ]
   },
