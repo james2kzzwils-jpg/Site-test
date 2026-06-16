@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import YandexMetrika from "@/components/YandexMetrika";
 
 const interSans = Inter({
   variable: "--font-display",
@@ -86,6 +87,7 @@ export default function RootLayout({
       className={`${interSans.variable} ${jetbrainsMono.variable} antialiased`}
     >
       <body>
+        <YandexMetrika />
         <Providers>{children}</Providers>
       </body>
     </html>
