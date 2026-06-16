@@ -13,6 +13,7 @@
     "services": "Services",
     "shop": "Shop",
     "about": "About",
+    "faq": "FAQ",
     "contact": "Contact"
   },
   "loader": {
@@ -571,6 +572,41 @@
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
     "next_project": "Next Project"
+  },
+  "faq": {
+    "section_label": "FAQ",
+    "title": "Questions Clients Ask",
+    "subtitle": "Straight answers on automation, procedural animation, pricing and how to start a project.",
+    "items": [
+      {
+        "q": "How can I automate repetitive tasks in my 3D animation pipeline?",
+        "a": "Most repetitive 3D work — versioning, render setup, scene assembly, asset naming and batch exports — can be automated with Python scripting and Houdini Digital Assets (HDAs). I build custom pipeline tools and HDAs that turn manual, error-prone steps into one-click operations, so artists spend their time on creative decisions instead of housekeeping. Typical wins: automated render-pass setup, procedural scene assembly, and naming/export conventions enforced by code."
+      },
+      {
+        "q": "What are the benefits of using procedural animation for brand campaigns?",
+        "a": "Procedural animation built in Houdini makes brand visuals art-directable and reusable: you can change product, colour, timing or format without re-animating from scratch. That means faster iteration, consistent quality across every deliverable, and easy adaptation to each platform aspect ratio. For campaigns it scales — one procedural setup can generate dozens of variations for A/B testing and localized cuts."
+      },
+      {
+        "q": "Can a CG generalist help optimize my studio production pipeline?",
+        "a": "Yes. A CG generalist sees the whole pipeline — modeling, lookdev, lighting, FX and compositing — so they can remove bottlenecks specialists miss, standardize handoffs between stages, and introduce automation through HDAs, Python tools and templated scenes. I help studios cut render and revision time by building reusable setups and documenting project files, so the team moves faster on the next job."
+      },
+      {
+        "q": "How do I estimate costs for a custom 3D product visualization project?",
+        "a": "Every project is priced individually, because the cost depends on the complexity of the simulations, the level of detail in the models and the runtime. Entry-level projects — for example product 3D visualization or short animation shots — start from 10,000 ₽ or $150. To get an accurate estimate and a timeline for your specific task, message me and we will discuss the details within the day."
+      },
+      {
+        "q": "What should I look for when hiring a freelance CG generalist?",
+        "a": "Look for a portfolio that shows real technical range — modeling, lookdev, lighting, FX and comp, not just one slice — plus a clear, staged process with revision rounds defined up front. Strong generalists can optimize and document pipelines, not only render pretty frames, and they communicate in deliverables and timelines rather than vague promises. Ask how they handle scope changes and final project-file handoff."
+      },
+      {
+        "q": "How do I start a 3D animation project for a new product launch?",
+        "a": "Start with a discovery call to align on goals, audience, budget and timeline, then approve a moodboard and references before any animation begins. From there it runs: animatic (timing and camera), lookdev and lighting, then a final graded master with cut-downs for every platform. Booking 4–8 weeks before launch leaves room for revision rounds — reach out via the contact form or Calendly to scope it."
+      },
+      {
+        "q": "What is the typical workflow for integrating Houdini into motion design for studios?",
+        "a": "A typical integration keeps Houdini for what it does best — procedural FX and simulation such as Vellum cloth, FLIP fluids, particles and volumetric smoke and fire — and exports cleanly into the studio's existing comp and edit stack (After Effects, DaVinci Resolve). I wrap effects as art-directable HDAs so motion designers can tweak parameters without touching the underlying network, and standardize caching and export so the Houdini step drops into the pipeline without friction."
+      }
+    ]
   },
   "footer": {
     "brand": "Epov Creative Lab's",
