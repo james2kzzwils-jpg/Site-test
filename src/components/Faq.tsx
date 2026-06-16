@@ -52,11 +52,17 @@ function FaqRow({
   );
 }
 
+const VISIBLE_COUNT = 5;
+
 export default function Faq() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [showAll, setShowAll] = useState(false);
+
+  const items = t.faq.items;
+  const visibleItems = showAll ? items : items.slice(0, VISIBLE_COUNT);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -96,7 +102,7 @@ export default function Faq() {
         </div>
 
         <div className={`mx-auto ${shown ? 'reveal is-in' : 'reveal'}`}>
-          {t.faq.items.map((item, i) => (
+          {visibleItems.map((item, i) => (
             <FaqRow
               key={i}
               item={item}
@@ -105,6 +111,30 @@ export default function Faq() {
               onToggle={() => setOpenIndex((prev) => (prev === i ? null : i))}
             />
           ))}
+
+          {items.length > VISIBLE_COUNT && (
+            <button
+              type="button"
+              onClick={() => {
+                setShowAll((s) => {
+                  const next = !s;
+                  if (!next && openIndex !== null && openIndex >= VISIBLE_COUNT) {
+                    setOpenIndex(null);
+                  }
+                  return next;
+                });
+              }}
+              className="group flex w-full items-center justify-center gap-3 border-b border-[var(--foreground)]/12 py-6 font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45 transition-colors duration-300 hover:bg-[var(--foreground)]/[0.015] hover:text-[var(--foreground)]/70"
+              data-cursor="hover"
+            >
+              <span className="accent-diamond transition-transform duration-300 group-hover:rotate-90">
+                ◆
+              </span>
+              {showAll
+                ? t.faq.show_less
+                : `${t.faq.show_all} (${String(items.length).padStart(2, '0')})`}
+            </button>
+          )}
         </div>
       </div>
     </section>
