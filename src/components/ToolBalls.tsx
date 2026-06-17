@@ -21,22 +21,31 @@ import { useMediaQuery } from './useMediaQuery';
 // Keep keys lowercased so we can match case-insensitively against
 // whatever the i18n dictionary throws at us.
 const BRAND_COLORS: Record<string, string> = {
-  houdini: '255,110,0',
+  houdini: '255,124,18',
   vellum: '255,150,40',
   flip: '90,160,255',
   particles: '255,180,80',
   embergen: '255,90,30',
-  blender: '234,98,33',
-  cycles: '232,162,53',
-  octane: '220,55,95',
+  blender: '255,123,40',
+  'unreal engine': '120,150,255',
+  unreal: '120,150,255',
+  cycles: '240,170,55',
+  octane: '235,60,110',
   'nano banana': '255,215,70',
-  'after effects': '160,140,255',
-  'davinci resolve': '230,80,70',
-  davinci: '230,80,70',
-  resolve: '230,80,70',
+  'after effects': '180,150,255',
+  'davinci resolve': '240,85,75',
+  davinci: '240,85,75',
+  resolve: '240,85,75',
+  photoshop: '49,168,255',
+  illustrator: '255,154,0',
+  figma: '170,108,255',
+  cavalry: '0,210,180',
+  veo: '70,170,255',
+  gemini: '150,120,250',
+  higgsfield: '80,225,130',
   'marvelous designer': '220,170,90',
   marvelous: '220,170,90',
-  python: '55,118,171',
+  python: '70,140,210',
   javascript: '247,223,30',
   typescript: '49,120,198',
   html: '227,79,38',
@@ -54,6 +63,10 @@ const BRAND_COLORS: Record<string, string> = {
 };
 
 const NEUTRAL = '210,205,196';
+
+// Glow never fully decays — each ball keeps a soft constant halo in its
+// brand colour so the field reads as colourful even at rest.
+const GLOW_FLOOR = 0.28;
 const colorFor = (label: string) =>
   BRAND_COLORS[label.trim().toLowerCase()] ?? NEUTRAL;
 
@@ -73,14 +86,21 @@ type Ball = {
 function StaticPills({ tools }: { tools: readonly string[] }) {
   return (
     <div className="flex flex-wrap gap-2">
-      {tools.map((tool) => (
-        <span
-          key={tool}
-          className="rounded-full border border-[var(--hairline)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--foreground)]/65"
-        >
-          {tool}
-        </span>
-      ))}
+      {tools.map((tool) => {
+        const rgb = colorFor(tool);
+        return (
+          <span
+            key={tool}
+            className="rounded-full border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--foreground)]/85"
+            style={{
+              borderColor: `rgba(${rgb}, 0.6)`,
+              background: `rgba(${rgb}, 0.1)`,
+            }}
+          >
+            {tool}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -145,20 +165,20 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
         if (b.x - b.r < 0) {
           b.x = b.r;
           b.vx = Math.abs(b.vx);
-          b.glow = Math.max(b.glow, 0.55);
+          b.glow = Math.max(b.glow, 0.78);
         } else if (b.x + b.r > cw) {
           b.x = cw - b.r;
           b.vx = -Math.abs(b.vx);
-          b.glow = Math.max(b.glow, 0.55);
+          b.glow = Math.max(b.glow, 0.78);
         }
         if (b.y - b.r < 0) {
           b.y = b.r;
           b.vy = Math.abs(b.vy);
-          b.glow = Math.max(b.glow, 0.55);
+          b.glow = Math.max(b.glow, 0.78);
         } else if (b.y + b.r > ch) {
           b.y = ch - b.r;
           b.vy = -Math.abs(b.vy);
-          b.glow = Math.max(b.glow, 0.55);
+          b.glow = Math.max(b.glow, 0.78);
         }
       }
 
@@ -193,7 +213,7 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
             // Light glow flash for both balls — they each light up
             // with their own brand colour. Strength scales with the
             // closing speed so soft brushes flash softly.
-            const flash = Math.min(0.4 + Math.abs(diff) * 0.7, 1);
+            const flash = Math.min(0.65 + Math.abs(diff) * 0.9, 1);
             a.glow = Math.max(a.glow, flash);
             c.glow = Math.max(c.glow, flash);
           }
@@ -213,9 +233,9 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
         b.vx += (Math.random() - 0.5) * 0.004;
         b.vy += (Math.random() - 0.5) * 0.004;
 
-        // Glow decays exponentially so collisions read as a snappy
-        // pulse rather than a sustained burn.
-        b.glow *= 0.91;
+        // Glow decays exponentially toward a constant floor so collisions
+        // read as a snappy pulse on top of a permanent brand-colour halo.
+        b.glow = Math.max(b.glow * 0.92, GLOW_FLOOR);
 
         b.el.style.transform = `translate3d(${b.x - b.r}px, ${b.y - b.r}px, 0)`;
         b.el.style.setProperty('--ball-glow', b.glow.toFixed(3));
@@ -266,7 +286,7 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
                 rgb,
               };
             }}
-            className="tool-ball pointer-events-none absolute left-0 top-0 flex h-[76px] w-[76px] select-none items-center justify-center rounded-full border border-[rgba(var(--ball-rgb),0.35)] bg-[var(--background)]/85 px-2 text-center font-mono text-[10px] uppercase leading-[1.1] tracking-[0.14em] text-[var(--foreground)]/85 backdrop-blur-[2px] will-change-transform sm:h-[84px] sm:w-[84px]"
+            className="tool-ball pointer-events-none absolute left-0 top-0 flex h-[76px] w-[76px] select-none items-center justify-center rounded-full border border-[rgba(var(--ball-rgb),0.6)] px-2 text-center font-mono text-[10px] uppercase leading-[1.1] tracking-[0.14em] text-[var(--foreground)]/90 backdrop-blur-[2px] will-change-transform sm:h-[84px] sm:w-[84px]"
             style={{
               transform: 'translate3d(-9999px, -9999px, 0)',
               // Custom properties consumed by the .tool-ball CSS rules
@@ -275,8 +295,12 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
               // ticks every frame.
               ['--ball-rgb' as string]: rgb,
               ['--ball-glow' as string]: '0',
+              // Brand-tinted base so each ball carries its colour at rest,
+              // sitting on the dark background for legible labels.
+              background:
+                'radial-gradient(circle at 50% 32%, rgba(var(--ball-rgb), calc(0.22 + var(--ball-glow) * 0.35)), rgba(var(--ball-rgb), 0.06) 70%), rgba(10,10,10,0.82)',
               boxShadow:
-                '0 0 0 1px rgba(var(--ball-rgb), calc(var(--ball-glow) * 0.6)), 0 0 24px rgba(var(--ball-rgb), calc(var(--ball-glow) * 0.55)), 0 0 64px rgba(var(--ball-rgb), calc(var(--ball-glow) * 0.35))',
+                '0 0 0 1px rgba(var(--ball-rgb), calc(0.28 + var(--ball-glow) * 0.7)), 0 0 30px rgba(var(--ball-rgb), calc(var(--ball-glow) * 0.85)), 0 0 82px rgba(var(--ball-rgb), calc(var(--ball-glow) * 0.55)), inset 0 0 26px rgba(var(--ball-rgb), calc(0.12 + var(--ball-glow) * 0.4))',
             }}
           >
             {tool}

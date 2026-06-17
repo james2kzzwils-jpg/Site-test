@@ -6,7 +6,19 @@ import { SITE_URL } from '@/lib/seo';
 // citation/answer AI crawlers, blocks AI *training* crawlers, and keeps the
 // private client portal out of every index.
 export default function robots(): MetadataRoute.Robots {
-  const trainingBots = [
+  // Crawlers allowed to index everything except the technical folders.
+  // Each agent gets its own explicit group (Allow/Disallow repeated) so the
+  // file is unambiguous and robust when merged with Cloudflare's managed block.
+  const allowedAgents = [
+    '*',
+    'OAI-SearchBot',
+    'PerplexityBot',
+    'ClaudeBot',
+    'Google-Extended',
+  ];
+
+  // AI training crawlers — blocked to honour "citation without training".
+  const blockedAgents = [
     'GPTBot',
     'CCBot',
     'Bytespider',
@@ -17,22 +29,15 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules: [
-      {
-        userAgent: '*',
+      ...allowedAgents.map((userAgent) => ({
+        userAgent,
         allow: '/',
         disallow: ['/portal/', '/api/'],
-      },
-      // AI answer / citation crawlers — explicitly allowed (no training use).
-      {
-        userAgent: ['OAI-SearchBot', 'PerplexityBot', 'ClaudeBot', 'Google-Extended'],
-        allow: '/',
-        disallow: ['/portal/', '/api/'],
-      },
-      // AI training crawlers — blocked to honour "citation without training".
-      {
-        userAgent: trainingBots,
+      })),
+      ...blockedAgents.map((userAgent) => ({
+        userAgent,
         disallow: '/',
-      },
+      })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
