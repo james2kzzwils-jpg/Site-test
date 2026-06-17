@@ -1,8 +1,18 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useLanguage } from '@/i18n/LanguageContext';
-import Scene3D from './Scene3D';
+
+// Three.js is heavy. Loading it via next/dynamic with ssr:false splits the
+// whole react-three-fiber + three bundle into its own async chunk so it no
+// longer sits in the critical path that blocks hydration / Time To
+// Interactive. The hero still renders instantly; the particle field fades in
+// once its chunk arrives.
+const Scene3D = dynamic(() => import('./Scene3D'), {
+  ssr: false,
+  loading: () => null,
+});
 
 export default function Hero() {
   const { t } = useLanguage();
