@@ -107,7 +107,6 @@ function StaticPills({ tools }: { tools: readonly string[] }) {
 
 export default function ToolBalls({ tools }: { tools: readonly string[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballsRef = useRef<(Ball | null)[]>([]);
   const rafRef = useRef<number | null>(null);
   const reduce = useMediaQuery('(prefers-reduced-motion: reduce)', false);
@@ -117,11 +116,6 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
     const container = containerRef.current;
     if (!container) return;
 
-    // Canvas behind the balls paints a fading, additive colour trail
-    // for each ball so the field leaves soft gradient streaks.
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d') ?? null;
-
     const balls = ballsRef.current.filter((b): b is Ball => b !== null);
     if (balls.length === 0) return;
 
@@ -130,17 +124,6 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
     const layout = () => {
       const W = container.clientWidth;
       const H = container.clientHeight;
-
-      // Match the trail canvas to the container (DPR-aware) and reset
-      // its accumulated streaks so a resize doesn't smear.
-      if (canvas && ctx) {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, W, H);
-      }
-
       const cols = Math.max(2, Math.min(5, Math.floor(W / 140)));
       const cellW = W / cols;
       const rows = Math.ceil(balls.length / cols);
@@ -258,34 +241,6 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
         b.el.style.setProperty('--ball-glow', b.glow.toFixed(3));
       }
 
-      // Fading colour trails. First subtract a little alpha everywhere
-      // (destination-out) so old streaks dissolve toward transparent and
-      // the box keeps its own background; then additively paint each
-      // ball's soft brand-colour blob so overlaps blend into a gradient.
-      if (ctx) {
-        // Fade existing streaks toward transparent so each trail keeps a
-        // short tail. We draw the colour blobs with plain source-over
-        // (not additive) so crossing trails keep their own hue instead
-        // of summing into a grey/white haze.
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'rgba(0,0,0,0.065)';
-        ctx.fillRect(0, 0, cw, ch);
-
-        ctx.globalCompositeOperation = 'source-over';
-        for (const b of balls) {
-          const alpha = 0.52 + b.glow * 0.4;
-          const rad = b.r * 0.82;
-          const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, rad);
-          grad.addColorStop(0, `rgba(${b.rgb},${alpha.toFixed(3)})`);
-          grad.addColorStop(0.5, `rgba(${b.rgb},${(alpha * 0.5).toFixed(3)})`);
-          grad.addColorStop(1, `rgba(${b.rgb},0)`);
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(b.x, b.y, rad, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -310,12 +265,6 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
       className="relative h-[360px] w-full overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] sm:h-[420px] lg:h-[460px]"
       aria-hidden="true"
     >
-      {/* Fading colour-trail layer, painted behind the balls. */}
-      <canvas
-        ref={canvasRef}
-        className="pointer-events-none absolute inset-0 h-full w-full"
-      />
-
       {tools.map((tool, i) => {
         const rgb = colorFor(tool);
         return (
