@@ -244,13 +244,32 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
+    const startLoop = () => {
+      if (rafRef.current === null) rafRef.current = requestAnimationFrame(tick);
+    };
+    const stopLoop = () => {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
+    };
+
+    // Only animate while the widget is on screen. It lives well below the
+    // fold, so this keeps the rAF loop off the main thread during the
+    // initial load (helping Time To Interactive) and pauses it whenever the
+    // section is scrolled out of view.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) startLoop();
+        else stopLoop();
+      },
+      { threshold: 0 }
+    );
+    io.observe(container);
+
+    return () => {
+      stopLoop();
+      io.disconnect();
       ro.disconnect();
     };
   }, [reduce, tools]);

@@ -186,10 +186,32 @@ export default function AmbientParticles({
       raf = requestAnimationFrame(loop);
     };
 
-    raf = requestAnimationFrame(loop);
+    const startLoop = () => {
+      if (raf === 0) raf = requestAnimationFrame(loop);
+    };
+    const stopLoop = () => {
+      if (raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+
+    // Particle fields sit behind below-the-fold sections, so only run the
+    // loop while the section is visible. This keeps the main thread free
+    // during initial load (better Time To Interactive) and stops burning
+    // CPU once the section scrolls away.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) startLoop();
+        else stopLoop();
+      },
+      { threshold: 0 }
+    );
+    io.observe(container);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopLoop();
+      io.disconnect();
       ro.disconnect();
     };
   }, [count, reduce, seed, rgb]);
