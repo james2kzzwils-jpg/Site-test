@@ -34,7 +34,7 @@ export default function Footer() {
                 <span className="accent-diamond">◆</span> Sitemap
               </p>
               <div className="flex flex-col gap-3">
-                {(['works', 'services', 'about', 'contact'] as const).map((item) => (
+                {(['works', 'services', 'about', 'faq', 'contact'] as const).map((item) => (
                   <a
                     key={item}
                     href={`#${item}`}
@@ -92,7 +92,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={resetConsent}
-              className="transition-colors hover:text-[var(--foreground)]/60"
+              className="uppercase transition-colors hover:text-[var(--foreground)]/60"
               data-cursor="hover"
             >
               {t.footer.cookieSettings}

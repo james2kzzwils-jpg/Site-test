@@ -2,6 +2,8 @@
 
 /**
  * Floating Telegram button — fixed bottom-right.
+ * Matches the back-to-top button in project pages: same bottom offset
+ * (bottom-11 = 2.75rem), slightly larger (h-16 w-16), right-11 from edge.
  * Hover: accent-green glow. Click: opens t.me/aepov_2kzz.
  */
 export default function TelegramFloat() {
@@ -12,12 +14,12 @@ export default function TelegramFloat() {
       rel="noreferrer"
       aria-label="Telegram"
       data-cursor="hover"
-      className="group fixed bottom-8 right-8 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--background)]/90 shadow-[0_4px_20px_rgba(0,0,0,0.35)] backdrop-blur transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.12] hover:shadow-[0_0_28px_var(--accent-glow)]"
+      className="group fixed bottom-11 right-11 z-[60] flex h-16 w-16 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--background)]/90 shadow-[0_6px_24px_rgba(0,0,0,0.45)] backdrop-blur transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.12] hover:shadow-[0_0_28px_var(--accent-glow)]"
     >
       {/* Telegram SVG icon */}
       <svg
-        width="24"
-        height="24"
+        width="28"
+        height="28"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

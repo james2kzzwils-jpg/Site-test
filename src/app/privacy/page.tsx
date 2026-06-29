@@ -61,7 +61,7 @@ function ContentRu() {
           Настоящая Политика конфиденциальности (далее — «Политика») определяет
           порядок обработки и защиты персональных данных посетителей сайта{' '}
           <strong className="text-[var(--foreground)]">aepovcg.pro</strong>{' '}
-          (далее — «Сайт»), принадлежащего Андрею Эпову / Epov Creative Labs
+          (далее — «Сайт»), принадлежащего Андрею Епову / Epov Creative Labs
           (далее — «Оператор»).
         </p>
         <p>
@@ -240,8 +240,9 @@ function ContentRu() {
           </li>
         </ul>
         <p className="mt-2">
-          Чтобы отозвать согласие на cookie, очистите данные сайта в настройках
-          браузера — при следующем посещении баннер появится снова.
+          Чтобы изменить свои предпочтения или отозвать согласие на
+          использование аналитических cookie, нажмите на ссылку «Настройки
+          Cookie» в подвале (футере) Сайта.
         </p>
       </section>
 
@@ -490,8 +491,9 @@ function ContentEn() {
           </li>
         </ul>
         <p className="mt-2">
-          To withdraw cookie consent, clear the Website data in your browser
-          settings — the banner will reappear on your next visit.
+          To change your preferences or withdraw your consent for analytics
+          cookies, click the &quot;Cookie Settings&quot; link in the footer of
+          the Website.
         </p>
       </section>
 

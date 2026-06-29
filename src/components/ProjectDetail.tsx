@@ -560,61 +560,25 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* Bento — Assignment / Solution / Process / Context with visual
-            cells. When the project flag `simpleBento` is on (Batara
-            etc.) the visual cells are dropped and the text blocks
-            stretch to fill the row so the story stays clean. */}
-        <section className="pb-24 lg:pb-32">
-          <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
-            {project.simpleBento ? (
+        {/* Bento — visual cells only (text was moved to Case Study).
+            When `simpleBento` is on, this section is skipped entirely
+            since those projects have no bento images. */}
+        {!project.simpleBento && (
+          <section className="pb-24 lg:pb-32">
+            <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
               <div className="grid grid-cols-12 gap-3 sm:gap-4">
-                <BentoText
-                  idx="01"
-                  label={t.project.assignment_label}
-                  body={project.assignment}
-                  className="col-span-12"
-                />
-                <BentoText
-                  idx="02"
-                  label={t.project.solution_label}
-                  body={project.solution}
-                  className="col-span-12 lg:col-span-7"
-                />
-                <BentoText
-                  idx="03"
-                  label={t.project.context_label}
-                  body={project.context}
-                  className="col-span-12 lg:col-span-5"
-                />
-              </div>
-            ) : (
-              <div className="grid grid-cols-12 gap-3 sm:gap-4">
-                <BentoText
-                  idx="01"
-                  label={t.project.assignment_label}
-                  body={project.assignment}
-                  className="col-span-12 lg:col-span-8"
-                />
                 <BentoVisual
                   label="Moodboard"
                   caption="01 / Reference"
                   aspect="aspect-[4/5] lg:aspect-auto lg:min-h-[360px]"
-                  className="col-span-12 lg:col-span-4 lg:row-span-2"
+                  className="col-span-12 lg:col-span-4"
                   src={project.bento?.moodboard}
                 />
-
-                <BentoText
-                  idx="02"
-                  label={t.project.solution_label}
-                  body={project.solution}
-                  className="col-span-12 lg:col-span-8"
-                />
-
                 <BentoVisual
                   label="Breakdown"
                   caption="Process — Frame 01"
                   aspect="aspect-[16/7]"
-                  className="col-span-12 lg:col-span-7"
+                  className="col-span-12 lg:col-span-8"
                   big
                   src={project.bento?.breakdown}
                 />
@@ -622,27 +586,20 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                   label="Frame"
                   caption="Process — Frame 02"
                   aspect="aspect-square"
-                  className="col-span-6 lg:col-span-5"
+                  className="col-span-6"
                   src={project.bento?.frame02}
-                />
-
-                <BentoText
-                  idx="03"
-                  label={t.project.context_label}
-                  body={project.context}
-                  className="col-span-12 lg:col-span-7"
                 />
                 <BentoVisual
                   label="Frame"
                   caption="Process — Frame 03"
-                  aspect="aspect-square lg:aspect-auto lg:min-h-full"
-                  className="col-span-6 lg:col-span-5"
+                  aspect="aspect-square"
+                  className="col-span-6"
                   src={project.bento?.frame03}
                 />
               </div>
-            )}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* Moodboard / experiments / gallery sections. Each project can
             opt into the bento layout (varied cell sizes on a 12-col
