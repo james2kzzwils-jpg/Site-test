@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import YandexMetrika from "@/components/YandexMetrika";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
+import ConsentAnalytics from "@/components/ConsentAnalytics";
+import CookieConsent from "@/components/CookieConsent";
+import TelegramFloat from "@/components/TelegramFloat";
 
 const interSans = Inter({
   variable: "--font-display",
@@ -88,9 +89,12 @@ export default function RootLayout({
       className={`${interSans.variable} ${jetbrainsMono.variable} antialiased`}
     >
       <body>
-        <GoogleAnalytics />
-        <YandexMetrika />
-        <Providers>{children}</Providers>
+        <ConsentAnalytics />
+        <Providers>
+          {children}
+          <CookieConsent />
+          <TelegramFloat />
+        </Providers>
       </body>
     </html>
   );

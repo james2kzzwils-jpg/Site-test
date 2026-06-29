@@ -351,6 +351,13 @@ export default function ProjectDetail({ slug }: { slug: string }) {
       frame02?: string;
       frame03?: string;
     };
+    caseStudy?: {
+      role: string;
+      caseTools: string;
+      challenge: string;
+      outcome: string;
+      techBreakdown: string[];
+    };
   };
   const project = projects[index] as ProjectShape | undefined;
   const next = projects[(index + 1) % projects.length];
@@ -475,6 +482,62 @@ export default function ProjectDetail({ slug }: { slug: string }) {
             </div>
           </div>
         </section>
+
+        {/* Case Study Overview */}
+        {project.caseStudy ? (
+          <section className="py-24 lg:py-32">
+            <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+              {/* Meta bar — Client / Role / Tools */}
+              <div className="mb-12 flex flex-wrap gap-x-12 gap-y-4 border-b border-[var(--hairline)] pb-8 font-mono text-[11px] uppercase tracking-[0.22em]">
+                <div>
+                  <span className="text-[var(--foreground)]/40">{t.project.client_label}: </span>
+                  <span className="text-[var(--foreground)]/80">{project.client}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--foreground)]/40">{t.project.role_label}: </span>
+                  <span className="text-[var(--foreground)]/80">{project.caseStudy.role}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--foreground)]/40">{t.project.tools_label}: </span>
+                  <span className="text-[var(--foreground)]/80">{project.caseStudy.caseTools}</span>
+                </div>
+              </div>
+
+              {/* Two-column: Business Story + Tech Breakdown */}
+              <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+                <div>
+                  <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+                    <span className="accent-diamond">◆</span> {t.project.theProject_label}
+                  </p>
+                  <div className="space-y-4 text-[15px] leading-[1.75] text-[var(--foreground)]/70">
+                    <p>
+                      <strong className="text-[var(--foreground)]">{t.project.challenge_label}:</strong>{' '}
+                      {project.caseStudy.challenge}
+                    </p>
+                    <p>
+                      <strong className="text-[var(--foreground)]">{t.project.outcome_label}:</strong>{' '}
+                      {project.caseStudy.outcome}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="lg:border-l lg:border-[var(--hairline)] lg:pl-16">
+                  <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+                    <span className="accent-diamond">◆</span> {t.project.techBreakdown_label}
+                  </p>
+                  <ul className="space-y-3 text-[15px] leading-[1.75] text-[var(--foreground)]/70">
+                    {project.caseStudy.techBreakdown.map((item: string, i: number) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="mt-1 shrink-0 text-[var(--accent)]">+</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* Outputs */}
         <section className="py-24 lg:py-32">

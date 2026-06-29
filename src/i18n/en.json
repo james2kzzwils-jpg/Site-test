@@ -23,7 +23,7 @@
     "kicker": "Portfolio — 2026",
     "title_line1": "Motion Design",
     "title_line2": "& CG Solutions",
-    "subtitle": "Where aesthetics is not the goal, but the natural result of a competent technical process.",
+    "subtitle": "Specializing in complex procedural animations, Vellum simulations, and full-cycle CG pipelines in Blender and Houdini. From concept and lookdev to final compositing.",
     "cta_works": "Projects",
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
@@ -100,7 +100,18 @@
           "frame02": "/works/cosmos/frame-12.webp",
           "frame03": "/works/cosmos/frame-16.webp"
         },
-        "published_at": "2025-08"
+        "published_at": "2025-08",
+        "caseStudy": {
+          "role": "3D Motion Designer & CG Generalist",
+          "caseTools": "Unreal Engine, After Effects",
+          "challenge": "Create graphics for non-standard overhead LED ceiling screens in a public pavilion — contrasty enough to stop passers-by, yet calm enough to hold attention for minutes.",
+          "outcome": "A seamless, looping ambient piece that pulls foot traffic and increases dwell time. Ready for fast color, scale, or branding customization.",
+          "techBreakdown": [
+            "Full scene assembly, shading, lighting, and animation in a single Unreal Engine real-time pipeline.",
+            "Procedural camera motion tuned so the loop point stays hidden.",
+            "Render optimization for massive LED screen dimensions."
+          ]
+        }
       },
       {
         "id": "parfume-simulation",
@@ -152,7 +163,18 @@
           "frame02": "/works/parfume-simulation/vid-03.mp4",
           "frame03": "/works/parfume-simulation/04.webp"
         },
-        "published_at": "2025-04"
+        "published_at": "2025-04",
+        "caseStudy": {
+          "role": "3D Motion Designer & CG Generalist",
+          "caseTools": "Houdini, Blender, DaVinci Resolve",
+          "challenge": "Bring a static perfume bottle to life as a photoreal, 'living' material using 3D alone — no shoot, no physical props. Visuals for premium retail and social feeds.",
+          "outcome": "A flexible visual system of seamless loops with photoreal material and fabric behavior. The pipeline delivers premium visuals and lets the scene be re-dressed for new seasons.",
+          "techBreakdown": [
+            "Complex procedural cloth and soft-body simulations in Houdini.",
+            "Premium lighting and render in Blender with physically-based shaders.",
+            "Final grade in DaVinci Resolve for cinematic color consistency."
+          ]
+        }
       },
       {
         "id": "hoodi-cloth",
@@ -204,7 +226,18 @@
           "frame02": "/works/hoodi-cloth/01.webp",
           "frame03": "/works/hoodi-cloth/05.webp"
         },
-        "published_at": "2024-11"
+        "published_at": "2024-11",
+        "caseStudy": {
+          "role": "CG Generalist",
+          "caseTools": "Blender, Marvelous Designer",
+          "challenge": "Translate a hoodie product photo into pure CG — material, folds, fit — with the fabric character intact at any zoom level.",
+          "outcome": "A reusable template for apparel brands: swap garment patterns and lookdev maps in the same scene for new products.",
+          "techBreakdown": [
+            "Base pattern built in Marvelous Designer, groomed in Blender.",
+            "Layered simulation: clean silhouette with tangible micro-folds and seams.",
+            "Physically-based fabric maps for authentic material response."
+          ]
+        }
       },
       {
         "id": "thyname-animation",
@@ -253,7 +286,18 @@
           "frame02": "/works/thyname-animation/speaking.mp4",
           "frame03": "/works/thyname-animation/end.mp4"
         },
-        "published_at": "2024-09"
+        "published_at": "2024-09",
+        "caseStudy": {
+          "role": "3D Motion Designer & Art Director",
+          "caseTools": "Houdini, Blender, After Effects",
+          "challenge": "Hold the room's attention during speaker changes and cut the cost of constantly refreshing event visuals for year-round conferences.",
+          "outcome": "Technical pauses between speakers fully removed. A scalable modular base that adapts to seasons and new topics with minimal rework.",
+          "techBreakdown": [
+            "Procedural animation system with modular scene composition.",
+            "Faceless figure concept as a direct translation of the brand mission.",
+            "Seasonal adaptation pipeline for rapid content refreshes."
+          ]
+        }
       },
       {
         "id": "metallplace",
@@ -293,7 +337,18 @@
           "frame02": "/works/metallplace/still-15.jpg",
           "frame03": "/works/metallplace/lecture-25.jpg"
         },
-        "published_at": "2024-06"
+        "published_at": "2024-06",
+        "caseStudy": {
+          "role": "Motion Designer",
+          "caseTools": "After Effects, DaVinci Resolve",
+          "challenge": "Translate the portal's brand kit into two formats: a short social/LED loop and a lecture cut explaining the product at MetallConf.",
+          "outcome": "Used across public channels, MetallConf 2023 keynotes, and internal onboarding for new suppliers and buyers.",
+          "techBreakdown": [
+            "Shared 2D toolkit in After Effects: palette, typographic system, motion curves.",
+            "Brand loop — tight and rhythmic; lecture cut — breathing room for voiceover.",
+            "Consistent visual language across all deliverables."
+          ]
+        }
       },
       {
         "id": "batara-travel",
@@ -327,7 +382,18 @@
         ],
         "links": {},
         "simpleBento": true,
-        "published_at": "2024-02"
+        "published_at": "2024-02",
+        "caseStudy": {
+          "role": "Motion Designer",
+          "caseTools": "After Effects",
+          "challenge": "Translate the agency's identity into a short looping spot that reads on social feeds and on partner LED screens.",
+          "outcome": "Used by the agency in social channels and inside their offline presentations.",
+          "techBreakdown": [
+            "Layout, animation, and final grade in After Effects.",
+            "Calm rhythm keeping typography and destinations as the lead actors.",
+            "Optimized for both vertical social feeds and widescreen LED displays."
+          ]
+        }
       }
     ]
   },
@@ -338,66 +404,47 @@
     "items": [
       {
         "number": "01",
-        "title": "Procedural Animation & Simulations",
+        "title": "Procedural Animation & FX",
         "price": "from 15,000 ₽ / from $250",
-        "description": "Complex simulations in Houdini and Embergen — Vellum cloth, FLIP fluids, particle systems, volumetric smoke and fire. Every effect is art-directable and optimized for production.",
+        "description": "Houdini & Blender (Advanced Geometry Nodes). High-end alternative to Cinema 4D. Vellum simulations for cloth, soft bodies, and particles.",
+        "bizDescription": "Hyper-realistic physical behavior (liquids, fabrics, dynamic elements) that cannot be filmed with a real camera. Perfect for premium product reveals.",
         "tools": [
           "Houdini",
           "Vellum",
           "FLIP",
           "Particles",
-          "Embergen"
+          "Blender"
         ]
       },
       {
         "number": "02",
-        "title": "Full Production Cycle",
+        "title": "Full-Cycle CG Production",
         "price": "from 25,000 ₽ / from $400",
-        "description": "From concept and shading in Blender to final compositing in After Effects and grading in DaVinci Resolve. End-to-end production with seamless integration at every stage.",
+        "description": "End-to-end pipeline: Scene layout (Blender) → FX (Houdini) → Compositing (After Effects) → Color (DaVinci). Caravaggio/Rembrandt lighting style.",
+        "bizDescription": "A turnkey solution. You hand over the brief, I deliver a fully polished, color-graded video ready for all digital platforms. No need to hire extra artists.",
         "tools": [
           "Blender",
+          "Houdini",
           "After Effects",
           "DaVinci Resolve"
         ]
       },
       {
         "number": "03",
-        "title": "Product Visualization",
+        "title": "Lookdev & Art Direction",
         "price": "from 10,000 ₽ / from $150",
-        "description": "High-end content for product, packaging, and tech brands. Photorealistic stills, dynamic reveals, and AI-assisted concepting that communicate value through visual precision.",
+        "description": "Complex shader creation, lighting setups, and procedural environment generation. Focus on photorealism and stylized aesthetics.",
+        "bizDescription": "Creating a unique visual identity for your product. We define the mood, lighting, and textures before full production starts, saving time and budget.",
         "tools": [
           "Blender",
           "Cycles",
           "Octane",
-          "Nano Banana"
-        ]
-      },
-      {
-        "number": "04",
-        "title": "Technical Solutions & Automation",
-        "price": "from 15,000 ₽ / from $200",
-        "description": "Custom pipeline tools, HDA development, automation scripts and lightweight web utilities that remove repetitive work from 3D production.",
-        "tools": [
-          "Python",
-          "JavaScript",
-          "HTML",
-          "CSS",
-          "HDAs",
-          "Pipeline"
-        ]
-      },
-      {
-        "number": "05",
-        "title": "3D Graphics Consulting & Mentorship",
-        "price": "from 1,500 ₽/h / from $30/h",
-        "description": "One-on-one mentorship and consulting for artists and studios — direction, technical reviews, roadmap, and where to focus next.",
-        "tools": [
-          "Mentorship",
-          "Reviews",
-          "Roadmap"
+          "Houdini"
         ]
       }
-    ]
+    ],
+    "audience_tech_label": "For Producers & Studios",
+    "audience_biz_label": "For Business & Brands"
   },
   "shop": {
     "section_label": "Shop",
@@ -515,7 +562,17 @@
       "Higgsfield",
       "Veo",
       "Gemini"
-    ]
+    ],
+    "availability_label": "Status & Availability",
+    "availability": {
+      "title": "Current Status & Availability",
+      "location_label": "Location",
+      "location": "Moscow / Remote Worldwide",
+      "schedule_label": "Project Availability",
+      "schedule": "Tue, Wed, Fri (Full-time) | Thu (Part-time / Consultations)",
+      "response_label": "Communication",
+      "response": "Response within 2 hours"
+    }
   },
   "contact": {
     "section_label": "Contact",
@@ -571,7 +628,15 @@
     "gallery_label": "Gallery",
     "collaborators_label": "Collaborators",
     "back_to_works": "All Projects",
-    "next_project": "Next Project"
+    "next_project": "Next Project",
+    "case_meta_label": "Project Overview",
+    "client_label": "Client",
+    "role_label": "Role",
+    "tools_label": "Tools",
+    "theProject_label": "The Project",
+    "challenge_label": "Challenge",
+    "outcome_label": "Outcome",
+    "techBreakdown_label": "Technical Breakdown"
   },
   "faq": {
     "section_label": "FAQ",
@@ -579,40 +644,32 @@
     "subtitle": "Straight answers on cost, timelines, the process and how we'd work together — for brands, founders and studios.",
     "items": [
       {
-        "q": "How much does a 3D product visualization or animation cost?",
-        "a": "Every project is priced individually — it depends on the complexity, detail and length. Entry-level projects like a product render or short animation start from 18,000 ₽ or $250. Message me with your task and I'll send an accurate estimate and timeline within the day."
+        "q": "How long does a project take?",
+        "a": "Product render: 2–3 days. Short animation (up to 15s): 2–4 weeks. Large campaigns are discussed individually."
       },
       {
-        "q": "How long does a 3D visualization or animation take?",
-        "a": "A single product render usually takes a few days, a short animated spot about 2–4 weeks, larger campaigns longer. After a short brief I give you a firm timeline with clear milestones. For a launch, booking 4–8 weeks ahead is comfortable."
+        "q": "What are your rates?",
+        "a": "Rates depend strictly on simulation complexity and video duration. Send me a brief, and I will provide an exact quote within 24 hours."
+      },
+      {
+        "q": "How do we control the process if I don't know 3D?",
+        "a": "We work in transparent stages: 1. Visual References → 2. Gray animation draft (Animatic) → 3. Final Render. You approve every step, ensuring no surprises at the end."
+      },
+      {
+        "q": "Why use Blender/Houdini instead of Cinema 4D?",
+        "a": "This stack provides a highly flexible, procedural pipeline. Houdini handles the most complex Vellum and particle simulations flawlessly, while Blender offers incredibly fast iteration times for lookdev and layout."
       },
       {
         "q": "Why choose 3D instead of a photo or video shoot?",
         "a": "With 3D you're not limited by the physical product, a location or shooting logistics — it can be shown from any angle, color or environment and reused across ads, web and social without reshooting. Ideal when the product doesn't exist yet or needs many variations."
       },
       {
-        "q": "Can you create a 3D animation or ad for a new product launch?",
-        "a": "Yes — it's one of my core services. We align on goal, audience, budget and deadline, then I show a moodboard and references for your sign-off before any animation starts. You approve the look early and receive a final video cut for every platform (Instagram, YouTube, your site)."
-      },
-      {
-        "q": "Do you work with studios and agencies as a freelance CG generalist or Houdini FX artist?",
-        "a": "Yes. I join studio and agency teams as extra experienced hands — lighting, rendering and especially the complex effects and simulations (cloth, liquids, smoke, particles) that need a dedicated specialist. I work in your team's formats (After Effects, DaVinci Resolve) and hand off clean project files."
-      },
-      {
-        "q": "What do you need from me to start a project?",
-        "a": "Just a short description of your goal, any references or brand materials, your deadline and a rough budget. From there I scope the work, give you a clear timeline and price, and we agree on review rounds. No technical or 3D knowledge needed on your side."
-      },
-      {
-        "q": "What kinds of projects do you take on?",
-        "a": "Product visualization, animated commercials and explainers, effect-driven and procedural animation (cloth, liquids, smoke, particles), motion design, and pipeline or automation help for studios. Not sure your project fits? Message me and I'll tell you honestly."
-      },
-      {
-        "q": "Why use CG instead of AI generators?",
-        "a": "AI generators are great for quick ideas, but they can't reliably reproduce your exact product, logo or materials, they drift between frames, and rarely give clean, editable output you own. CG gives full control — accurate from every angle, art-directable, with physically correct simulations."
+        "q": "Do you work with studios and agencies?",
+        "a": "Yes. I join studio and agency teams as extra experienced hands — lighting, rendering and especially the complex effects and simulations (cloth, liquids, smoke, particles) that need a dedicated specialist."
       },
       {
         "q": "Do you combine AI with CG?",
-        "a": "Yes — that's where the best results come from. I use AI to speed up ideation, references and texture exploration, then build the final, brand-accurate and fully controllable result in CG. You get the speed of AI with the precision and consistency of real production."
+        "a": "Yes — that's where the best results come from. I use AI to speed up ideation, references and texture exploration, then build the final, brand-accurate and fully controllable result in CG."
       }
     ],
     "show_all": "Show all",
@@ -622,6 +679,15 @@
     "brand": "Epov Creative Lab's",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
-    "available": "Open to collaboration, 2026"
+    "available": "Open to collaboration, 2026",
+    "privacy": "Privacy Policy",
+    "cookieSettings": "Cookie Settings"
+  },
+  "cookieConsent": {
+    "ariaLabel": "Cookie settings",
+    "text": "We use cookies for analytics (Yandex Metrica, Google Analytics) to improve the site. Learn more —",
+    "policyLink": "Privacy Policy",
+    "acceptAll": "Accept all",
+    "rejectAll": "Only essential"
   }
 }

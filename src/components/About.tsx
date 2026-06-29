@@ -53,6 +53,46 @@ export default function About() {
           </p>
         </div>
 
+        {/* Availability grid */}
+        {t.about.availability ? (
+          <div
+            className={`mb-32 rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] p-8 lg:p-10 ${
+              shown ? 'reveal is-in' : 'reveal'
+            }`}
+            style={{ transitionDelay: '260ms' }}
+          >
+            <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45">
+              <span className="accent-diamond">◆</span> {t.about.availability_label}
+            </p>
+            <div className="grid gap-6 sm:grid-cols-3">
+              <div>
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+                  {t.about.availability.location_label}
+                </p>
+                <p className="text-[15px] leading-[1.65] text-[var(--foreground)]/80">
+                  {t.about.availability.location}
+                </p>
+              </div>
+              <div>
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+                  {t.about.availability.schedule_label}
+                </p>
+                <p className="text-[15px] leading-[1.65] text-[var(--foreground)]/80">
+                  {t.about.availability.schedule}
+                </p>
+              </div>
+              <div>
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">
+                  {t.about.availability.response_label}
+                </p>
+                <p className="text-[15px] leading-[1.65] text-[var(--foreground)]/80">
+                  {t.about.availability.response}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {/* Approach steps */}
         <div className="mb-32">
           <div className="mb-12 flex items-end justify-between">

@@ -20,11 +20,13 @@ function ServiceRow({
   index,
   isVisible,
   onHover,
+  audienceLabels,
 }: {
-  service: { number: string; title: string; description: string; tools: string[]; price?: string };
+  service: { number: string; title: string; description: string; bizDescription?: string; tools: string[]; price?: string };
   index: number;
   isVisible: boolean;
   onHover?: (el: HTMLElement | null) => void;
+  audienceLabels?: { tech: string; biz: string };
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   // Every row starts collapsed — the hover preview alone is enough of an
@@ -152,9 +154,30 @@ function ServiceRow({
       >
         <div className="grid gap-10 pb-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14 lg:pl-[calc(2rem+5rem)]">
           <div className="flex flex-col gap-8">
-            <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
-              {service.description}
-            </p>
+            {service.bizDescription && audienceLabels ? (
+              <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
+                <div>
+                  <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                    <span className="accent-diamond">◆</span> {audienceLabels.tech}
+                  </p>
+                  <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
+                    {service.description}
+                  </p>
+                </div>
+                <div>
+                  <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
+                    <span className="accent-diamond">◆</span> {audienceLabels.biz}
+                  </p>
+                  <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
+                    {service.bizDescription}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="max-w-xl text-[15px] leading-[1.75] text-[var(--foreground)]/55">
+                {service.description}
+              </p>
+            )}
             {/* Price echo inside the expanded panel — needed because the
                 inline pill on the title row is hidden on mobile widths,
                 and we still want a clear "from N ₽ / from $M" anchor on
@@ -271,6 +294,11 @@ export default function Services() {
               index={i}
               isVisible={shown}
               onHover={handleRowHover}
+              audienceLabels={
+                t.services.audience_tech_label
+                  ? { tech: t.services.audience_tech_label, biz: t.services.audience_biz_label }
+                  : undefined
+              }
             />
           ))}
           <div className="border-t border-[var(--hairline)]" />

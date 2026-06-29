@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { resetConsent } from '@/components/CookieConsent';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -32,7 +34,7 @@ export default function Footer() {
                 <span className="accent-diamond">◆</span> Sitemap
               </p>
               <div className="flex flex-col gap-3">
-                {(['works', 'services', 'shop', 'about', 'contact'] as const).map((item) => (
+                {(['works', 'services', 'about', 'contact'] as const).map((item) => (
                   <a
                     key={item}
                     href={`#${item}`}
@@ -78,8 +80,23 @@ export default function Footer() {
 
       <div className="relative border-t border-[var(--hairline)]">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start justify-between gap-3 px-6 py-6 sm:flex-row sm:items-center sm:px-10 lg:px-14">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
-            © {new Date().getFullYear()} {t.footer.brand}. {t.footer.rights}
+          <p className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
+            <span>© {new Date().getFullYear()} {t.footer.brand}. {t.footer.rights}</span>
+            <Link
+              href="/privacy"
+              className="transition-colors hover:text-[var(--foreground)]/60"
+              data-cursor="hover"
+            >
+              {t.footer.privacy}
+            </Link>
+            <button
+              type="button"
+              onClick={resetConsent}
+              className="transition-colors hover:text-[var(--foreground)]/60"
+              data-cursor="hover"
+            >
+              {t.footer.cookieSettings}
+            </button>
           </p>
           <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/35">
             <span
