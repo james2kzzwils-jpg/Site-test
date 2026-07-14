@@ -3,9 +3,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 
 /**
- * Full-screen showreel modal with cinematic black backdrop.
- * Closes on Escape, on backdrop click, or via the × button.
- * The video auto-plays when opened and pauses when closed.
+ * Showreel overlay — the 9:16 vertical video flies onto the screen
+ * and sits over the hero particle field, offset to the left.
+ * Cinematic black backdrop, Escape / backdrop / × to close.
  */
 export default function ShowreelModal({
   open,
@@ -65,7 +65,7 @@ export default function ShowreelModal({
       aria-modal="true"
       aria-label="Showreel"
       onClick={handleBackdropClick}
-      className={`fixed inset-0 z-[9998] flex items-center justify-center bg-black/95 backdrop-blur-sm transition-all duration-500 ${
+      className={`fixed inset-0 z-[9998] flex items-center bg-black/90 backdrop-blur-md transition-all duration-500 ${
         open
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0'
@@ -88,24 +88,62 @@ export default function ShowreelModal({
         <span className="text-[var(--accent)]">◆</span> Showreel 2026
       </p>
 
-      {/* Video container */}
+      {/* Video container — 9:16 vertical, offset left on desktop, centered on mobile */}
       <div
-        className={`relative w-[92vw] max-w-[1200px] overflow-hidden rounded-sm border border-[var(--hairline)] shadow-[0_0_80px_rgba(0,0,0,0.6)] transition-transform duration-500 ${
-          open ? 'scale-100' : 'scale-95'
+        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 ${
+          open
+            ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
+            : '-translate-x-12 translate-y-8 scale-90 opacity-0'
         }`}
+        style={{
+          /* Offset ~20% from left on desktop, centered on mobile */
+          marginLeft: 'clamp(1rem, 15vw, 20vw)',
+        }}
       >
-        <div className="relative aspect-video w-full bg-black">
-          <video
-            ref={videoRef}
-            className="h-full w-full object-contain"
-            src="/showreel/showreel.mp4"
-            controls
-            playsInline
-            preload="metadata"
-          />
+        {/* Accent glow behind the video */}
+        <div
+          aria-hidden="true"
+          className="absolute -inset-4 rounded-2xl opacity-30 blur-3xl"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 50%, var(--accent-glow) 0%, transparent 70%)',
+          }}
+        />
+
+        <div className="relative overflow-hidden rounded-lg border border-[var(--accent)]/20 shadow-[0_0_80px_rgba(0,0,0,0.6),0_0_40px_var(--accent-glow)]">
+          {/* 9:16 aspect container */}
+          <div
+            className="relative bg-black"
+            style={{
+              width: 'min(45vh, 340px)',
+              aspectRatio: '9 / 16',
+            }}
+          >
+            <video
+              ref={videoRef}
+              className="h-full w-full object-cover"
+              src="/showreel/showreel.mp4"
+              controls
+              playsInline
+              preload="metadata"
+            />
+          </div>
+
+          {/* Scanline overlay */}
+          <div className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-[0.06] [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_3px)]" />
         </div>
-        {/* Scanline overlay */}
-        <div className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-10 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.04)_0px,rgba(255,255,255,0.04)_1px,transparent_1px,transparent_3px)]" />
+
+        {/* Bottom caption */}
+        <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-white/30">
+          Andrey Epov — Selected Works
+        </p>
+      </div>
+
+      {/* Right side decorative text (desktop only) */}
+      <div className="absolute right-10 top-1/2 hidden -translate-y-1/2 lg:block">
+        <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/15 [writing-mode:vertical-rl]">
+          CG Generalist & Motion Designer
+        </p>
       </div>
     </div>
   );

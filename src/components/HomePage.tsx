@@ -9,6 +9,7 @@ import About from '@/components/About';
 import Faq from '@/components/Faq';
 import Contact from '@/components/Contact';
 import ScheduleCalendar from '@/components/ScheduleCalendar';
+import ScrollToTop from '@/components/ScrollToTop';
 import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -44,6 +45,7 @@ export default function HomePage() {
         <Contact />
         <Footer />
       </main>
+      <ScrollToTop />
     </>
   );
 }

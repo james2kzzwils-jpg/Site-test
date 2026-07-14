@@ -108,15 +108,15 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => setShowReel(true)}
-                className="group inline-flex items-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-7 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]"
+                className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]"
                 data-cursor="hover"
               >
-                <span aria-hidden="true" className="text-[16px]">▶</span>
+                <span aria-hidden="true" className="text-[14px]">▶</span>
                 {t.hero.cta_showreel}
               </button>
               <a
                 href="#contact"
-                className="group inline-flex items-center gap-3 rounded-full border border-[var(--foreground)]/30 px-7 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-all duration-300 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]"
+                className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--foreground)]/30 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-all duration-300 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]"
                 data-cursor="hover"
               >
                 {t.hero.cta_contact}
