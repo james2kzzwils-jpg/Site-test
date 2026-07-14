@@ -24,7 +24,7 @@ export const schedule = {
   extraFreeDates: [] as string[], // e.g. ['2026-07-22']
 
   /** Calendly booking URL */
-  calendlyUrl: 'https://calendly.com/aepov',
+  calendlyUrl: 'https://calendly.com/cggeneralistandrey/30min',
 
   /** How many months to show (current + next N) */
   monthsAhead: 2,

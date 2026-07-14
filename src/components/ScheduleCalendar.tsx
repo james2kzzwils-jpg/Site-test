@@ -112,8 +112,8 @@ function MonthGrid({ year, month, isRu }: { year: number; month: number; isRu: b
 }
 
 export default function ScheduleCalendar() {
-  const { t } = useLanguage();
-  const isRu = Boolean((t as Record<string, unknown>).schedule);
+  const { t, locale } = useLanguage();
+  const isRu = locale === 'ru';
 
   const months = useMemo(() => {
     const now = new Date();
@@ -125,7 +125,7 @@ export default function ScheduleCalendar() {
     return result;
   }, []);
 
-  const scheduleT = (t as Record<string, Record<string, string>>).schedule;
+  const scheduleT = (t as unknown as Record<string, Record<string, string>>).schedule;
 
   return (
     <section className="py-14 sm:py-24 lg:py-36">
