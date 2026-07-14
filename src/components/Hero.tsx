@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useLanguage } from '@/i18n/LanguageContext';
+import ShowreelModal from './ShowreelModal';
 
 // Three.js is heavy. Loading it via next/dynamic with ssr:false splits the
 // whole react-three-fiber + three bundle into its own async chunk so it no
@@ -17,6 +18,7 @@ const Scene3D = dynamic(() => import('./Scene3D'), {
 export default function Hero() {
   const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showReel, setShowReel] = useState(false);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -102,20 +104,19 @@ export default function Hero() {
               {t.hero.subtitle}
             </p>
 
-            <div data-reveal className="reveal flex items-end justify-end gap-10">
-              <a
-                href="#works"
-                className="hover-line group inline-flex items-center gap-3 pb-2 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-colors duration-300 hover:text-[var(--foreground)]"
+            <div data-reveal className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-end sm:gap-6">
+              <button
+                type="button"
+                onClick={() => setShowReel(true)}
+                className="group inline-flex items-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-7 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]"
                 data-cursor="hover"
               >
-                <span aria-hidden="true" className="text-[var(--accent)]">
-                  →
-                </span>
-                {t.hero.cta_works}
-              </a>
+                <span aria-hidden="true" className="text-[16px]">▶</span>
+                {t.hero.cta_showreel}
+              </button>
               <a
                 href="#contact"
-                className="hover-line group inline-flex items-center gap-3 pb-2 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/55 transition-colors duration-300 hover:text-[var(--foreground)]"
+                className="group inline-flex items-center gap-3 rounded-full border border-[var(--foreground)]/30 px-7 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-all duration-300 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]"
                 data-cursor="hover"
               >
                 {t.hero.cta_contact}
@@ -136,6 +137,8 @@ export default function Hero() {
           <span>2026</span>
         </div>
       </div>
+
+      <ShowreelModal open={showReel} onClose={() => setShowReel(false)} />
     </section>
   );
 }

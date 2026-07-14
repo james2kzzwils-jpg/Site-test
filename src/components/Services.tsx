@@ -48,22 +48,21 @@ function ServiceRow({
 
   const videoSrc = SERVICE_VIDEOS[service.number];
 
-  // Hover preview: only play while the row is collapsed AND the pointer
-  // is inside it. When the row is opened the full video below takes
-  // over, so we hide the preview to avoid duplicate playback.
-  const showPreview = hovering && !open && Boolean(videoSrc);
+  // Hover preview: plays while the row is collapsed AND (the pointer
+  // is inside it OR we're on mobile where it plays continuously).
+  const showPreview = !open && Boolean(videoSrc) && (hovering || true);
 
   useEffect(() => {
     const el = previewRef.current;
     if (!el) return;
-    if (showPreview) {
+    if (!open && videoSrc) {
       el.play().catch(() => {
         /* autoplay blocked — ignore */
       });
     } else {
       el.pause();
     }
-  }, [showPreview]);
+  }, [open, videoSrc]);
 
   return (
     <div
@@ -86,15 +85,14 @@ function ServiceRow({
         className="relative flex w-full items-center gap-6 overflow-hidden border-t border-[var(--hairline)] py-9 pr-3 text-left lg:gap-14 lg:py-11 lg:pr-10"
         data-cursor="hover"
       >
-        {/* Hover-only video preview — sits behind the title at ~50%
-            opacity. Hidden when the row is expanded. Right side only
-            so the title stays legible. */}
+        {/* Video preview — always visible at low opacity on mobile,
+            hover-revealed on desktop. Hidden when the row is expanded. */}
         {videoSrc ? (
           <span
             aria-hidden="true"
-            className={`pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block ${
-              showPreview ? 'opacity-50' : 'opacity-0'
-            } transition-opacity duration-500`}
+            className={`pointer-events-none absolute inset-y-0 right-0 w-[55%] transition-opacity duration-500 ${
+              open ? 'opacity-0' : showPreview ? 'opacity-50' : 'opacity-30 md:opacity-0'
+            }`}
           >
             <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_82%,transparent_100%)]">
               <video
@@ -265,7 +263,7 @@ export default function Services() {
   };
 
   return (
-    <section id="services" ref={sectionRef} className="relative py-24 lg:py-36">
+    <section id="services" ref={sectionRef} className="relative py-14 sm:py-24 lg:py-36">
       <AmbientParticles highlight={highlight} count={220} seed={202} />
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div

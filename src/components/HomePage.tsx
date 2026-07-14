@@ -8,6 +8,7 @@ import Shop from '@/components/Shop';
 import About from '@/components/About';
 import Faq from '@/components/Faq';
 import Contact from '@/components/Contact';
+import ScheduleCalendar from '@/components/ScheduleCalendar';
 import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -38,6 +39,7 @@ export default function HomePage() {
         <Services />
         {SHOW_SHOP && <Shop />}
         <About />
+        <ScheduleCalendar />
         <Faq />
         <Contact />
         <Footer />

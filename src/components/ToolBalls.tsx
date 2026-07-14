@@ -281,7 +281,7 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
   return (
     <div
       ref={containerRef}
-      className="relative h-[360px] w-full overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] sm:h-[420px] lg:h-[460px]"
+      className="relative h-[220px] w-full overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] sm:h-[420px] lg:h-[460px]"
       aria-hidden="true"
     >
       {tools.map((tool, i) => {
@@ -305,7 +305,7 @@ export default function ToolBalls({ tools }: { tools: readonly string[] }) {
                 rgb,
               };
             }}
-            className="tool-ball pointer-events-none absolute left-0 top-0 flex h-[76px] w-[76px] select-none items-center justify-center rounded-full border border-[rgba(var(--ball-rgb),0.6)] px-2 text-center font-mono text-[10px] uppercase leading-[1.1] tracking-[0.14em] text-[var(--foreground)]/90 backdrop-blur-[2px] will-change-transform sm:h-[84px] sm:w-[84px]"
+            className="tool-ball pointer-events-none absolute left-0 top-0 flex h-[42px] w-[42px] select-none items-center justify-center rounded-full border border-[rgba(var(--ball-rgb),0.6)] px-1 text-center font-mono text-[7px] uppercase leading-[1.1] tracking-[0.1em] text-[var(--foreground)]/90 backdrop-blur-[2px] will-change-transform sm:h-[84px] sm:w-[84px] sm:px-2 sm:text-[10px] sm:tracking-[0.14em]"
             style={{
               transform: 'translate3d(-9999px, -9999px, 0)',
               // Custom properties consumed by the .tool-ball CSS rules

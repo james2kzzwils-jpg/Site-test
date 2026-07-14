@@ -21,7 +21,7 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={sectionRef} className="py-24 lg:py-36">
+    <section id="about" ref={sectionRef} className="py-14 sm:py-24 lg:py-36">
       <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <p
           className={`mb-10 font-mono text-[11px] uppercase tracking-[0.32em] text-[var(--foreground)]/45 ${
@@ -33,7 +33,7 @@ export default function About() {
 
         {/* Philosophy */}
         <div
-          className={`mb-32 grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-20 ${
+          className={`mb-16 sm:mb-32 grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-20 ${
             shown ? 'reveal is-in' : 'reveal'
           }`}
         >
@@ -56,7 +56,7 @@ export default function About() {
         {/* Availability grid */}
         {t.about.availability ? (
           <div
-            className={`mb-32 rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] p-8 lg:p-10 ${
+            className={`mb-16 sm:mb-32 rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012] p-6 sm:p-8 lg:p-10 ${
               shown ? 'reveal is-in' : 'reveal'
             }`}
             style={{ transitionDelay: '260ms' }}
@@ -93,9 +93,9 @@ export default function About() {
           </div>
         ) : null}
 
-        {/* Approach steps */}
-        <div className="mb-32">
-          <div className="mb-12 flex items-end justify-between">
+        {/* Approach steps — desktop: 5-col grid; mobile: tree/timeline */}
+        <div className="mb-16 sm:mb-32">
+          <div className="mb-8 sm:mb-12 flex items-end justify-between">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
               ({t.about.approach_label})
             </p>
@@ -104,18 +104,13 @@ export default function About() {
             </h3>
           </div>
 
-          <div className="grid border-t border-[var(--hairline)] sm:grid-cols-2 lg:grid-cols-5">
+          {/* ─── Desktop grid (sm+) ─── */}
+          <div className="hidden border-t border-[var(--hairline)] sm:grid sm:grid-cols-2 lg:grid-cols-5">
             {t.about.approach_steps.map((step, i) => {
-              // Accent column rising from the bottom of each card. The
-              // fill height (and the gradient itself) ramps step-by-step
-              // — the first card stays flat so a viewer reads the
-              // progression top→bottom of the section. The 50% cap is
-              // a hard ceiling so text stays comfortably legible at
-              // the bottom of card #5.
               const total = t.about.approach_steps.length;
               const ramp = total > 1 ? i / (total - 1) : 0;
-              const fillHeightPct = Math.round(ramp * 92); // 0 → 92
-              const fillOpacity = 0.08 + ramp * 0.42; // 0.08 → 0.50
+              const fillHeightPct = Math.round(ramp * 92);
+              const fillOpacity = 0.08 + ramp * 0.42;
               return (
                 <div
                   key={step.number}
@@ -147,46 +142,83 @@ export default function About() {
                     {step.description}
                   </p>
                   <div className="relative mt-auto flex flex-col gap-4 border-t border-[var(--hairline)] pt-5">
-                  <div>
-                    <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
-                        {t.about.understanding_label}
-                      </span>
-                      <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--foreground)]">
-                        {step.mutual_pct}%
-                      </span>
+                    <div>
+                      <div className="mb-2 flex items-baseline justify-between gap-3">
+                        <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                          {t.about.understanding_label}
+                        </span>
+                        <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--foreground)]">
+                          {step.mutual_pct}%
+                        </span>
+                      </div>
+                      <div className="h-[2px] w-full bg-[var(--hairline)]">
+                        <div
+                          className="h-full bg-[var(--foreground)]/80 transition-[width] duration-700"
+                          style={{ width: shown ? `${step.mutual_pct}%` : '0%' }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-[2px] w-full bg-[var(--hairline)]">
-                      <div
-                        className="h-full bg-[var(--foreground)]/80 transition-[width] duration-700"
-                        style={{ width: shown ? `${step.mutual_pct}%` : '0%' }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
-                        → {t.about.result_label}
-                      </span>
-                      <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--accent)]">
-                        {step.result_pct}%
-                      </span>
-                    </div>
-                    <div className="h-[2px] w-full bg-[var(--hairline)]">
-                      <div
-                        className="h-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent-glow)] transition-[width] duration-700"
-                        style={{ width: shown ? `${step.result_pct}%` : '0%' }}
-                      />
+                    <div>
+                      <div className="mb-2 flex items-baseline justify-between gap-3">
+                        <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--accent)]">
+                          → {t.about.result_label}
+                        </span>
+                        <span className="font-display text-[18px] font-medium tabular-nums tracking-[-0.01em] text-[var(--accent)]">
+                          {step.result_pct}%
+                        </span>
+                      </div>
+                      <div className="h-[2px] w-full bg-[var(--hairline)]">
+                        <div
+                          className="h-full bg-[var(--accent)] shadow-[0_0_12px_var(--accent-glow)] transition-[width] duration-700"
+                          style={{ width: shown ? `${step.result_pct}%` : '0%' }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+
+          {/* ─── Mobile tree/timeline (below sm) ─── */}
+          <div className="relative sm:hidden">
+            {/* Vertical connector line */}
+            <div
+              aria-hidden="true"
+              className="absolute left-5 top-0 bottom-0 w-px bg-[var(--hairline)]"
+            />
+            {t.about.approach_steps.map((step, i) => {
+              const isEven = i % 2 === 0;
+              return (
+                <div
+                  key={step.number}
+                  className={`relative flex gap-5 pb-8 ${
+                    shown ? 'reveal is-in' : 'reveal'
+                  }`}
+                  style={{ transitionDelay: `${200 + i * 120}ms` }}
+                >
+                  {/* Circle node */}
+                  <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--accent)]/50 bg-[var(--background)] shadow-[0_0_16px_var(--accent-glow)]">
+                    <span className="font-mono text-[10px] font-medium text-[var(--accent)]">
+                      {step.number}
+                    </span>
+                  </div>
+                  {/* Content card */}
+                  <div className="flex-1 rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.015] p-4">
+                    <h4 className="mb-1 font-display text-[16px] font-medium leading-[1.2] tracking-[-0.01em] text-[var(--foreground)]">
+                      {step.title}
+                    </h4>
+                    <p className="text-[13px] leading-[1.55] text-[var(--foreground)]/45">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
               );
             })}
           </div>
 
           <p
-            className={`mt-10 max-w-3xl font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45 ${
+            className={`mt-6 sm:mt-10 max-w-3xl font-mono text-[11px] uppercase tracking-[0.22em] text-[var(--foreground)]/45 ${
               shown ? 'reveal is-in' : 'reveal'
             }`}
             style={{ transitionDelay: '720ms' }}

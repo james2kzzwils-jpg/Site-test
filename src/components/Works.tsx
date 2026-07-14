@@ -104,7 +104,7 @@ return (
   <section
     id="works"
     ref={ref}
-    className="relative py-24 lg:py-36"
+    className="relative py-14 sm:py-24 lg:py-36"
   >
     <AmbientParticles highlight={highlight} count={260} seed={101} />
     <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
@@ -167,19 +167,20 @@ return (
               data-cursor="view"
               data-cursor-label={t.works.view_project}
             >
-              {/* Hover preview */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] opacity-0 transition-opacity duration-500 group-hover:opacity-100 lg:block"
-                style={{
-                  WebkitMaskImage:
-                    'linear-gradient(to left, #000 35%, transparent 100%)',
-                  maskImage:
-                    'linear-gradient(to left, #000 35%, transparent 100%)',
-                }}
-              >
-                <div className="relative h-full w-full overflow-hidden bg-[var(--foreground)]/[0.02]">
-                  {project.cover ? (
+              {/* Cover preview — always visible on mobile (with lower
+                  opacity), hover-revealed on desktop */}
+              {project.cover ? (
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 right-0 w-[55%] opacity-40 transition-opacity duration-500 lg:opacity-0 lg:group-hover:opacity-100"
+                  style={{
+                    WebkitMaskImage:
+                      'linear-gradient(to left, #000 35%, transparent 100%)',
+                    maskImage:
+                      'linear-gradient(to left, #000 35%, transparent 100%)',
+                  }}
+                >
+                  <div className="relative h-full w-full overflow-hidden bg-[var(--foreground)]/[0.02]">
                     <img
                       src={project.cover}
                       alt=""
@@ -190,25 +191,15 @@ return (
                           project.id === 'metalplace' ? 'center 22%' : undefined,
                       }}
                     />
-                  ) : (
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 opacity-30"
-                      style={{
-                        backgroundImage:
-                          'linear-gradient(to right, rgba(245,243,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245,243,238,0.05) 1px, transparent 1px)',
-                        backgroundSize: '48px 48px',
-                      }}
-                    />
-                  )}
-                  <span className="absolute inset-0 flex items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.22] mix-blend-screen">
-                    {idx}
-                  </span>
-                  <span className="absolute bottom-3 left-6 font-mono text-[9px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">
-                    <span className="accent-diamond">✦</span> Preview
-                  </span>
+                    <span className="absolute inset-0 hidden items-center justify-end pr-12 font-display text-[clamp(4rem,10vw,9rem)] font-medium leading-none tracking-[-0.05em] text-[var(--accent)]/[0.22] mix-blend-screen lg:flex">
+                      {idx}
+                    </span>
+                    <span className="absolute bottom-3 left-6 hidden font-mono text-[9px] uppercase tracking-[0.32em] text-[var(--foreground)]/40 lg:block">
+                      <span className="accent-diamond">✦</span> Preview
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               <div className="relative z-10 grid grid-cols-[auto_1fr_auto] items-center gap-6 py-7 pr-3 sm:gap-10 sm:py-9 lg:gap-14 lg:py-10 lg:pr-10">
                 {/* Number */}

@@ -28,7 +28,8 @@
     "cta_contact": "Начать проект",
     "scroll": "Листай ниже",
     "click_hold": "Click & Hold",
-    "discover": "Посмотреть"
+    "discover": "Посмотреть",
+    "cta_showreel": "Show Reel"
   },
   "works": {
     "section_label": "Проекты",
@@ -689,5 +690,12 @@
     "policyLink": "Политика конфиденциальности",
     "acceptAll": "Принять всё",
     "rejectAll": "Только необходимые"
+  },
+  "schedule": {
+    "section_label": "Расписание",
+    "title": "Доступность",
+    "subtitle": "Зелёные даты свободны для новых проектов. Нажмите, чтобы забронировать звонок.",
+    "legend_free": "Свободен — нажмите для записи",
+    "legend_busy": "Занят"
   }
 }

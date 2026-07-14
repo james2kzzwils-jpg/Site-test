@@ -28,7 +28,8 @@
     "cta_contact": "Start a Project",
     "scroll": "Keep Scrolling",
     "click_hold": "Click & Hold",
-    "discover": "Discover"
+    "discover": "Discover",
+    "cta_showreel": "Show Reel"
   },
   "works": {
     "section_label": "Projects",
@@ -689,5 +690,12 @@
     "policyLink": "Privacy Policy",
     "acceptAll": "Accept all",
     "rejectAll": "Only essential"
+  },
+  "schedule": {
+    "section_label": "Schedule",
+    "title": "Availability",
+    "subtitle": "Green dates are open for new projects. Click to book a call.",
+    "legend_free": "Available — click to book",
+    "legend_busy": "Busy"
   }
 }
