@@ -48,21 +48,20 @@ function ServiceRow({
 
   const videoSrc = SERVICE_VIDEOS[service.number];
 
-  // Hover preview: plays while the row is collapsed AND (the pointer
-  // is inside it OR we're on mobile where it plays continuously).
-  const showPreview = !open && Boolean(videoSrc) && (hovering || true);
+  // Hover preview: plays while the row is collapsed AND the pointer is inside.
+  const showPreview = !open && Boolean(videoSrc) && hovering;
 
   useEffect(() => {
     const el = previewRef.current;
     if (!el) return;
-    if (!open && videoSrc) {
+    if (showPreview) {
       el.play().catch(() => {
         /* autoplay blocked — ignore */
       });
     } else {
       el.pause();
     }
-  }, [open, videoSrc]);
+  }, [showPreview]);
 
   return (
     <div
@@ -91,7 +90,7 @@ function ServiceRow({
           <span
             aria-hidden="true"
             className={`pointer-events-none absolute inset-y-0 right-0 w-[55%] transition-opacity duration-500 ${
-              open ? 'opacity-0' : showPreview ? 'opacity-50' : 'opacity-30 md:opacity-0'
+              open ? 'opacity-0' : showPreview ? 'opacity-50' : 'opacity-0'
             }`}
           >
             <span className="absolute inset-0 [mask-image:linear-gradient(to_right,transparent_0%,#000_22%,#000_82%,transparent_100%)]">

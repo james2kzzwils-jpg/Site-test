@@ -167,8 +167,7 @@ return (
               data-cursor="view"
               data-cursor-label={t.works.view_project}
             >
-              {/* Cover preview — always visible on mobile (with lower
-                  opacity), hover-revealed on desktop */}
+              {/* Cover preview — always visible on mobile, hover-revealed on desktop */}
               {project.cover ? (
                 <div
                   aria-hidden="true"

@@ -15,7 +15,7 @@
 
 export const schedule = {
   /** Weekdays that are always free (0=Sun, 1=Mon, ..., 6=Sat) */
-  freeDays: [5] as number[], // Friday
+  freeDays: [2, 3, 5] as number[], // Tuesday, Wednesday, Friday
 
   /** Specific dates that are busy even if they fall on a free day */
   busyDates: [] as string[], // e.g. ['2026-07-18']
@@ -24,7 +24,7 @@ export const schedule = {
   extraFreeDates: [] as string[], // e.g. ['2026-07-22']
 
   /** Calendly booking URL */
-  calendlyUrl: 'https://calendly.com/cggeneralistandrey/30min',
+  calendlyUrl: 'https://calendly.com/aepov',
 
   /** How many months to show (current + next N) */
   monthsAhead: 2,
