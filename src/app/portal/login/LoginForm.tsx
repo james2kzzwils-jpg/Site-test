@@ -9,8 +9,8 @@ interface LoginFormProps {
 }
 
 // Magic-link form. Submits the email to Supabase, which dispatches an
-// OTP email; the callback in /auth/callback exchanges the code on
-// return. We never read or store the password — there isn't one.
+// OTP email. The completion page handles both query-param and URL-hash
+// auth payloads before redirecting into the portal.
 export default function LoginForm({ redirectTo, initialError }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -23,7 +23,7 @@ export default function LoginForm({ redirectTo, initialError }: LoginFormProps) 
     setError(null);
     try {
       const supabase = createSupabaseBrowserClient();
-      const callback = new URL('/auth/callback', window.location.origin);
+      const callback = new URL('/auth/complete', window.location.origin);
       callback.searchParams.set('redirect', redirectTo);
       const { error: authError } = await supabase.auth.signInWithOtp({
         email: email.trim(),

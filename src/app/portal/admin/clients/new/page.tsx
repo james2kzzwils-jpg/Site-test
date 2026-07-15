@@ -41,8 +41,6 @@ async function createClientAction(formData: FormData) {
 
   const admin = createSupabaseAdminClient();
 
-  // 1) Create the client row using the admin client (bypasses RLS for
-  //    the created_by self-reference; we still record it).
   const { data: clientRow, error: insertErr } = await admin
     .from('clients')
     .insert({ name, company, created_by: user.id })
