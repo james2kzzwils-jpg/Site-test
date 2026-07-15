@@ -21,6 +21,9 @@ interface ClientDetailSearch {
   sent?: string;
   err?: string;
   error_message?: string;
+  /** Magic-link URL returned by generateTestLoginAction — surfaced on
+   * the same page so the admin can copy it into a private window
+   * without spending a Supabase email quota. */
   test_link?: string;
   test_link_email?: string;
 }

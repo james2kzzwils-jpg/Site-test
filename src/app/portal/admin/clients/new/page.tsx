@@ -15,11 +15,6 @@ async function resolvePublicPortalOrigin(): Promise<string> {
   return getPublicPortalOriginFromHeaders(h);
 }
 
-async function resolveEmailAuthRedirectUrl(redirectTo = '/portal'): Promise<string> {
-  const origin = await resolvePublicPortalOrigin();
-  return `${origin}/auth/complete?redirect=${encodeURIComponent(redirectTo)}`;
-}
-
 // Server action for creating a client + invitee. We use the secret
 // client to generate the auth invite (bypass RLS), then attach them
 // via client_members from the same flow.
@@ -55,8 +50,11 @@ async function createClientAction(formData: FormData) {
     throw new Error(insertErr?.message ?? 'Failed to create client');
   }
 
+  // 2) Invite the contact (magic link). Supabase will create the
+  //    auth.users row and dispatch an email automatically.
   if (inviteEmail) {
-    const inviteRedirectTo = await resolveEmailAuthRedirectUrl('/portal');
+    const origin = await resolvePublicPortalOrigin();
+    const inviteRedirectTo = `${origin}/auth/callback?redirect=${encodeURIComponent('/portal')}`;
     const { data: inviteData, error: inviteErr } =
       await admin.auth.admin.inviteUserByEmail(inviteEmail, {
         redirectTo: inviteRedirectTo,
