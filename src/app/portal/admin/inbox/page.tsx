@@ -17,6 +17,12 @@ import {
   setInboxEventReadStateAction,
 } from './actions';
 
+interface AdminInboxSearch {
+  filter?: string;
+}
+
+type InboxFilter = 'all' | 'attention' | 'unread' | 'approvals';
+
 function payloadString(payload: Record<string, unknown>, key: string) {
   const value = payload[key];
   return typeof value === 'string' ? value : null;
@@ -193,7 +199,49 @@ function summaryCard(
   );
 }
 
-export default async function AdminInboxPage() {
+function normalizeFilter(value: string | undefined): InboxFilter {
+  if (value === 'attention' || value === 'unread' || value === 'approvals') {
+    return value;
+  }
+  return 'all';
+}
+
+function matchesFilter(item: PortalInboxItem, filter: InboxFilter) {
+  switch (filter) {
+    case 'attention':
+      return isActionRequired(item);
+    case 'unread':
+      return item.readAt == null;
+    case 'approvals':
+      return isPendingApproval(item);
+    case 'all':
+    default:
+      return true;
+  }
+}
+
+function filterLabel(filter: InboxFilter, locale: PortalLocale) {
+  switch (filter) {
+    case 'attention':
+      return locale === 'ru' ? 'Требует внимания' : 'Needs attention';
+    case 'unread':
+      return locale === 'ru' ? 'Непрочитано' : 'Unread';
+    case 'approvals':
+      return locale === 'ru' ? 'Подтверждения' : 'Approvals';
+    case 'all':
+    default:
+      return locale === 'ru' ? 'Все' : 'All';
+  }
+}
+
+export default async function AdminInboxPage({
+  searchParams,
+}: {
+  searchParams?: Promise<AdminInboxSearch>;
+}) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const activeFilter = normalizeFilter(resolvedSearchParams.filter);
+
   const supabase = await createSupabaseServerClient();
   const locale = await getPortalLocale();
   const t = tFactory(locale);
@@ -220,10 +268,18 @@ export default async function AdminInboxPage() {
     return b.createdAt.localeCompare(a.createdAt);
   });
 
+  const filteredItems = items.filter((item) => matchesFilter(item, activeFilter));
   const needsAttention = items.filter(isActionRequired).length;
   const pendingApprovals = items.filter(isPendingApproval).length;
   const unreadCount = items.filter((item) => item.readAt == null).length;
   const recentActivity = items.length;
+
+  const filters: Array<{ id: InboxFilter; count: number }> = [
+    { id: 'all', count: recentActivity },
+    { id: 'attention', count: needsAttention },
+    { id: 'unread', count: unreadCount },
+    { id: 'approvals', count: pendingApprovals },
+  ];
 
   return (
     <>
@@ -312,16 +368,46 @@ export default async function AdminInboxPage() {
         </div>
       ) : null}
 
+      <section className="mb-6 flex flex-wrap gap-2">
+        {filters.map((filter) => {
+          const href =
+            filter.id === 'all'
+              ? '/portal/admin/inbox'
+              : `/portal/admin/inbox?filter=${filter.id}`;
+          const isActive = filter.id === activeFilter;
+
+          return (
+            <Link
+              key={filter.id}
+              href={href}
+              className={`border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                isActive
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
+                  : 'border-[var(--hairline)] text-[var(--foreground)]/60 hover:border-[var(--accent)] hover:text-[var(--accent)]'
+              }`}
+            >
+              {filterLabel(filter.id, locale)} · {filter.count}
+            </Link>
+          );
+        })}
+      </section>
+
       <section className="border-t border-[var(--hairline)]">
-        {items.length === 0 ? (
-          <p className="py-10 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
-            {locale === 'ru'
-              ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
-              : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'}
-          </p>
+        {filteredItems.length === 0 ? (
+          <div className="py-10">
+            <p className="text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+              {activeFilter === 'all'
+                ? locale === 'ru'
+                  ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
+                  : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'
+                : locale === 'ru'
+                  ? `По фильтру «${filterLabel(activeFilter, locale)}» пока ничего нет.`
+                  : `Nothing currently matches the “${filterLabel(activeFilter, locale)}” filter.`}
+            </p>
+          </div>
         ) : (
           <ul>
-            {items.map((item) => {
+            {filteredItems.map((item) => {
               const actionRequired = isActionRequired(item);
               const isUnread = item.readAt == null;
 
