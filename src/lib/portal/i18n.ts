@@ -411,6 +411,32 @@ const DICT = {
     en: "You don't have any active projects yet. We'll send an invite when one starts.",
     ru: 'Активных проектов пока нет. Мы пришлём приглашение, когда стартует первый.',
   },
+  'client.card.progress': { en: 'Progress', ru: 'Прогресс' },
+  'client.card.currentStage': { en: 'Current stage', ru: 'Текущий этап' },
+  'client.card.nextStep': { en: 'Next step', ru: 'Следующий шаг' },
+  'client.card.waitingOnYou': { en: 'Waiting on you', ru: 'Ждём вас' },
+  'client.card.waitingOnYouHint': {
+    en: 'The latest deliverable is ready for review — open the project to approve it or request changes.',
+    ru: 'Последний результат готов к ревью — открой проект, чтобы утвердить его или запросить правки.',
+  },
+  'client.card.inStudio': { en: 'In studio', ru: 'В работе у нас' },
+  'client.card.inStudioHint': {
+    en: 'The studio is preparing the current stage. No action is needed from you yet.',
+    ru: 'Сейчас мы готовим текущий этап. От вас пока ничего не требуется.',
+  },
+  'client.card.awaitingStudio': {
+    en: 'Approved by you',
+    ru: 'Уже утверждено вами',
+  },
+  'client.card.awaitingStudioHint': {
+    en: 'You approved the current stage. The studio is wrapping it and moving the project forward.',
+    ru: 'Вы утвердили текущий этап. Сейчас мы его закрываем и двигаем проект дальше.',
+  },
+  'client.card.completed': { en: 'Completed', ru: 'Завершено' },
+  'client.card.completedHint': {
+    en: 'Final delivery is wrapped. Open the project to review the full history and materials.',
+    ru: 'Финальная поставка завершена. Открой проект, чтобы посмотреть всю историю и материалы.',
+  },
 
   // Common
   'common.open': { en: 'Open', ru: 'Открыть' },
