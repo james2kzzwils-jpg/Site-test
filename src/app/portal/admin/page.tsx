@@ -94,6 +94,27 @@ export default async function AdminClientsPage() {
   const pendingApprovals = inbox.items.filter(isPendingApproval).length;
   const recentEvents = inbox.items.length;
 
+  const countsByClient = new Map<
+    string,
+    { attention: number; unread: number; approvals: number }
+  >();
+
+  for (const item of inbox.items) {
+    if (!item.clientId) continue;
+
+    const current = countsByClient.get(item.clientId) ?? {
+      attention: 0,
+      unread: 0,
+      approvals: 0,
+    };
+
+    if (isActionRequired(item)) current.attention += 1;
+    if (item.readAt == null) current.unread += 1;
+    if (isPendingApproval(item)) current.approvals += 1;
+
+    countsByClient.set(item.clientId, current);
+  }
+
   return (
     <>
       <PortalHeader
@@ -184,29 +205,72 @@ export default async function AdminClientsPage() {
           </p>
         ) : (
           <ul>
-            {clients!.map((c) => (
-              <li
-                key={c.id}
-                className="flex items-center justify-between border-b border-[var(--hairline)] py-5"
-              >
-                <div>
-                  <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
-                    {c.name}
-                  </p>
-                  {c.company ? (
-                    <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
-                      {c.company}
-                    </p>
-                  ) : null}
-                </div>
-                <Link
-                  href={`/portal/admin/clients/${c.id}`}
-                  className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+            {clients!.map((c) => {
+              const counts = countsByClient.get(c.id) ?? {
+                attention: 0,
+                unread: 0,
+                approvals: 0,
+              };
+
+              return (
+                <li
+                  key={c.id}
+                  className="flex items-center justify-between gap-4 border-b border-[var(--hairline)] py-5"
                 >
-                  {t('common.open')} →
-                </Link>
-              </li>
-            ))}
+                  <div className="flex flex-col gap-2">
+                    <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
+                      {c.name}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {c.company ? (
+                        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
+                          {c.company}
+                        </p>
+                      ) : null}
+                      {counts.attention > 0 ? (
+                        <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                          {locale === 'ru'
+                            ? `Внимание ${counts.attention}`
+                            : `Attention ${counts.attention}`}
+                        </span>
+                      ) : null}
+                      {counts.unread > 0 ? (
+                        <span className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60">
+                          {locale === 'ru'
+                            ? `Unread ${counts.unread}`
+                            : `Unread ${counts.unread}`}
+                        </span>
+                      ) : null}
+                      {counts.approvals > 0 ? (
+                        <span className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60">
+                          {locale === 'ru'
+                            ? `Approve ${counts.approvals}`
+                            : `Approvals ${counts.approvals}`}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {counts.attention > 0 || counts.unread > 0 ? (
+                      <Link
+                        href={`/portal/admin/inbox?filter=${
+                          counts.attention > 0 ? 'attention' : 'unread'
+                        }`}
+                        className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+                      >
+                        {locale === 'ru' ? 'В inbox →' : 'In inbox →'}
+                      </Link>
+                    ) : null}
+                    <Link
+                      href={`/portal/admin/clients/${c.id}`}
+                      className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    >
+                      {t('common.open')} →
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
