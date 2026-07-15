@@ -45,31 +45,11 @@ function isMissingPortalEventsTable(message: string) {
   );
 }
 
-export async function loadAdminInbox(args: {
-  supabase: SupabaseServerClient;
-  limit?: number;
-}): Promise<AdminInboxLoadResult> {
-  const { supabase, limit = 40 } = args;
-
-  const { data, error } = await supabase
-    .from('portal_events')
-    .select('id, type, project_id, client_id, actor_id, payload, created_at, read_at')
-    .order('created_at', { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    if (isMissingPortalEventsTable(error.message)) {
-      return { status: 'not_ready', items: [] };
-    }
-
-    console.error('[admin_inbox] portal_events query failed:', error.message);
-    return { status: 'error', items: [] };
-  }
-
-  const events = (data ?? []) as RawPortalEvent[];
-  if (events.length === 0) {
-    return { status: 'ready', items: [] };
-  }
+async function enrichPortalEvents(
+  supabase: SupabaseServerClient,
+  events: RawPortalEvent[]
+): Promise<PortalInboxItem[]> {
+  if (events.length === 0) return [];
 
   const projectIds = [...new Set(events.map((event) => event.project_id).filter(Boolean))];
   const clientIds = [...new Set(events.map((event) => event.client_id).filter(Boolean))];
@@ -91,13 +71,13 @@ export async function loadAdminInbox(args: {
   ]);
 
   if (projectsResult.error) {
-    console.error('[admin_inbox] projects lookup failed:', projectsResult.error.message);
+    console.error('[portal_events] projects lookup failed:', projectsResult.error.message);
   }
   if (clientsResult.error) {
-    console.error('[admin_inbox] clients lookup failed:', clientsResult.error.message);
+    console.error('[portal_events] clients lookup failed:', clientsResult.error.message);
   }
   if (actorsResult.error) {
-    console.error('[admin_inbox] profiles lookup failed:', actorsResult.error.message);
+    console.error('[portal_events] profiles lookup failed:', actorsResult.error.message);
   }
 
   const projects = new Map(
@@ -110,9 +90,10 @@ export async function loadAdminInbox(args: {
     (actorsResult.data ?? []).map((profile) => [profile.id, profile])
   );
 
-  const items = events.map<PortalInboxItem>((event) => {
+  return events.map<PortalInboxItem>((event) => {
     const project = projects.get(event.project_id);
-    const client = clients.get(event.client_id) ??
+    const client =
+      clients.get(event.client_id) ??
       (project?.client_id ? clients.get(project.client_id) : undefined);
     const actor = actors.get(event.actor_id);
 
@@ -124,7 +105,8 @@ export async function loadAdminInbox(args: {
       actorId: event.actor_id,
       actorEmail: actor?.email ?? null,
       actorName: actor?.display_name ?? null,
-      actorRole: actor?.role === 'admin' || actor?.role === 'client' ? actor.role : null,
+      actorRole:
+        actor?.role === 'admin' || actor?.role === 'client' ? actor.role : null,
       projectTitle: project?.title ?? null,
       clientName: client?.name ?? null,
       payload: event.payload ?? {},
@@ -132,6 +114,58 @@ export async function loadAdminInbox(args: {
       readAt: event.read_at,
     };
   });
+}
 
+async function loadPortalEvents(args: {
+  supabase: SupabaseServerClient;
+  limit: number;
+  projectId?: string;
+}): Promise<AdminInboxLoadResult> {
+  const { supabase, limit, projectId } = args;
+
+  let query = supabase
+    .from('portal_events')
+    .select('id, type, project_id, client_id, actor_id, payload, created_at, read_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (projectId) {
+    query = query.eq('project_id', projectId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    if (isMissingPortalEventsTable(error.message)) {
+      return { status: 'not_ready', items: [] };
+    }
+
+    console.error('[portal_events] query failed:', error.message);
+    return { status: 'error', items: [] };
+  }
+
+  const events = (data ?? []) as RawPortalEvent[];
+  if (events.length === 0) {
+    return { status: 'ready', items: [] };
+  }
+
+  const items = await enrichPortalEvents(supabase, events);
   return { status: 'ready', items };
+}
+
+export async function loadAdminInbox(args: {
+  supabase: SupabaseServerClient;
+  limit?: number;
+}): Promise<AdminInboxLoadResult> {
+  const { supabase, limit = 40 } = args;
+  return loadPortalEvents({ supabase, limit });
+}
+
+export async function loadProjectActivity(args: {
+  supabase: SupabaseServerClient;
+  projectId: string;
+  limit?: number;
+}): Promise<AdminInboxLoadResult> {
+  const { supabase, projectId, limit = 12 } = args;
+  return loadPortalEvents({ supabase, limit, projectId });
 }
