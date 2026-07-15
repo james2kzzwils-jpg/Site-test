@@ -12,6 +12,16 @@ import {
   loadAdminInbox,
   type PortalInboxItem,
 } from '@/lib/portal/inbox';
+import {
+  markAllInboxReadAction,
+  setInboxEventReadStateAction,
+} from './actions';
+
+interface AdminInboxSearch {
+  filter?: string;
+}
+
+type InboxFilter = 'all' | 'attention' | 'unread' | 'approvals';
 
 function payloadString(payload: Record<string, unknown>, key: string) {
   const value = payload[key];
@@ -46,7 +56,10 @@ function isActionRequired(item: PortalInboxItem) {
   if (item.type === 'approval_decided' && decision === 'changes_requested') {
     return true;
   }
-  if ((item.type === 'comment_added' || item.type === 'file_uploaded') && item.actorRole === 'client') {
+  if (
+    (item.type === 'comment_added' || item.type === 'file_uploaded') &&
+    item.actorRole === 'client'
+  ) {
     return true;
   }
   return false;
@@ -54,7 +67,10 @@ function isActionRequired(item: PortalInboxItem) {
 
 function isPendingApproval(item: PortalInboxItem) {
   const decision = payloadString(item.payload, 'decision');
-  return item.type === 'approval_requested' || (item.type === 'approval_decided' && decision === 'approved');
+  return (
+    item.type === 'approval_requested' ||
+    (item.type === 'approval_decided' && decision === 'approved')
+  );
 }
 
 function titleFor(item: PortalInboxItem, locale: PortalLocale) {
@@ -81,16 +97,16 @@ function titleFor(item: PortalInboxItem, locale: PortalLocale) {
           ? 'Новый комментарий от клиента'
           : 'New client comment'
         : locale === 'ru'
-        ? 'Новый комментарий от студии'
-        : 'New studio comment';
+          ? 'Новый комментарий от студии'
+          : 'New studio comment';
     case 'file_uploaded':
       return item.actorRole === 'client'
         ? locale === 'ru'
           ? 'Клиент загрузил файл'
           : 'Client uploaded a file'
         : locale === 'ru'
-        ? 'Студия загрузила файл'
-        : 'Studio uploaded a file';
+          ? 'Студия загрузила файл'
+          : 'Studio uploaded a file';
     case 'project_created':
       return locale === 'ru' ? 'Создан новый проект' : 'New project created';
     case 'stage_changed':
@@ -105,7 +121,9 @@ function titleFor(item: PortalInboxItem, locale: PortalLocale) {
 }
 
 function hintFor(item: PortalInboxItem, locale: PortalLocale) {
-  const project = item.projectTitle ?? (locale === 'ru' ? 'проект без названия' : 'untitled project');
+  const project =
+    item.projectTitle ??
+    (locale === 'ru' ? 'проект без названия' : 'untitled project');
   const client = item.clientName ?? (locale === 'ru' ? 'клиент' : 'client');
   const actor = actorLabel(item, locale);
   const filename = payloadString(item.payload, 'filename');
@@ -121,8 +139,8 @@ function hintFor(item: PortalInboxItem, locale: PortalLocale) {
           ? `${project} · ${client} · открой карточку проекта и посмотри, какие правки запросил клиент.`
           : `${project} · ${client} · open the project and review the requested changes.`
         : locale === 'ru'
-        ? `${project} · ${client} · клиент уже согласовал этап, можно подтверждать перевод дальше.`
-        : `${project} · ${client} · the client has signed off, so the stage can be confirmed and advanced.`;
+          ? `${project} · ${client} · клиент уже согласовал этап, можно подтверждать перевод дальше.`
+          : `${project} · ${client} · the client has signed off, so the stage can be confirmed and advanced.`;
     case 'comment_added':
       return locale === 'ru'
         ? `${project} · ${client} · ${actor} оставил комментарий.`
@@ -144,9 +162,7 @@ function hintFor(item: PortalInboxItem, locale: PortalLocale) {
         ? `${project} · ${client} · обнови дальнейшие шаги с учётом NDA.`
         : `${project} · ${client} · continue the workflow with the NDA state in mind.`;
     default:
-      return locale === 'ru'
-        ? `${project} · ${client}`
-        : `${project} · ${client}`;
+      return `${project} · ${client}`;
   }
 }
 
@@ -183,7 +199,49 @@ function summaryCard(
   );
 }
 
-export default async function AdminInboxPage() {
+function normalizeFilter(value: string | undefined): InboxFilter {
+  if (value === 'attention' || value === 'unread' || value === 'approvals') {
+    return value;
+  }
+  return 'all';
+}
+
+function matchesFilter(item: PortalInboxItem, filter: InboxFilter) {
+  switch (filter) {
+    case 'attention':
+      return isActionRequired(item);
+    case 'unread':
+      return item.readAt == null;
+    case 'approvals':
+      return isPendingApproval(item);
+    case 'all':
+    default:
+      return true;
+  }
+}
+
+function filterLabel(filter: InboxFilter, locale: PortalLocale) {
+  switch (filter) {
+    case 'attention':
+      return locale === 'ru' ? 'Требует внимания' : 'Needs attention';
+    case 'unread':
+      return locale === 'ru' ? 'Непрочитано' : 'Unread';
+    case 'approvals':
+      return locale === 'ru' ? 'Подтверждения' : 'Approvals';
+    case 'all':
+    default:
+      return locale === 'ru' ? 'Все' : 'All';
+  }
+}
+
+export default async function AdminInboxPage({
+  searchParams,
+}: {
+  searchParams?: Promise<AdminInboxSearch>;
+}) {
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const activeFilter = normalizeFilter(resolvedSearchParams.filter);
+
   const supabase = await createSupabaseServerClient();
   const locale = await getPortalLocale();
   const t = tFactory(locale);
@@ -201,14 +259,27 @@ export default async function AdminInboxPage() {
 
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const items = [...inbox.items].sort((a, b) => {
-    const priority = Number(isActionRequired(b)) - Number(isActionRequired(a));
-    if (priority !== 0) return priority;
+    const actionPriority = Number(isActionRequired(b)) - Number(isActionRequired(a));
+    if (actionPriority !== 0) return actionPriority;
+
+    const unreadPriority = Number(a.readAt == null) - Number(b.readAt == null);
+    if (unreadPriority !== 0) return -unreadPriority;
+
     return b.createdAt.localeCompare(a.createdAt);
   });
 
+  const filteredItems = items.filter((item) => matchesFilter(item, activeFilter));
   const needsAttention = items.filter(isActionRequired).length;
   const pendingApprovals = items.filter(isPendingApproval).length;
+  const unreadCount = items.filter((item) => item.readAt == null).length;
   const recentActivity = items.length;
+
+  const filters: Array<{ id: InboxFilter; count: number }> = [
+    { id: 'all', count: recentActivity },
+    { id: 'attention', count: needsAttention },
+    { id: 'unread', count: unreadCount },
+    { id: 'approvals', count: pendingApprovals },
+  ];
 
   return (
     <>
@@ -230,26 +301,56 @@ export default async function AdminInboxPage() {
           <span className="text-[var(--accent)]">◆</span>{' '}
           {locale === 'ru' ? 'Admin Inbox' : 'Admin Inbox'}
         </p>
-        <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
-          {locale === 'ru' ? 'Входящие по порталу' : 'Portal inbox'}
-        </h1>
-        <p className="max-w-3xl text-[14px] leading-[1.7] text-[var(--foreground)]/55">
-          {locale === 'ru'
-            ? 'Единая лента того, что требует внимания студии: новые ревью, правки, комментарии и загрузки файлов от клиентов.'
-            : 'A single queue for what needs studio attention across the portal: review requests, client changes, comments and file uploads.'}
-        </p>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-3">
+            <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
+              {locale === 'ru' ? 'Входящие по порталу' : 'Portal inbox'}
+            </h1>
+            <p className="max-w-3xl text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Единая лента того, что требует внимания студии: новые ревью, правки, комментарии и загрузки файлов от клиентов.'
+                : 'A single queue for what needs studio attention across the portal: review requests, client changes, comments and file uploads.'}
+            </p>
+          </div>
+          {unreadCount > 0 ? (
+            <form action={markAllInboxReadAction}>
+              <button
+                type="submit"
+                className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                {locale === 'ru' ? 'Отметить всё как прочитанное' : 'Mark all as read'}
+              </button>
+            </form>
+          ) : null}
+        </div>
       </div>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
-        {summaryCard(locale === 'ru' ? 'Требует внимания' : 'Needs attention', needsAttention, 'accent')}
-        {summaryCard(locale === 'ru' ? 'Ожидают подтверждения' : 'Pending approvals', pendingApprovals)}
-        {summaryCard(locale === 'ru' ? 'Событий в ленте' : 'Events loaded', recentActivity)}
+      <section className="mb-8 grid gap-4 md:grid-cols-4">
+        {summaryCard(
+          locale === 'ru' ? 'Требует внимания' : 'Needs attention',
+          needsAttention,
+          'accent'
+        )}
+        {summaryCard(
+          locale === 'ru' ? 'Непрочитано' : 'Unread',
+          unreadCount
+        )}
+        {summaryCard(
+          locale === 'ru' ? 'Ожидают подтверждения' : 'Pending approvals',
+          pendingApprovals
+        )}
+        {summaryCard(
+          locale === 'ru' ? 'Событий в ленте' : 'Events loaded',
+          recentActivity
+        )}
       </section>
 
       {inbox.status === 'not_ready' ? (
         <div className="mb-8 border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
           <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--accent)]">
-            {locale === 'ru' ? 'Нужен Supabase migration' : 'Supabase migration required'}
+            {locale === 'ru'
+              ? 'Нужен Supabase migration'
+              : 'Supabase migration required'}
           </p>
           <p className="mt-2">
             {locale === 'ru'
@@ -267,21 +368,55 @@ export default async function AdminInboxPage() {
         </div>
       ) : null}
 
+      <section className="mb-6 flex flex-wrap gap-2">
+        {filters.map((filter) => {
+          const href =
+            filter.id === 'all'
+              ? '/portal/admin/inbox'
+              : `/portal/admin/inbox?filter=${filter.id}`;
+          const isActive = filter.id === activeFilter;
+
+          return (
+            <Link
+              key={filter.id}
+              href={href}
+              className={`border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                isActive
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
+                  : 'border-[var(--hairline)] text-[var(--foreground)]/60 hover:border-[var(--accent)] hover:text-[var(--accent)]'
+              }`}
+            >
+              {filterLabel(filter.id, locale)} · {filter.count}
+            </Link>
+          );
+        })}
+      </section>
+
       <section className="border-t border-[var(--hairline)]">
-        {items.length === 0 ? (
-          <p className="py-10 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
-            {locale === 'ru'
-              ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
-              : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'}
-          </p>
+        {filteredItems.length === 0 ? (
+          <div className="py-10">
+            <p className="text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+              {activeFilter === 'all'
+                ? locale === 'ru'
+                  ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
+                  : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'
+                : locale === 'ru'
+                  ? `По фильтру «${filterLabel(activeFilter, locale)}» пока ничего нет.`
+                  : `Nothing currently matches the “${filterLabel(activeFilter, locale)}” filter.`}
+            </p>
+          </div>
         ) : (
           <ul>
-            {items.map((item) => {
+            {filteredItems.map((item) => {
               const actionRequired = isActionRequired(item);
+              const isUnread = item.readAt == null;
+
               return (
                 <li
                   key={item.id}
-                  className="grid gap-4 border-b border-[var(--hairline)] py-5 lg:grid-cols-[1fr_auto] lg:items-start"
+                  className={`grid gap-4 border-b border-[var(--hairline)] py-5 lg:grid-cols-[1fr_auto] lg:items-start ${
+                    isUnread ? 'bg-[var(--accent)]/5' : ''
+                  }`}
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-wrap items-center gap-2">
@@ -290,6 +425,15 @@ export default async function AdminInboxPage() {
                           {locale === 'ru' ? 'Нужно действие' : 'Action required'}
                         </span>
                       ) : null}
+                      {isUnread ? (
+                        <span className="border border-[var(--foreground)]/15 bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/60">
+                          {locale === 'ru' ? 'Непрочитано' : 'Unread'}
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/35">
+                          {locale === 'ru' ? 'Прочитано' : 'Read'}
+                        </span>
+                      )}
                       <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/40">
                         {formatDate(locale, item.createdAt)}
                       </span>
@@ -303,14 +447,37 @@ export default async function AdminInboxPage() {
                   </div>
                   <div className="flex flex-col items-start gap-2 lg:items-end">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/40">
-                      {(item.projectTitle ?? (locale === 'ru' ? 'Без названия' : 'Untitled'))}
+                      {item.projectTitle ??
+                        (locale === 'ru' ? 'Без названия' : 'Untitled')}
                     </p>
-                    <Link
-                      href={destinationFor(item)}
-                      className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                    >
-                      {locale === 'ru' ? 'Открыть проект →' : 'Open project →'}
-                    </Link>
+                    <div className="flex flex-wrap gap-2 lg:justify-end">
+                      <form action={setInboxEventReadStateAction}>
+                        <input type="hidden" name="event_id" value={item.id} />
+                        <input
+                          type="hidden"
+                          name="next_state"
+                          value={isUnread ? 'read' : 'unread'}
+                        />
+                        <button
+                          type="submit"
+                          className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                        >
+                          {isUnread
+                            ? locale === 'ru'
+                              ? 'Прочитано'
+                              : 'Mark read'
+                            : locale === 'ru'
+                              ? 'Вернуть в непрочитанное'
+                              : 'Mark unread'}
+                        </button>
+                      </form>
+                      <Link
+                        href={destinationFor(item)}
+                        className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      >
+                        {locale === 'ru' ? 'Открыть проект →' : 'Open project →'}
+                      </Link>
+                    </div>
                   </div>
                 </li>
               );
