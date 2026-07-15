@@ -4,6 +4,66 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
 import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
+
+function payloadString(payload: Record<string, unknown>, key: string) {
+  const value = payload[key];
+  return typeof value === 'string' ? value : null;
+}
+
+function isActionRequired(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  if (item.type === 'approval_requested') return true;
+  if (item.type === 'approval_decided' && decision === 'changes_requested') {
+    return true;
+  }
+  if (
+    (item.type === 'comment_added' || item.type === 'file_uploaded') &&
+    item.actorRole === 'client'
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isPendingApproval(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  return (
+    item.type === 'approval_requested' ||
+    (item.type === 'approval_decided' && decision === 'approved')
+  );
+}
+
+function summaryCard(args: {
+  label: string;
+  value: number;
+  href: string;
+  tone?: 'default' | 'accent';
+  caption: string;
+}) {
+  const { label, value, href, tone = 'default', caption } = args;
+
+  return (
+    <Link
+      href={href}
+      className={`border p-4 transition-colors ${
+        tone === 'accent'
+          ? 'border-[var(--accent)] bg-[var(--accent)]/8 hover:bg-[var(--accent)]/14'
+          : 'border-[var(--hairline)] hover:border-[var(--accent)]'
+      }`}
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+        {label}
+      </p>
+      <p className="mt-2 font-display text-[36px] leading-none tracking-[-0.04em]">
+        {value}
+      </p>
+      <p className="mt-3 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+        {caption}
+      </p>
+    </Link>
+  );
+}
 
 // Admin dashboard: list of all clients. RLS guarantees only admins can
 // read these rows, but the middleware redirected non-admins already.
@@ -21,11 +81,18 @@ export default async function AdminClientsPage() {
     .select('role, email')
     .eq('id', user.id)
     .maybeSingle();
+  if (profile?.role !== 'admin') redirect('/portal');
 
   const { data: clients } = await supabase
     .from('clients')
     .select('id, name, company, created_at')
     .order('created_at', { ascending: false });
+
+  const inbox = await loadAdminInbox({ supabase, limit: 50 });
+  const needsAttention = inbox.items.filter(isActionRequired).length;
+  const unreadCount = inbox.items.filter((item) => item.readAt == null).length;
+  const pendingApprovals = inbox.items.filter(isPendingApproval).length;
+  const recentEvents = inbox.items.length;
 
   return (
     <>
@@ -61,6 +128,54 @@ export default async function AdminClientsPage() {
           </Link>
         </div>
       </div>
+
+      <section className="mb-8 grid gap-4 md:grid-cols-4">
+        {summaryCard({
+          label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
+          value: needsAttention,
+          href: '/portal/admin/inbox?filter=attention',
+          tone: 'accent',
+          caption:
+            locale === 'ru'
+              ? 'Клиентские комментарии, правки и события, где студии нужно реагировать.'
+              : 'Client comments, change requests and events that need studio action.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Непрочитано' : 'Unread',
+          value: unreadCount,
+          href: '/portal/admin/inbox?filter=unread',
+          caption:
+            locale === 'ru'
+              ? 'Все ещё неразобранные события в ленте портала.'
+              : 'Portal events that still have not been triaged.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
+          value: pendingApprovals,
+          href: '/portal/admin/inbox?filter=approvals',
+          caption:
+            locale === 'ru'
+              ? 'Этапы, отправленные на ревью или уже подтверждённые клиентом.'
+              : 'Stages sent for review or already approved by the client.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Событий загружено' : 'Events loaded',
+          value: recentEvents,
+          href: '/portal/admin/inbox',
+          caption:
+            locale === 'ru'
+              ? 'Быстрый переход в общую operational-ленту админа.'
+              : 'Quick jump into the admin’s operational inbox feed.',
+        })}
+      </section>
+
+      {inbox.status === 'not_ready' ? (
+        <div className="mb-8 border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
+          {locale === 'ru'
+            ? 'Сводка активности начнёт работать после применения migration 0008_portal_events.sql в Supabase.'
+            : 'The activity summary will start working once migration 0008_portal_events.sql is applied in Supabase.'}
+        </div>
+      ) : null}
 
       <div className="border-t border-[var(--hairline)]">
         {(clients ?? []).length === 0 ? (
