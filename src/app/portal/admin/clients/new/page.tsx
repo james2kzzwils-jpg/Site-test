@@ -1,10 +1,24 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
+import {
+  createSupabaseServerClient,
+  createSupabaseAdminClient,
+} from '@/lib/supabase/server';
+import { getPublicPortalOriginFromHeaders } from '@/lib/portal/public-origin';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
 import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+
+async function resolvePublicPortalOrigin(): Promise<string> {
+  const h = await headers();
+  return getPublicPortalOriginFromHeaders(h);
+}
+
+async function resolveEmailAuthRedirectUrl(redirectTo = '/portal'): Promise<string> {
+  const origin = await resolvePublicPortalOrigin();
+  return `${origin}/auth/complete?redirect=${encodeURIComponent(redirectTo)}`;
+}
 
 // Server action for creating a client + invitee. We use the secret
 // client to generate the auth invite (bypass RLS), then attach them
@@ -32,8 +46,6 @@ async function createClientAction(formData: FormData) {
 
   const admin = createSupabaseAdminClient();
 
-  // 1) Create the client row using the admin client (bypasses RLS for
-  //    the created_by self-reference; we still record it).
   const { data: clientRow, error: insertErr } = await admin
     .from('clients')
     .insert({ name, company, created_by: user.id })
@@ -43,26 +55,22 @@ async function createClientAction(formData: FormData) {
     throw new Error(insertErr?.message ?? 'Failed to create client');
   }
 
-  // 2) Invite the contact (magic link). Supabase will create the
-  //    auth.users row and dispatch an email automatically. We pin
-  //    redirectTo to the live origin from the request headers so the
-  //    invite link doesn't fall back to the dashboard's "Site URL"
-  //    (which can still point at localhost in fresh projects).
   if (inviteEmail) {
-    const h = await headers();
-    const proto =
-      h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-    const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-    const inviteRedirectTo = `${proto}://${host}/auth/callback?redirect=${encodeURIComponent('/portal')}`;
+    const inviteRedirectTo = await resolveEmailAuthRedirectUrl('/portal');
     const { data: inviteData, error: inviteErr } =
       await admin.auth.admin.inviteUserByEmail(inviteEmail, {
         redirectTo: inviteRedirectTo,
       });
+
     if (inviteErr) {
-      // We don't unwind the client row — the admin can re-invite from
-      // the client detail screen later.
-      console.warn('invite failed:', inviteErr.message);
-    } else if (inviteData?.user) {
+      const params = new URLSearchParams({
+        err: 'invite_failed',
+        error_message: inviteErr.message,
+      });
+      redirect(`/portal/admin/clients/${clientRow.id}?${params.toString()}`);
+    }
+
+    if (inviteData?.user) {
       await admin.from('client_members').insert({
         client_id: clientRow.id,
         profile_id: inviteData.user.id,
@@ -71,7 +79,7 @@ async function createClientAction(formData: FormData) {
   }
 
   revalidatePath('/portal/admin');
-  redirect(`/portal/admin/clients/${clientRow.id}`);
+  redirect(`/portal/admin/clients/${clientRow.id}${inviteEmail ? '?sent=invited' : ''}`);
 }
 
 export default async function NewClientPage() {
