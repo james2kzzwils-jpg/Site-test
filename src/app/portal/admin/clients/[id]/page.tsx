@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import { insertPortalEvent } from '@/lib/portal/events';
+import { getPublicPortalOriginFromHeaders } from '@/lib/portal/public-origin';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
 import CopyButton from '../../../_shared/CopyButton';
@@ -23,29 +24,17 @@ interface ClientDetailSearch {
   test_link_email?: string;
 }
 
-// Resolve the absolute `/auth/callback` URL for the *current* deploy
-// by reading the live request headers. Used by every magic-link
-// server action so we never hardcode `localhost` or `NEXT_PUBLIC_SITE_URL`.
-// The forwarded headers are set by our reverse proxy (nginx) and fall
-// back to the regular `host` header for direct connections.
-async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
+async function resolvePublicPortalOrigin(): Promise<string> {
   const h = await headers();
-  const proto =
-    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  return `${proto}://${host}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
+  return getPublicPortalOriginFromHeaders(h);
 }
 
-// Resolve the origin (scheme + host) for the current deploy. Used by
-// the test-login flow which bypasses Supabase's /auth/v1/verify
-// redirect-chain and points the browser straight at our callback with
-// a token_hash to verify server-side.
-async function resolveOrigin(): Promise<string> {
-  const h = await headers();
-  const proto =
-    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  return `${proto}://${host}`;
+// Resolve the absolute `/auth/callback` URL for the public portal.
+// This prefers an explicit env var for production because some server
+// actions can see `localhost`/internal host headers at runtime.
+async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
+  const origin = await resolvePublicPortalOrigin();
+  return `${origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
 }
 
 async function requireAdmin() {
@@ -153,7 +142,7 @@ async function generateTestLoginAction(formData: FormData) {
   // the test-login flow we build the URL ourselves below, but having
   // the redirect on the link is harmless.
   const redirectTo = await resolveAuthCallbackUrl();
-  const origin = await resolveOrigin();
+  const origin = await resolvePublicPortalOrigin();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',

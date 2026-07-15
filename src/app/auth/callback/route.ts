@@ -1,6 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getPublicPortalOriginFromRequest } from '@/lib/portal/public-origin';
+
+function normalizeRedirectPath(redirect: string | null) {
+  if (!redirect || !redirect.startsWith('/')) return '/portal';
+  return redirect;
+}
 
 // Magic-link / OAuth callback. We support two arrival shapes:
 //
@@ -21,10 +27,14 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 // Either path produces session cookies on the redirected response.
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
+  const origin = getPublicPortalOriginFromRequest({
+    headers: request.headers,
+    fallbackOrigin: request.nextUrl.origin,
+  });
   const code = url.searchParams.get('code');
   const tokenHash = url.searchParams.get('token_hash');
   const otpTypeParam = url.searchParams.get('type');
-  const redirect = url.searchParams.get('redirect') ?? '/portal';
+  const redirect = normalizeRedirectPath(url.searchParams.get('redirect'));
 
   const supabase = await createSupabaseServerClient();
 
@@ -40,24 +50,26 @@ export async function GET(request: NextRequest) {
     });
     if (error) {
       return NextResponse.redirect(
-        new URL(`/portal/login?error=${encodeURIComponent(error.message)}`, url)
+        new URL(`/portal/login?error=${encodeURIComponent(error.message)}`, origin)
       );
     }
-    return NextResponse.redirect(new URL(redirect, url));
+    return NextResponse.redirect(new URL(redirect, origin));
   }
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
       return NextResponse.redirect(
-        new URL(`/portal/login?error=${encodeURIComponent(error.message)}`, url)
+        new URL(`/portal/login?error=${encodeURIComponent(error.message)}`, origin)
       );
     }
-    return NextResponse.redirect(new URL(redirect, url));
+    return NextResponse.redirect(new URL(redirect, origin));
   }
 
   // Neither flow's params present — the user landed here from
   // somewhere that didn't pass a credential. Bounce to login with a
   // diagnostic flag so we don't silently 404.
-  return NextResponse.redirect(new URL('/portal/login?error=missing_code', url));
+  return NextResponse.redirect(
+    new URL('/portal/login?error=missing_code', origin)
+  );
 }
