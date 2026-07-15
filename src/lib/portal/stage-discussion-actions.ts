@@ -3,6 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
+// Keep portal invalidation pinned to the canonical client route.
+// Older code paths used `/portal/client/projects/[projectId]`, but the
+// real page lives at `/portal/client/[projectId]`.
 function pathsFor(clientId: string, projectId: string) {
   return {
     adminProject: clientId
