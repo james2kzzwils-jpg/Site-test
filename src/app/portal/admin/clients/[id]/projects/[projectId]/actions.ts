@@ -3,10 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { insertPortalEvent } from '@/lib/portal/events';
 import {
   STAGE_ORDER,
   nextStageKind,
-  prevStageKind,
   type ProjectStatus,
   type StageKind,
 } from '@/lib/portal/stages';
@@ -50,7 +50,7 @@ export async function confirmAndAdvanceAction(formData: FormData) {
   const projectId = String(formData.get('project_id') || '');
   if (!clientId || !projectId) return;
 
-  const { supabase } = await requireAdmin();
+  const { supabase, userId } = await requireAdmin();
 
   const { data: project } = await supabase
     .from('projects')
@@ -78,6 +78,19 @@ export async function confirmAndAdvanceAction(formData: FormData) {
     .update({ status: next ?? 'archived' })
     .eq('id', projectId);
 
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId,
+    actorId: userId,
+    type: 'stage_changed',
+    payload: {
+      from_stage: current,
+      to_stage: next ?? 'archived',
+      trigger: 'confirm_and_advance',
+    },
+  });
+
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);
   revalidatePath(clientProject);
@@ -89,10 +102,6 @@ export async function confirmAndAdvanceAction(formData: FormData) {
  * This allows the admin to set project.status to any stage,
  * enabling flexible workflow management. Useful for corrections,
  * skipping stages, or rolling back.
- *
- * When moving backward, the target stage's state is NOT reset —
- * the admin can reset it separately via setStageStateAction if
- * needed. When moving forward, the previous stages remain as-is.
  */
 export async function navigateStageAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
@@ -103,12 +112,31 @@ export async function navigateStageAction(formData: FormData) {
   const targetKind = targetKindRaw as StageKind;
   if (!STAGE_ORDER.includes(targetKind)) return;
 
-  const { supabase } = await requireAdmin();
+  const { supabase, userId } = await requireAdmin();
+
+  const { data: current } = await supabase
+    .from('projects')
+    .select('status')
+    .eq('id', projectId)
+    .maybeSingle();
 
   await supabase
     .from('projects')
     .update({ status: targetKind })
     .eq('id', projectId);
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId,
+    actorId: userId,
+    type: 'stage_changed',
+    payload: {
+      from_stage: current?.status ?? null,
+      to_stage: targetKind,
+      trigger: 'navigate',
+    },
+  });
 
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);
@@ -117,15 +145,14 @@ export async function navigateStageAction(formData: FormData) {
 
 // Advance: mark the current stage approved and bump project.status to
 // the next stage. If we're already on the last stage, the project is
-// flipped to 'archived'.
-// Kept for backward compatibility but internal flow should prefer
-// confirmAndAdvanceAction.
+// flipped to 'archived'. Kept for backward compatibility but internal
+// flow should prefer confirmAndAdvanceAction.
 export async function advanceStageAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
   if (!clientId || !projectId) return;
 
-  const { supabase } = await requireAdmin();
+  const { supabase, userId } = await requireAdmin();
 
   const { data: project } = await supabase
     .from('projects')
@@ -151,28 +178,63 @@ export async function advanceStageAction(formData: FormData) {
     .update({ status: next ?? 'archived' })
     .eq('id', projectId);
 
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId,
+    actorId: userId,
+    type: 'stage_changed',
+    payload: {
+      from_stage: current,
+      to_stage: next ?? 'archived',
+      trigger: 'legacy_advance',
+    },
+  });
+
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);
   revalidatePath(clientProject);
 }
 
-// Move a stage state forward without finalising the project (e.g. mark
-// it in_review when sent to client for feedback, or changes_requested
-// when the client pushed back).
+// Move a stage state forward without finalising the project.
 export async function setStageStateAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
   const stageId = String(formData.get('stage_id') || '');
   const stateRaw = String(formData.get('state') || '');
-  const allowed = new Set(['pending', 'in_review', 'changes_requested', 'client_approved', 'approved']);
-  if (!allowed.has(stateRaw) || !stageId) return;
+  const allowed = new Set([
+    'pending',
+    'in_review',
+    'changes_requested',
+    'client_approved',
+    'approved',
+  ]);
+  if (!projectId || !clientId || !stageId || !allowed.has(stateRaw)) return;
 
-  await requireAdmin();
-  const supabase = (await createSupabaseServerClient());
+  const { supabase, userId } = await requireAdmin();
   await supabase
     .from('stages')
-    .update({ state: stateRaw, approved_at: stateRaw === 'approved' || stateRaw === 'client_approved' ? new Date().toISOString() : null })
+    .update({
+      state: stateRaw,
+      approved_at:
+        stateRaw === 'approved' || stateRaw === 'client_approved'
+          ? new Date().toISOString()
+          : null,
+    })
     .eq('id', stageId);
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId,
+    actorId: userId,
+    type: stateRaw === 'in_review' ? 'approval_requested' : 'stage_changed',
+    payload: {
+      stage_id: stageId,
+      stage_state: stateRaw,
+      trigger: 'set_stage_state',
+    },
+  });
 
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);
@@ -180,14 +242,13 @@ export async function setStageStateAction(formData: FormData) {
 }
 
 // Reset everything: bump project back to 'discovery' and wipe all
-// stage approvals. Used while iterating, not exposed in default UI
-// yet.
+// stage approvals. Used while iterating, not exposed in default UI yet.
 export async function resetProjectAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
-  if (!projectId) return;
+  if (!projectId || !clientId) return;
 
-  const { supabase } = await requireAdmin();
+  const { supabase, userId } = await requireAdmin();
   await supabase
     .from('stages')
     .update({ state: 'pending', approved_at: null })
@@ -197,14 +258,23 @@ export async function resetProjectAction(formData: FormData) {
     .update({ status: STAGE_ORDER[0] })
     .eq('id', projectId);
 
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId,
+    actorId: userId,
+    type: 'stage_changed',
+    payload: {
+      to_stage: STAGE_ORDER[0],
+      trigger: 'reset',
+    },
+  });
+
   const { adminProject, clientProject } = pathsFor(clientId, projectId);
   revalidatePath(adminProject);
   revalidatePath(clientProject);
 }
 
-// Project metadata: brief, budget, due date, status (admin-pick from
-// dropdown). All optional · we only touch the field if the form
-// submitted a non-empty value, except for brief which can be empty.
 export async function updateProjectMetaAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
@@ -237,10 +307,6 @@ export async function updateProjectMetaAction(formData: FormData) {
   revalidatePath(clientProject);
 }
 
-// NDA toggle. Three modes:
-//   none       nda_until = null
-//   until       nda_until = (date input)
-//   perpetual ¶ nda_until = 'infinity'
 export async function updateProjectNdaAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
@@ -261,11 +327,6 @@ export async function updateProjectNdaAction(formData: FormData) {
   revalidatePath(clientProject);
 }
 
-// Toggle whether the project should land in the public portfolio.
-// Server-side mirror of the UI guard: only allow flipping the flag
-// when the project is on the Final stage OR has been wrapped early
-// (status === 'archived'). Anything earlier is silently ignored so a
-// crafted POST can't bypass the UI lock.
 export async function togglePublishAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');
@@ -292,10 +353,6 @@ export async function togglePublishAction(formData: FormData) {
   revalidatePath(clientProject);
 }
 
-// Per-stage summary. Stored in `stages.admin_summary`; the surface
-// on the page renders stage-aware placeholder hints (references for
-// Mood, scene list for Animatic, etc.) so the admin knows what to
-// write at each step. Client view renders this as plain prose.
 export async function updateStageSummaryAction(formData: FormData) {
   const clientId = String(formData.get('client_id') || '');
   const projectId = String(formData.get('project_id') || '');

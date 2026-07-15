@@ -2,10 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { insertPortalEvent } from '@/lib/portal/events';
 
-// Keep portal invalidation pinned to the canonical client route.
-// Older code paths used `/portal/client/projects/[projectId]`, but the
-// real page lives at `/portal/client/[projectId]`.
 function pathsFor(clientId: string, projectId: string) {
   return {
     adminProject: clientId
@@ -44,6 +42,19 @@ export async function postDiscussionAction(formData: FormData) {
     body,
   });
   if (error) return { ok: false, error: error.message };
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId: clientId || null,
+    actorId: user.id,
+    type: 'comment_added',
+    payload: {
+      stage_id: stageId,
+      thread: 'stage_discussion',
+      body_length: body.length,
+    },
+  });
 
   const paths = pathsFor(clientId, projectId);
   if (paths.adminProject) revalidatePath(paths.adminProject);

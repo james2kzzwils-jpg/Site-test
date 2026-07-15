@@ -14,6 +14,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { insertPortalEvent } from '@/lib/portal/events';
 
 async function requireProfile() {
   const supabase = await createSupabaseServerClient();
@@ -42,9 +43,10 @@ function pathsFor(projectId: string) {
 export async function clientApproveStageAction(formData: FormData) {
   const projectId = String(formData.get('project_id') || '');
   const stageId = String(formData.get('stage_id') || '');
+  const stageKind = String(formData.get('stage_kind') || '');
   if (!projectId || !stageId) return;
 
-  const { supabase } = await requireProfile();
+  const { supabase, user } = await requireProfile();
 
   await supabase
     .from('stages')
@@ -53,6 +55,18 @@ export async function clientApproveStageAction(formData: FormData) {
       approved_at: new Date().toISOString(),
     })
     .eq('id', stageId);
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    actorId: user.id,
+    type: 'approval_decided',
+    payload: {
+      stage_id: stageId,
+      stage_kind: stageKind || null,
+      decision: 'approved',
+    },
+  });
 
   // NOTE: project.status is NOT advanced here — that happens when
   // the admin calls confirmAndAdvanceAction.
@@ -70,12 +84,23 @@ export async function clientRequestChangesAction(formData: FormData) {
   const stageId = String(formData.get('stage_id') || '');
   if (!projectId || !stageId) return;
 
-  const { supabase } = await requireProfile();
+  const { supabase, user } = await requireProfile();
 
   await supabase
     .from('stages')
     .update({ state: 'changes_requested' })
     .eq('id', stageId);
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    actorId: user.id,
+    type: 'approval_decided',
+    payload: {
+      stage_id: stageId,
+      decision: 'changes_requested',
+    },
+  });
 
   revalidatePath(pathsFor(projectId));
 }
