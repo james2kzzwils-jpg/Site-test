@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
+import {
+  createSupabaseServerClient,
+  createSupabaseAdminClient,
+} from '@/lib/supabase/server';
 import { insertPortalEvent } from '@/lib/portal/events';
 import { getPublicPortalOriginFromHeaders } from '@/lib/portal/public-origin';
 import PortalHeader from '../../../_shared/PortalHeader';
@@ -17,6 +20,7 @@ interface ClientDetailParams {
 interface ClientDetailSearch {
   sent?: string;
   err?: string;
+  error_message?: string;
   /** Magic-link URL returned by generateTestLoginAction — surfaced on
    * the same page so the admin can copy it into a private window
    * without spending a Supabase email quota. */
@@ -100,12 +104,17 @@ async function inviteMemberAction(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/portal/admin/clients/${clientId}?err=invite_failed`);
+    const params = new URLSearchParams({
+      err: 'invite_failed',
+      error_message: error.message,
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
   if (data?.user) {
-    await admin
-      .from('client_members')
-      .insert({ client_id: clientId, profile_id: data.user.id });
+    await admin.from('client_members').insert({
+      client_id: clientId,
+      profile_id: data.user.id,
+    });
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -151,7 +160,11 @@ async function generateTestLoginAction(formData: FormData) {
   });
 
   if (error || !data?.properties?.hashed_token) {
-    redirect(`/portal/admin/clients/${clientId}?err=test_link_failed`);
+    const params = new URLSearchParams({
+      err: 'test_link_failed',
+      error_message: error?.message ?? 'Missing token hash in generateLink response',
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
 
   // Build the URL that goes directly to our callback. The callback
@@ -193,7 +206,11 @@ async function resendMagicLinkAction(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/portal/admin/clients/${clientId}?err=resend_failed`);
+    const params = new URLSearchParams({
+      err: 'resend_failed',
+      error_message: error.message,
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -208,7 +225,8 @@ export default async function ClientDetailPage({
   searchParams: Promise<ClientDetailSearch>;
 }) {
   const { id } = await params;
-  const { sent, err, test_link, test_link_email } = await searchParams;
+  const { sent, err, error_message, test_link, test_link_email } =
+    await searchParams;
 
   const { user, profile } = await requireAdmin();
   const supabase = await createSupabaseServerClient();
@@ -275,18 +293,25 @@ export default async function ClientDetailPage({
         </div>
       ) : null}
       {err ? (
-        <div className="mb-6 border border-red-500/40 bg-red-500/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-red-400">
-          {err === 'resend_failed'
-            ? locale === 'ru'
-              ? 'Не удалось отправить ссылку. Проверь email.'
-              : "Couldn't send magic link. Check the email."
-            : err === 'test_link_failed'
-            ? locale === 'ru'
-              ? 'Не удалось сгенерировать тестовую ссылку.'
-              : "Couldn't generate test login link."
-            : locale === 'ru'
-            ? 'Приглашение не отправлено.'
-            : 'Invite failed.'}
+        <div className="mb-6 flex flex-col gap-2 border border-red-500/40 bg-red-500/10 px-4 py-3 text-red-400">
+          <div className="font-mono text-[11px] uppercase tracking-[0.16em]">
+            {err === 'resend_failed'
+              ? locale === 'ru'
+                ? 'Не удалось отправить ссылку. Проверь email.'
+                : "Couldn't send magic link. Check the email."
+              : err === 'test_link_failed'
+                ? locale === 'ru'
+                  ? 'Не удалось сгенерировать тестовую ссылку.'
+                  : "Couldn't generate test login link."
+                : locale === 'ru'
+                  ? 'Приглашение не отправлено.'
+                  : 'Invite failed.'}
+          </div>
+          {error_message ? (
+            <div className="text-[12px] leading-[1.6] text-red-200">
+              {error_message}
+            </div>
+          ) : null}
         </div>
       ) : null}
 
