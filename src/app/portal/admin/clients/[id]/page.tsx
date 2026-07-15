@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
+import { insertPortalEvent } from '@/lib/portal/events';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
 import CopyButton from '../../../_shared/CopyButton';
@@ -66,7 +67,7 @@ async function requireAdmin() {
 
 async function createProjectAction(formData: FormData) {
   'use server';
-  const { supabase } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
 
   const clientId = String(formData.get('client_id') ?? '');
   const title = String(formData.get('title') ?? '').trim();
@@ -78,6 +79,15 @@ async function createProjectAction(formData: FormData) {
     .select('id')
     .single();
   if (error || !data) throw new Error(error?.message ?? 'Failed to create project');
+
+  await insertPortalEvent({
+    supabase,
+    projectId: data.id,
+    clientId,
+    actorId: user.id,
+    type: 'project_created',
+    payload: { title },
+  });
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
   redirect(`/portal/admin/clients/${clientId}/projects/${data.id}`);

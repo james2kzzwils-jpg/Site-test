@@ -21,6 +21,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { insertPortalEvent } from '@/lib/portal/events';
 import { isRoundBillable } from '@/lib/portal/rounds';
 import type { StageKind } from '@/lib/portal/stages';
 
@@ -149,6 +150,22 @@ export async function postCommentAction(
     };
   }
 
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId: clientIdRaw || null,
+    actorId: profile.id,
+    type: 'comment_added',
+    payload: {
+      stage_id: stageId,
+      stage_kind: stageKind,
+      round_id: round.id,
+      round_index: round.index,
+      comment_id: inserted.id,
+      thread: 'round',
+    },
+  });
+
   const { clientView, adminView } = pathsFor({
     clientId: clientIdRaw || null,
     projectId,
@@ -263,6 +280,21 @@ export async function finalizeAttachmentAction(formData: FormData) {
     mime_type: mime,
   });
   if (error) return { ok: false as const, error: error.message };
+
+  await insertPortalEvent({
+    supabase,
+    projectId,
+    clientId: clientIdRaw || null,
+    actorId: profile.id,
+    type: 'file_uploaded',
+    payload: {
+      stage_id: stageId,
+      comment_id: commentId,
+      filename,
+      storage_path: storagePath,
+      kind,
+    },
+  });
 
   const { clientView, adminView } = pathsFor({
     clientId: clientIdRaw || null,

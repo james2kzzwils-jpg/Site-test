@@ -46,12 +46,20 @@ export default async function AdminClientsPage() {
             {t('admin.clients.subtitle')}
           </p>
         </div>
-        <Link
-          href="/portal/admin/clients/new"
-          className="border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
-        >
-          + {t('admin.clients.new')}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/portal/admin/inbox"
+            className="border border-[var(--hairline)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/65 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Inbox админа' : 'Admin inbox'}
+          </Link>
+          <Link
+            href="/portal/admin/clients/new"
+            className="border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)]"
+          >
+            + {t('admin.clients.new')}
+          </Link>
+        </div>
       </div>
 
       <div className="border-t border-[var(--hairline)]">
