@@ -4,14 +4,15 @@ import { createSupabaseMiddlewareClient } from '@/lib/supabase/middleware';
 
 // Protect /portal/* by refreshing the Supabase session cookie and
 // redirecting unauthenticated visitors to /portal/login. The login
-// page itself and the OAuth callback are publicly reachable so the
-// magic-link round-trip can complete.
+// page itself and the auth completion routes are publicly reachable so
+// the magic-link round-trip can complete.
 //
 // Next.js 16 renamed the file convention from `middleware` to `proxy`;
 // the exported function name changes to match.
 const PUBLIC_PORTAL_PATHS = new Set<string>([
   '/portal/login',
   '/auth/callback',
+  '/auth/complete',
 ]);
 
 export async function proxy(request: NextRequest) {
