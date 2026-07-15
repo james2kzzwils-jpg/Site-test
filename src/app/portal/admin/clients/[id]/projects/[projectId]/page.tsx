@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '@/app/portal/_shared/PortalHeader';
@@ -6,7 +7,11 @@ import StageStepper from '@/app/portal/_shared/StageStepper';
 import StageThread, {
   type StageThreadLabels,
 } from '@/app/portal/_shared/StageThread';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
+import {
+  loadProjectActivity,
+  type PortalInboxItem,
+} from '@/lib/portal/inbox';
 import { loadProjectThreads } from '@/lib/portal/thread-loader';
 import {
   STAGE_ORDER,
@@ -33,6 +38,139 @@ interface ProjectDetailParams {
 // text in the DB (`currency` column) so adding new options is just an
 // edit here.
 const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB', 'USDT', 'BTC', 'ETH'] as const;
+
+function payloadString(payload: Record<string, unknown>, key: string) {
+  const value = payload[key];
+  return typeof value === 'string' ? value : null;
+}
+
+function stageLabel(item: PortalInboxItem) {
+  return (
+    payloadString(item.payload, 'stage_kind') ??
+    payloadString(item.payload, 'to_stage') ??
+    payloadString(item.payload, 'from_stage')
+  );
+}
+
+function formatActivityDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
+
+function activityActorLabel(item: PortalInboxItem, locale: PortalLocale) {
+  if (item.actorRole === 'admin') return locale === 'ru' ? 'Студия' : 'Studio';
+  if (item.actorName) return item.actorName;
+  if (item.actorEmail) return item.actorEmail;
+  return locale === 'ru' ? 'Участник' : 'Member';
+}
+
+function isActionRequired(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  if (item.type === 'approval_requested') return true;
+  if (item.type === 'approval_decided' && decision === 'changes_requested') {
+    return true;
+  }
+  if (
+    (item.type === 'comment_added' || item.type === 'file_uploaded') &&
+    item.actorRole === 'client'
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
+  const stage = stageLabel(item);
+  const decision = payloadString(item.payload, 'decision');
+
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `Этап ${stage ?? 'текущий'} отправлен на ревью`
+        : `${stage ?? 'Current stage'} sent for review`;
+    case 'approval_decided':
+      if (decision === 'changes_requested') {
+        return locale === 'ru'
+          ? `Клиент запросил правки по ${stage ?? 'этапу'}`
+          : `Client requested changes on ${stage ?? 'the stage'}`;
+      }
+      return locale === 'ru'
+        ? `Клиент утвердил ${stage ?? 'этап'}`
+        : `Client approved ${stage ?? 'the stage'}`;
+    case 'comment_added':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Новый комментарий от клиента'
+          : 'New client comment'
+        : locale === 'ru'
+          ? 'Новый комментарий от студии'
+          : 'New studio comment';
+    case 'file_uploaded':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Клиент загрузил файл'
+          : 'Client uploaded a file'
+        : locale === 'ru'
+          ? 'Студия загрузила файл'
+          : 'Studio uploaded a file';
+    case 'project_created':
+      return locale === 'ru' ? 'Создан новый проект' : 'New project created';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `Этап переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
+        : `Stage moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
+    case 'nda_signed':
+      return locale === 'ru' ? 'Подписан NDA' : 'NDA signed';
+    default:
+      return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
+  }
+}
+
+function activityHint(item: PortalInboxItem, locale: PortalLocale) {
+  const actor = activityActorLabel(item, locale);
+  const filename = payloadString(item.payload, 'filename');
+
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `${actor} отправил результат на ревью. Можно проверить этап и двигать проект дальше.`
+        : `${actor} sent the deliverable for review. You can check the stage and move the project forward.`;
+    case 'approval_decided':
+      return payloadString(item.payload, 'decision') === 'changes_requested'
+        ? locale === 'ru'
+          ? `${actor} оставил запрос на правки по текущему этапу.`
+          : `${actor} requested changes on the current stage.`
+        : locale === 'ru'
+          ? `${actor} утвердил текущий этап.`
+          : `${actor} approved the current stage.`;
+    case 'comment_added':
+      return locale === 'ru'
+        ? `${actor} оставил комментарий в обсуждении этапа.`
+        : `${actor} left a new comment in the stage discussion.`;
+    case 'file_uploaded':
+      return locale === 'ru'
+        ? `${actor} загрузил ${filename ?? 'новый файл'} в этап.`
+        : `${actor} uploaded ${filename ?? 'a new file'} to this stage.`;
+    case 'project_created':
+      return locale === 'ru'
+        ? 'Проект создан и готов к дальнейшей настройке.'
+        : 'The project was created and is ready for the next setup steps.';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `${actor} перевёл проект в другой статус.`
+        : `${actor} moved the project to a new status.`;
+    case 'nda_signed':
+      return locale === 'ru'
+        ? 'Состояние NDA было обновлено для проекта.'
+        : 'The NDA state for this project was updated.';
+    default:
+      return locale === 'ru'
+        ? `${actor} обновил активность проекта.`
+        : `${actor} updated project activity.`;
+  }
+}
 
 export default async function AdminProjectDetailPage({
   params,
@@ -82,6 +220,11 @@ export default async function AdminProjectDetailPage({
   const stages = (stagesRaw ?? []) as StageRow[];
   const projectStatus = project.status as ProjectStatus;
   const threadsByStage = await loadProjectThreads(project.id);
+  const activity = await loadProjectActivity({
+    supabase,
+    projectId: project.id,
+    limit: 8,
+  });
   const threadLabels: StageThreadLabels = {
     studio: t('thread.studio'),
     client: t('thread.client'),
@@ -107,8 +250,8 @@ export default async function AdminProjectDetailPage({
     project.nda_until == null
       ? 'none'
       : project.nda_until === 'infinity'
-      ? 'perpetual'
-      : 'until';
+        ? 'perpetual'
+        : 'until';
 
   const today = new Date().toISOString().slice(0, 10);
   const isUnderNda =
@@ -189,8 +332,8 @@ export default async function AdminProjectDetailPage({
               {projectStatus === 'archived'
                 ? t('progress.archived')
                 : projectStatus === 'final'
-                ? t('progress.finish')
-                : t('progress.advance')}
+                  ? t('progress.finish')
+                  : t('progress.advance')}
             </button>
           </form>
           <form action={resetProjectAction}>
@@ -204,6 +347,93 @@ export default async function AdminProjectDetailPage({
             </button>
           </form>
         </div>
+      </section>
+
+      <section className="mb-12">
+        <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-2">
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {locale === 'ru' ? 'Активность проекта' : 'Project activity'}
+            </h2>
+            <p className="max-w-2xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Последние события по этому проекту: ревью, комментарии, загрузки файлов и смена статусов.'
+                : 'Latest events for this project: reviews, comments, file uploads and status changes.'}
+            </p>
+          </div>
+          <Link
+            href="/portal/admin/inbox"
+            className="self-start border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
+          </Link>
+        </div>
+
+        {activity.status === 'not_ready' ? (
+          <div className="border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
+            {locale === 'ru'
+              ? 'Лента активности появится после применения migration 0008_portal_events.sql.'
+              : 'This activity feed will appear once migration 0008_portal_events.sql is applied.'}
+          </div>
+        ) : activity.status === 'error' ? (
+          <div className="border border-red-500/40 bg-red-500/10 p-4 text-[13px] leading-[1.7] text-red-200">
+            {locale === 'ru'
+              ? 'Не удалось загрузить активность проекта.'
+              : 'The project activity feed could not be loaded.'}
+          </div>
+        ) : activity.items.length === 0 ? (
+          <div className="border border-[var(--hairline)] p-5 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+            {locale === 'ru'
+              ? 'По этому проекту пока нет событий. Как только начнутся комментарии, ревью или загрузки, они появятся здесь.'
+              : 'There is no project activity yet. As soon as reviews, comments or uploads start, they will appear here.'}
+          </div>
+        ) : (
+          <ul className="border-t border-[var(--hairline)]">
+            {activity.items.map((item) => (
+              <li
+                key={item.id}
+                className={`grid gap-4 border-b border-[var(--hairline)] py-4 lg:grid-cols-[1fr_auto] lg:items-start ${
+                  item.readAt == null ? 'bg-[var(--accent)]/5' : ''
+                }`}
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isActionRequired(item) ? (
+                      <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
+                        {locale === 'ru' ? 'Нужно действие' : 'Action required'}
+                      </span>
+                    ) : null}
+                    {item.readAt == null ? (
+                      <span className="border border-[var(--foreground)]/15 bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/60">
+                        {locale === 'ru' ? 'Непрочитано' : 'Unread'}
+                      </span>
+                    ) : null}
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/40">
+                      {formatActivityDate(locale, item.createdAt)}
+                    </span>
+                  </div>
+                  <p className="font-display text-[20px] leading-[1.15] tracking-[-0.02em]">
+                    {activityTitle(item, locale)}
+                  </p>
+                  <p className="max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/60">
+                    {activityHint(item, locale)}
+                  </p>
+                </div>
+                <div className="flex flex-col items-start gap-2 lg:items-end">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/40">
+                    {activityActorLabel(item, locale)}
+                  </p>
+                  <Link
+                    href="/portal/admin/inbox"
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                  >
+                    {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="mb-12 grid gap-8 lg:grid-cols-2">
@@ -430,10 +660,10 @@ export default async function AdminProjectDetailPage({
                     {s.state === 'pending'
                       ? t('stageState.pending')
                       : s.state === 'in_review'
-                      ? t('stageState.in_review')
-                      : s.state === 'changes_requested'
-                      ? t('stageState.changes_requested')
-                      : t('stageState.approved')}
+                        ? t('stageState.in_review')
+                        : s.state === 'changes_requested'
+                          ? t('stageState.changes_requested')
+                          : t('stageState.approved')}
                   </span>
                 </div>
 
