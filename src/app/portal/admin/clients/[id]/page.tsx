@@ -365,6 +365,14 @@ export default async function ClientDetailPage({
   const clientUnread = clientEvents.filter((item) => item.readAt == null).length;
   const clientApprovals = clientEvents.filter(isPendingApproval).length;
   const recentClientEvents = clientEvents.slice(0, 5);
+  const latestProjectEvent = new Map<string, PortalInboxItem>();
+
+  for (const item of clientEvents) {
+    if (!item.projectId) continue;
+    if (!latestProjectEvent.has(item.projectId)) {
+      latestProjectEvent.set(item.projectId, item);
+    }
+  }
 
   return (
     <>
@@ -661,33 +669,53 @@ export default async function ClientDetailPage({
             </p>
           ) : (
             <ul>
-              {projects.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between border-b border-[var(--hairline)] py-4"
-                >
-                  <div className="flex flex-col gap-1">
-                    <p className="font-display text-[18px] leading-[1.2] tracking-[-0.01em]">
-                      {p.title}
-                    </p>
-                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
-                      <span>{p.status}</span>
-                      {p.is_under_nda ? (
-                        <span className="text-[var(--accent)]">· NDA</span>
-                      ) : null}
-                      {p.is_public_portfolio ? (
-                        <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
+              {projects.map((p) => {
+                const latest = latestProjectEvent.get(p.id);
+
+                return (
+                  <li
+                    key={p.id}
+                    className="flex items-start justify-between gap-4 border-b border-[var(--hairline)] py-4"
+                  >
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <p className="font-display text-[18px] leading-[1.2] tracking-[-0.01em]">
+                        {p.title}
+                      </p>
+                      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
+                        <span>{p.status}</span>
+                        {p.is_under_nda ? (
+                          <span className="text-[var(--accent)]">· NDA</span>
+                        ) : null}
+                        {p.is_public_portfolio ? (
+                          <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
+                        ) : null}
+                      </div>
+                      {latest ? (
+                        <div className="flex flex-col gap-1">
+                          <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/62">
+                            {activityTitle(latest, locale)}
+                          </p>
+                          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/38">
+                            {formatDate(locale, latest.createdAt)}
+                          </p>
+                        </div>
+                      ) : inbox.status === 'ready' ? (
+                        <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/45">
+                          {locale === 'ru'
+                            ? 'Пока без недавней активности по проекту.'
+                            : 'No recent project activity yet.'}
+                        </p>
                       ) : null}
                     </div>
-                  </div>
-                  <Link
-                    href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
-                    className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
-                  >
-                    {t('common.open')} →
-                  </Link>
-                </li>
-              ))}
+                    <Link
+                      href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
+                      className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    >
+                      {t('common.open')} →
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
