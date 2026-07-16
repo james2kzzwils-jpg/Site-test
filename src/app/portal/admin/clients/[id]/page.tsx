@@ -129,47 +129,15 @@ function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
   }
 }
 
-function projectWorkflowHint(args: {
-  locale: PortalLocale;
-  status: string;
-  stageState: string | null;
-  dueDate: string | null;
-}) {
-  const { locale, status, stageState, dueDate } = args;
+function scopedInboxHref(clientId: string, item: PortalInboxItem) {
+  const base = item.projectId
+    ? `/portal/admin/inbox?clientId=${clientId}&projectId=${item.projectId}`
+    : `/portal/admin/inbox?clientId=${clientId}`;
 
-  if (status === 'archived') {
-    return locale === 'ru'
-      ? 'Проект уже завершён. Это хорошая точка входа в финальные материалы и всю историю взаимодействия.'
-      : 'The project is already wrapped. This row now works as a quick entry point to final materials and the full delivery history.';
-  }
-
-  if (stageState === 'in_review') {
-    return locale === 'ru'
-      ? 'Сейчас у клиента есть deliverable на ревью — отсюда удобно сразу открыть проект и проверить feedback.'
-      : 'The client currently has a deliverable out for review — this is a good row to open first and inspect feedback.';
-  }
-
-  if (stageState === 'changes_requested') {
-    return locale === 'ru'
-      ? 'По текущему этапу уже пришли правки, значит студии может понадобиться быстрое follow-up действие.'
-      : 'Revisions already came in on the current stage, so this project may need a quicker studio follow-up.';
-  }
-
-  if (stageState === 'client_approved') {
-    return locale === 'ru'
-      ? 'Клиент уже утвердил этап. Осталось только закрыть handoff и двинуть проект дальше.'
-      : 'The client has already approved the current stage. The remaining move is the internal handoff into the next step.';
-  }
-
-  if (dueDate) {
-    return locale === 'ru'
-      ? `Следующий срок по проекту — ${dueDate}. Это удобный ориентир для контроля нагрузки по клиенту.`
-      : `The next project checkpoint is ${dueDate}. Use it as a quick timing anchor when scanning this client.`;
-  }
-
-  return locale === 'ru'
-    ? 'Проект идёт по обычному pipeline и пока не сигнализирует о срочном действии.'
-    : 'This project is moving through the normal pipeline and is not signalling an urgent action right now.';
+  if (isPendingApproval(item)) return `${base}&filter=approvals`;
+  if (isActionRequired(item)) return `${base}&filter=attention`;
+  if (item.readAt == null) return `${base}&filter=unread`;
+  return base;
 }
 
 function summaryCard(args: {
@@ -648,14 +616,20 @@ export default async function ClientDetailPage({
                 </div>
                 <div className="flex flex-col items-start gap-2 lg:items-end">
                   <Link
+                    href={scopedInboxHref(client.id, item)}
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                  >
+                    {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
+                  </Link>
+                  <Link
                     href={
                       item.projectId
                         ? `/portal/admin/clients/${client.id}/projects/${item.projectId}`
                         : `/portal/admin/clients/${client.id}`
                     }
-                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
                   >
-                    {locale === 'ru' ? 'Открыть →' : 'Open →'}
+                    {locale === 'ru' ? 'Открыть проект →' : 'Open project →'}
                   </Link>
                 </div>
               </li>
