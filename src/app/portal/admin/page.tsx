@@ -34,6 +34,23 @@ function isPendingApproval(item: PortalInboxItem) {
   );
 }
 
+function clientInboxHref(
+  clientId: string,
+  counts: { attention: number; unread: number; approvals: number },
+) {
+  const params = new URLSearchParams({ clientId });
+
+  if (counts.attention > 0) {
+    params.set('filter', 'attention');
+  } else if (counts.approvals > 0) {
+    params.set('filter', 'approvals');
+  } else if (counts.unread > 0) {
+    params.set('filter', 'unread');
+  }
+
+  return `/portal/admin/inbox?${params.toString()}`;
+}
+
 function summaryCard(args: {
   label: string;
   value: number;
@@ -251,11 +268,9 @@ export default async function AdminClientsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {counts.attention > 0 || counts.unread > 0 ? (
+                    {counts.attention > 0 || counts.unread > 0 || counts.approvals > 0 ? (
                       <Link
-                        href={`/portal/admin/inbox?filter=${
-                          counts.attention > 0 ? 'attention' : 'unread'
-                        }`}
+                        href={clientInboxHref(c.id, counts)}
                         className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
                       >
                         {locale === 'ru' ? 'В inbox →' : 'In inbox →'}
