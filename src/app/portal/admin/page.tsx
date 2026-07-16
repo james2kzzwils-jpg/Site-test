@@ -48,61 +48,21 @@ function isPendingApproval(item: PortalInboxItem) {
   );
 }
 
-function formatDate(locale: PortalLocale, value: string) {
-  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value));
-}
+function clientInboxHref(
+  clientId: string,
+  counts: { attention: number; unread: number; approvals: number },
+) {
+  const params = new URLSearchParams({ clientId });
 
-function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
-  const stage =
-    payloadString(item.payload, 'stage_kind') ??
-    payloadString(item.payload, 'to_stage') ??
-    payloadString(item.payload, 'from_stage');
-  const decision = payloadString(item.payload, 'decision');
-
-  switch (item.type) {
-    case 'approval_requested':
-      return locale === 'ru'
-        ? `Этап ${stage ?? 'текущий'} отправлен на ревью`
-        : `${stage ?? 'Current stage'} sent for review`;
-    case 'approval_decided':
-      if (decision === 'changes_requested') {
-        return locale === 'ru'
-          ? `Клиент запросил правки по ${stage ?? 'этапу'}`
-          : `Client requested changes on ${stage ?? 'the stage'}`;
-      }
-      return locale === 'ru'
-        ? `Клиент утвердил ${stage ?? 'этап'}`
-        : `Client approved ${stage ?? 'the stage'}`;
-    case 'comment_added':
-      return item.actorRole === 'client'
-        ? locale === 'ru'
-          ? 'Новый комментарий от клиента'
-          : 'New client comment'
-        : locale === 'ru'
-          ? 'Новый комментарий от студии'
-          : 'New studio comment';
-    case 'file_uploaded':
-      return item.actorRole === 'client'
-        ? locale === 'ru'
-          ? 'Клиент загрузил файл'
-          : 'Client uploaded a file'
-        : locale === 'ru'
-          ? 'Студия загрузила файл'
-          : 'Studio uploaded a file';
-    case 'project_created':
-      return locale === 'ru' ? 'Создан новый проект' : 'New project created';
-    case 'stage_changed':
-      return locale === 'ru'
-        ? `Этап переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
-        : `Stage moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
-    case 'nda_signed':
-      return locale === 'ru' ? 'Подписан NDA' : 'NDA signed';
-    default:
-      return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
+  if (counts.attention > 0) {
+    params.set('filter', 'attention');
+  } else if (counts.approvals > 0) {
+    params.set('filter', 'approvals');
+  } else if (counts.unread > 0) {
+    params.set('filter', 'unread');
   }
+
+  return `/portal/admin/inbox?${params.toString()}`;
 }
 
 function summaryCard(args: {
@@ -520,11 +480,9 @@ export default async function AdminClientsPage() {
                     ) : null}
                   </div>
                   <div className="flex items-center gap-3">
-                    {counts.attention > 0 || counts.unread > 0 ? (
+                    {counts.attention > 0 || counts.unread > 0 || counts.approvals > 0 ? (
                       <Link
-                        href={`/portal/admin/inbox?filter=${
-                          counts.attention > 0 ? 'attention' : 'unread'
-                        }`}
+                        href={clientInboxHref(c.id, counts)}
                         className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
                       >
                         {locale === 'ru' ? 'В inbox →' : 'In inbox →'}
