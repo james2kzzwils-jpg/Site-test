@@ -68,9 +68,11 @@ Old keys leaked in chat; rotate before going live.
 3. **Generate new secret key** → copy `sb_secret_…`.
 
 Then **Authentication → URL Configuration**:
-- **Site URL**: `https://portal.aepovcg.online`
+- **Site URL**: your real live portal origin
+  - example: `https://portal.aepovcg.pro`
 - **Additional Redirect URLs** (one per line):
-  - `https://portal.aepovcg.online/auth/callback`
+  - your real live portal callback URL
+    - example: `https://portal.aepovcg.pro/auth/callback`
   - `http://localhost:3000/auth/callback` *(keep for local dev)*
 
 Save.
@@ -117,7 +119,9 @@ If the repo asks for credentials (it is currently private):
 ```bash
 cp deploy/env.example .env.local
 nano .env.local
-# Paste the rotated Supabase keys from step 0.4. Save.
+# Paste the rotated Supabase keys from step 0.4.
+# IMPORTANT: set PORTAL_PUBLIC_URL to the exact live portal origin,
+# for example https://portal.aepovcg.pro . Save.
 chmod 600 .env.local
 ```
 
@@ -218,7 +222,7 @@ curl -sI https://portal.aepovcg.online/portal/login
 
 In a browser:
 
-1. Open https://portal.aepovcg.online → should land on `/portal/login`.
+1. Open your live portal origin → should land on `/portal/login`.
 2. Enter your admin email → magic link arrives.
 3. Click the link → land on `/portal/admin`. Header shows your email.
 4. Verify clients list, project page, stage stepper, NDA controls.

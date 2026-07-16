@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
+import {
+  createSupabaseServerClient,
+  createSupabaseAdminClient,
+} from '@/lib/supabase/server';
 import { insertPortalEvent } from '@/lib/portal/events';
 import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
 import PortalHeader from '../../../_shared/PortalHeader';
@@ -17,6 +20,7 @@ interface ClientDetailParams {
 interface ClientDetailSearch {
   sent?: string;
   err?: string;
+  error_message?: string;
   /** Magic-link URL returned by generateTestLoginAction — surfaced on
    * the same page so the admin can copy it into a private window
    * without spending a Supabase email quota. */
@@ -146,22 +150,12 @@ function summaryCard(args: {
 // back to the regular `host` header for direct connections.
 async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
   const h = await headers();
-  const proto =
-    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  return `${proto}://${host}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
+  return getPublicPortalOriginFromHeaders(h);
 }
 
-// Resolve the origin (scheme + host) for the current deploy. Used by
-// the test-login flow which bypasses Supabase's /auth/v1/verify
-// redirect-chain and points the browser straight at our callback with
-// a token_hash to verify server-side.
-async function resolveOrigin(): Promise<string> {
-  const h = await headers();
-  const proto =
-    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  return `${proto}://${host}`;
+async function resolveEmailAuthRedirectUrl(redirect = '/portal'): Promise<string> {
+  const origin = await resolvePublicPortalOrigin();
+  return `${origin}/auth/complete?redirect=${encodeURIComponent(redirect)}`;
 }
 
 async function requireAdmin() {
@@ -209,9 +203,6 @@ async function createProjectAction(formData: FormData) {
   redirect(`/portal/admin/clients/${clientId}/projects/${data.id}`);
 }
 
-// Invite a brand-new email to the client. Same flow as the create-
-// client page, but reusable from the detail screen so admin can add
-// extra contacts later.
 async function inviteMemberAction(formData: FormData) {
   'use server';
   await requireAdmin();
@@ -221,39 +212,29 @@ async function inviteMemberAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const redirectTo = await resolveAuthCallbackUrl();
+  const redirectTo = await resolveEmailAuthRedirectUrl('/portal');
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
     redirectTo,
   });
 
   if (error) {
-    redirect(`/portal/admin/clients/${clientId}?err=invite_failed`);
+    const params = new URLSearchParams({
+      err: 'invite_failed',
+      error_message: error.message,
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
   if (data?.user) {
-    await admin
-      .from('client_members')
-      .insert({ client_id: clientId, profile_id: data.user.id });
+    await admin.from('client_members').insert({
+      client_id: clientId,
+      profile_id: data.user.id,
+    });
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
   redirect(`/portal/admin/clients/${clientId}?sent=invited`);
 }
 
-// Generate a one-shot magic link for an existing member email — but
-// instead of emailing it, return a URL directly into our own callback
-// so the admin can copy/paste it into a private browser window. We
-// deliberately *don't* use the `action_link` Supabase returns from
-// generateLink: that link is an implicit-flow magic link that goes
-// through `/auth/v1/verify` and bounces back to our callback with the
-// access_token in the URL *fragment* (`#access_token=…`). Fragments
-// never reach the server, so our SSR callback can't read the session
-// and the user lands on /portal/login?error=missing_code.
-//
-// Instead, we take the `hashed_token` from the same response and hand
-// it to our own callback as a query param (`?token_hash=…&type=…`).
-// The callback verifies the token via supabase.auth.verifyOtp({...})
-// server-side, which sets the auth cookies on the response. This is
-// the officially recommended Supabase SSR pattern.
 async function generateTestLoginAction(formData: FormData) {
   'use server';
   await requireAdmin();
@@ -263,13 +244,8 @@ async function generateTestLoginAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  // We still pass the absolute callback URL as redirectTo so it shows
-  // up on Supabase's allow-list trace and so the link Supabase emails
-  // out (for the regular magic-link flow) stays self-consistent. For
-  // the test-login flow we build the URL ourselves below, but having
-  // the redirect on the link is harmless.
-  const redirectTo = await resolveAuthCallbackUrl();
-  const origin = await resolveOrigin();
+  const redirectTo = await resolveEmailAuthRedirectUrl('/portal');
+  const origin = await resolvePublicPortalOrigin();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',
@@ -278,18 +254,19 @@ async function generateTestLoginAction(formData: FormData) {
   });
 
   if (error || !data?.properties?.hashed_token) {
-    redirect(`/portal/admin/clients/${clientId}?err=test_link_failed`);
+    const params = new URLSearchParams({
+      err: 'test_link_failed',
+      error_message: error?.message ?? 'Missing token hash in generateLink response',
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
 
-  // Build the URL that goes directly to our callback. The callback
-  // will call verifyOtp({ token_hash, type: 'magiclink' }) and set
-  // session cookies, then redirect onward to /portal.
   const callbackParams = new URLSearchParams({
     token_hash: data.properties.hashed_token,
     type: 'magiclink',
     redirect: '/portal',
   });
-  const link = `${origin}/auth/callback?${callbackParams.toString()}`;
+  const link = `${origin}/auth/complete?${callbackParams.toString()}`;
 
   const params = new URLSearchParams({
     test_link: link,
@@ -298,9 +275,6 @@ async function generateTestLoginAction(formData: FormData) {
   redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
 }
 
-// Resend a magic link to an existing member email. Uses signInWithOtp
-// which dispatches a fresh magic link email and works for users that
-// were already invited.
 async function resendMagicLinkAction(formData: FormData) {
   'use server';
   await requireAdmin();
@@ -310,7 +284,7 @@ async function resendMagicLinkAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const emailRedirectTo = await resolveAuthCallbackUrl();
+  const emailRedirectTo = await resolveEmailAuthRedirectUrl('/portal');
   const { error } = await admin.auth.signInWithOtp({
     email,
     options: {
@@ -320,7 +294,11 @@ async function resendMagicLinkAction(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/portal/admin/clients/${clientId}?err=resend_failed`);
+    const params = new URLSearchParams({
+      err: 'resend_failed',
+      error_message: error.message,
+    });
+    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -335,7 +313,8 @@ export default async function ClientDetailPage({
   searchParams: Promise<ClientDetailSearch>;
 }) {
   const { id } = await params;
-  const { sent, err, test_link, test_link_email } = await searchParams;
+  const { sent, err, error_message, test_link, test_link_email } =
+    await searchParams;
 
   const { user, profile } = await requireAdmin();
   const supabase = await createSupabaseServerClient();
@@ -349,9 +328,6 @@ export default async function ClientDetailPage({
     .maybeSingle();
   if (!client) notFound();
 
-  // Members: profiles linked through client_members. Admin client used
-  // here so we can read the email even if RLS doesn't expose it to
-  // this admin's session (it does, but being explicit is safer).
   const adminDb = createSupabaseAdminClient();
   const { data: memberRows } = await adminDb
     .from('client_members')
