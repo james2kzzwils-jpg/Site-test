@@ -551,7 +551,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
           value: clientNeedsAttention,
-          href: '/portal/admin/inbox?filter=attention',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=attention`,
           tone: 'accent',
           caption:
             locale === 'ru'
@@ -561,7 +561,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Непрочитано' : 'Unread',
           value: clientUnread,
-          href: '/portal/admin/inbox?filter=unread',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=unread`,
           caption:
             locale === 'ru'
               ? 'Непросмотренная активность по проектам этого клиента.'
@@ -570,7 +570,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
           value: clientApprovals,
-          href: '/portal/admin/inbox?filter=approvals',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=approvals`,
           caption:
             locale === 'ru'
               ? 'Ревью и подтверждения, относящиеся к этому клиенту.'
@@ -608,7 +608,7 @@ export default async function ClientDetailPage({
             </p>
           </div>
           <Link
-            href="/portal/admin/inbox"
+            href={`/portal/admin/inbox?clientId=${client.id}`}
             className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
