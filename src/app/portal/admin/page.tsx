@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
 import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
 
 function payloadString(payload: Record<string, unknown>, key: string) {
@@ -32,6 +32,63 @@ function isPendingApproval(item: PortalInboxItem) {
     item.type === 'approval_requested' ||
     (item.type === 'approval_decided' && decision === 'approved')
   );
+}
+
+function formatDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
+
+function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
+  const stage =
+    payloadString(item.payload, 'stage_kind') ??
+    payloadString(item.payload, 'to_stage') ??
+    payloadString(item.payload, 'from_stage');
+  const decision = payloadString(item.payload, 'decision');
+
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `Этап ${stage ?? 'текущий'} отправлен на ревью`
+        : `${stage ?? 'Current stage'} sent for review`;
+    case 'approval_decided':
+      if (decision === 'changes_requested') {
+        return locale === 'ru'
+          ? `Клиент запросил правки по ${stage ?? 'этапу'}`
+          : `Client requested changes on ${stage ?? 'the stage'}`;
+      }
+      return locale === 'ru'
+        ? `Клиент утвердил ${stage ?? 'этап'}`
+        : `Client approved ${stage ?? 'the stage'}`;
+    case 'comment_added':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Новый комментарий от клиента'
+          : 'New client comment'
+        : locale === 'ru'
+          ? 'Новый комментарий от студии'
+          : 'New studio comment';
+    case 'file_uploaded':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Клиент загрузил файл'
+          : 'Client uploaded a file'
+        : locale === 'ru'
+          ? 'Студия загрузила файл'
+          : 'Studio uploaded a file';
+    case 'project_created':
+      return locale === 'ru' ? 'Создан новый проект' : 'New project created';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `Этап переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
+        : `Stage moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
+    case 'nda_signed':
+      return locale === 'ru' ? 'Подписан NDA' : 'NDA signed';
+    default:
+      return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
+  }
 }
 
 function summaryCard(args: {
@@ -98,6 +155,7 @@ export default async function AdminClientsPage() {
     string,
     { attention: number; unread: number; approvals: number }
   >();
+  const latestByClient = new Map<string, PortalInboxItem>();
 
   for (const item of inbox.items) {
     if (!item.clientId) continue;
@@ -113,6 +171,10 @@ export default async function AdminClientsPage() {
     if (isPendingApproval(item)) current.approvals += 1;
 
     countsByClient.set(item.clientId, current);
+
+    if (!latestByClient.has(item.clientId)) {
+      latestByClient.set(item.clientId, item);
+    }
   }
 
   return (
@@ -211,13 +273,14 @@ export default async function AdminClientsPage() {
                 unread: 0,
                 approvals: 0,
               };
+              const latest = latestByClient.get(c.id);
 
               return (
                 <li
                   key={c.id}
                   className="flex items-center justify-between gap-4 border-b border-[var(--hairline)] py-5"
                 >
-                  <div className="flex flex-col gap-2">
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
                       {c.name}
                     </p>
@@ -249,6 +312,22 @@ export default async function AdminClientsPage() {
                         </span>
                       ) : null}
                     </div>
+                    {latest ? (
+                      <div className="flex flex-col gap-1">
+                        <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/62">
+                          {activityTitle(latest, locale)}
+                        </p>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/38">
+                          {formatDate(locale, latest.createdAt)}
+                        </p>
+                      </div>
+                    ) : inbox.status === 'ready' ? (
+                      <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/45">
+                        {locale === 'ru'
+                          ? 'Пока без недавней активности по порталу.'
+                          : 'No recent portal activity yet.'}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-3">
                     {counts.attention > 0 || counts.unread > 0 ? (
