@@ -6,10 +6,15 @@ import StageStepper from '@/app/portal/_shared/StageStepper';
 import StageThread, {
   type StageThreadLabels,
 } from '@/app/portal/_shared/StageThread';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import {
+  getPortalLocale,
+  tFactory,
+  type PortalLocale,
+} from '@/lib/portal/i18n';
 import { loadProjectThreads } from '@/lib/portal/thread-loader';
 import {
   STAGE_ORDER,
+  nextStageKind,
   type ProjectStatus,
   type StageKind,
   type StageRow,
@@ -23,9 +28,161 @@ interface ClientProjectParams {
   projectId: string;
 }
 
-// Client view of a single project. Read-only timeline with the same
-// stepper the admin uses so progress is unambiguous on both sides.
-// Round comments + uploads hang off the active stage in Wave B2.
+function stageStateLabel(
+  locale: PortalLocale,
+  t: ReturnType<typeof tFactory>,
+  state: StageRow['state']
+) {
+  if (state === 'client_approved') {
+    return locale === 'ru' ? 'клиент утвердил' : 'client approved';
+  }
+
+  switch (state) {
+    case 'pending':
+      return t('stageState.pending');
+    case 'in_review':
+      return t('stageState.in_review');
+    case 'changes_requested':
+      return t('stageState.changes_requested');
+    case 'approved':
+    default:
+      return t('stageState.approved');
+  }
+}
+
+function nextStepContent(args: {
+  locale: PortalLocale;
+  projectStatus: ProjectStatus;
+  currentStage: StageRow | null;
+  nextStageTitle: string | null;
+}) {
+  const { locale, projectStatus, currentStage, nextStageTitle } = args;
+
+  if (projectStatus === 'archived') {
+    return {
+      title:
+        locale === 'ru' ? 'Проект завершён и собран' : 'Project delivery is wrapped',
+      body:
+        locale === 'ru'
+          ? 'Все финальные материалы и история обсуждений остаются на этой странице. Если нужно вернуться к деталям, используй треды по этапам ниже.'
+          : 'The final files and conversation history stay on this page. If you need to revisit context, use the stage threads below.',
+      currentCardLabel: locale === 'ru' ? 'Статус проекта' : 'Project status',
+      currentCardValue: locale === 'ru' ? 'Завершён' : 'Wrapped',
+      nextCardLabel: locale === 'ru' ? 'Дальше' : 'What next',
+      nextCardValue:
+        locale === 'ru'
+          ? 'Можно возвращаться к файлам, комментариям и финальным договорённостям.'
+          : 'You can revisit files, comments, and final delivery notes anytime.',
+    };
+  }
+
+  if (!currentStage) {
+    return {
+      title:
+        locale === 'ru'
+          ? 'Проект готовится к следующему шагу'
+          : 'The project is preparing for the next step',
+      body:
+        locale === 'ru'
+          ? 'Текущий статус уже обновлён, а следующая стадия скоро появится в таймлайне ниже.'
+          : 'The current status has already moved forward, and the next stage will appear in the timeline below shortly.',
+      currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+      currentCardValue: locale === 'ru' ? 'Обновляется' : 'Updating',
+      nextCardLabel: locale === 'ru' ? 'Следом' : 'Up next',
+      nextCardValue: nextStageTitle ?? (locale === 'ru' ? 'Скоро' : 'Soon'),
+    };
+  }
+
+  switch (currentStage.state) {
+    case 'in_review':
+      return {
+        title:
+          locale === 'ru' ? 'Сейчас нужен твой фидбек' : 'Your feedback is needed now',
+        body:
+          locale === 'ru'
+            ? `${currentStage.title} готов к ревью. Если всё ок — утверди этап. Если нужны правки, зафиксируй их здесь же, чтобы студия сразу вернулась в работу.${nextStageTitle ? ` После подтверждения студия откроет этап ${nextStageTitle}.` : ''}`
+            : `${currentStage.title} is ready for review. Approve the stage if it looks right, or request changes here so the studio can jump back into iteration immediately.${nextStageTitle ? ` After sign-off, the studio will open ${nextStageTitle}.` : ''}`,
+        currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+        currentCardValue: currentStage.title,
+        nextCardLabel: locale === 'ru' ? 'Следом' : 'Up next',
+        nextCardValue:
+          nextStageTitle ??
+          (locale === 'ru' ? 'Финальная передача проекта' : 'Final project handoff'),
+      };
+    case 'client_approved':
+      return {
+        title:
+          locale === 'ru'
+            ? 'Твоё утверждение уже зафиксировано'
+            : 'Your approval is already recorded',
+        body:
+          locale === 'ru'
+            ? `${currentStage.title} уже отмечен как одобренный с твоей стороны. Теперь студия подтверждает передачу и двигает проект дальше.${nextStageTitle ? ` Следующим откроется этап ${nextStageTitle}.` : ''}`
+            : `${currentStage.title} has already been marked approved on your side. The studio is now confirming the handoff and moving the project forward.${nextStageTitle ? ` ${nextStageTitle} will open next.` : ''}`,
+        currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+        currentCardValue: currentStage.title,
+        nextCardLabel: locale === 'ru' ? 'Следом' : 'Up next',
+        nextCardValue:
+          nextStageTitle ??
+          (locale === 'ru' ? 'Финальная передача проекта' : 'Final project handoff'),
+      };
+    case 'changes_requested':
+      return {
+        title:
+          locale === 'ru'
+            ? 'Студия сейчас вносит правки'
+            : 'The studio is revising this stage',
+        body:
+          locale === 'ru'
+            ? `Ты уже запросил правки по этапу ${currentStage.title}. Если появятся дополнительные детали, оставь их в обсуждении ниже — так следующий раунд останется в одном месте.`
+            : `You have already requested changes on ${currentStage.title}. If more detail comes up, add it in the conversation below so the next revision round stays in one place.`,
+        currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+        currentCardValue: currentStage.title,
+        nextCardLabel: locale === 'ru' ? 'Что ждать' : 'What to expect',
+        nextCardValue:
+          locale === 'ru'
+            ? 'Студия обновит материалы и снова вернёт этап на ревью.'
+            : 'The studio will update the deliverable and send the stage back for review.',
+      };
+    case 'approved':
+      return {
+        title:
+          locale === 'ru'
+            ? 'Этап закрыт, проект движется дальше'
+            : 'This stage is complete and the project is moving on',
+        body:
+          locale === 'ru'
+            ? `${currentStage.title} уже полностью закрыт. Следующий шаг — дождаться нового материала на следующем этапе.${nextStageTitle ? ` Дальше идёт ${nextStageTitle}.` : ''}`
+            : `${currentStage.title} is fully complete. The next step is to wait for the next deliverable to arrive.${nextStageTitle ? ` ${nextStageTitle} is up next.` : ''}`,
+        currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+        currentCardValue: currentStage.title,
+        nextCardLabel: locale === 'ru' ? 'Следом' : 'Up next',
+        nextCardValue:
+          nextStageTitle ??
+          (locale === 'ru' ? 'Финальная передача проекта' : 'Final project handoff'),
+      };
+    case 'pending':
+    default:
+      return {
+        title:
+          locale === 'ru'
+            ? 'Студия готовит следующий апдейт'
+            : 'The studio is preparing the next update',
+        body:
+          locale === 'ru'
+            ? `${currentStage.title} сейчас находится в работе. От тебя ничего не требуется, но если контекст изменился, можно заранее оставить комментарий в обсуждении ниже.`
+            : `${currentStage.title} is currently being prepared by the studio. You do not need to do anything right now, but if context changed you can leave a note in the conversation below.`,
+        currentCardLabel: locale === 'ru' ? 'Текущий этап' : 'Current stage',
+        currentCardValue: currentStage.title,
+        nextCardLabel: locale === 'ru' ? 'Следом' : 'Up next',
+        nextCardValue:
+          locale === 'ru'
+            ? 'Когда результат будет готов, этап перейдёт в ревью.'
+            : 'Once the deliverable is ready, this stage will move into review.',
+      };
+  }
+}
+
 export default async function ClientProjectPage({
   params,
 }: {
@@ -64,6 +221,19 @@ export default async function ClientProjectPage({
   const stages = (stagesRaw ?? []) as StageRow[];
   const projectStatus = project.status as ProjectStatus;
   const currentKind = projectStatus === 'archived' ? null : (projectStatus as StageKind);
+  const currentStage = currentKind
+    ? stages.find((stage) => stage.kind === currentKind) ?? null
+    : null;
+  const nextKind = currentKind ? nextStageKind(currentKind) : null;
+  const nextStageTitle = nextKind
+    ? stages.find((stage) => stage.kind === nextKind)?.title ?? nextKind
+    : null;
+  const nextStep = nextStepContent({
+    locale,
+    projectStatus,
+    currentStage,
+    nextStageTitle,
+  });
   const threadsByStage = await loadProjectThreads(project.id);
   const threadLabels: StageThreadLabels = {
     studio: t('thread.studio'),
@@ -127,6 +297,39 @@ export default async function ClientProjectPage({
 
       <StageStepper stages={stages} projectStatus={projectStatus} />
 
+      <section className="mb-12 grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.7fr)]">
+        <div className="border border-[var(--accent)] bg-[var(--accent)]/8 p-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--accent)]">
+            {locale === 'ru' ? 'Что дальше' : 'What happens next'}
+          </p>
+          <h2 className="mt-3 font-display text-[24px] leading-[1.1] tracking-[-0.02em]">
+            {nextStep.title}
+          </h2>
+          <p className="mt-3 max-w-2xl text-[14px] leading-[1.7] text-[var(--foreground)]/72">
+            {nextStep.body}
+          </p>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="border border-[var(--hairline)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+              {nextStep.currentCardLabel}
+            </p>
+            <p className="mt-2 font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
+              {nextStep.currentCardValue}
+            </p>
+          </div>
+          <div className="border border-[var(--hairline)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+              {nextStep.nextCardLabel}
+            </p>
+            <p className="mt-2 text-[13px] leading-[1.7] text-[var(--foreground)]/68">
+              {nextStep.nextCardValue}
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section>
         <h2 className="mb-6 font-display text-[22px] font-medium tracking-[-0.01em]">
           {t('stages.title')}
@@ -147,7 +350,7 @@ export default async function ClientProjectPage({
                 <div className="flex items-center justify-between">
                   <p
                     className={`font-mono text-[10px] uppercase tracking-[0.24em] ${
-                      isCurrent || isApproved
+                      isCurrent || isApproved || s.state === 'client_approved'
                         ? 'text-[var(--accent)]'
                         : 'text-[var(--foreground)]/55'
                     }`}
@@ -158,13 +361,7 @@ export default async function ClientProjectPage({
                     · {s.kind}
                   </p>
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55">
-                    {s.state === 'pending'
-                      ? t('stageState.pending')
-                      : s.state === 'in_review'
-                      ? t('stageState.in_review')
-                      : s.state === 'changes_requested'
-                      ? t('stageState.changes_requested')
-                      : t('stageState.approved')}
+                    {stageStateLabel(locale, t, s.state)}
                   </span>
                 </div>
                 <p className="mt-1 font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
@@ -181,10 +378,6 @@ export default async function ClientProjectPage({
                   </p>
                 ) : null}
 
-                {/* Client-side stage controls: only surfaced when the
-                    studio has marked this stage as ready for review
-                    (`in_review`). Approve advances to the next stage;
-                    Request changes flips state back into iteration. */}
                 {isCurrent && s.state === 'in_review' ? (
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <form action={clientApproveStageAction}>
@@ -199,7 +392,9 @@ export default async function ClientProjectPage({
                           {t('clientStageActions.approve.title')}
                         </span>
                         <span className="text-[11px] leading-[1.55] text-[var(--background)]/80">
-                          {t('clientStageActions.approve.hint')}
+                          {locale === 'ru'
+                            ? 'Фиксирует этап с твоей стороны. После этого студия подтверждает передачу и двигает проект дальше.'
+                            : 'Records your approval for this stage. After that, the studio confirms the handoff and moves the project forward.'}
                         </span>
                       </button>
                     </form>
