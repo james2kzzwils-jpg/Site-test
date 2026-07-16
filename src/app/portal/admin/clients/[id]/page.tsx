@@ -2,10 +2,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
-import {
-  createSupabaseServerClient,
-  createSupabaseAdminClient,
-} from '@/lib/supabase/server';
+import { createSupabaseServerClient, createSupabaseAdminClient } from '@/lib/supabase/server';
 import { insertPortalEvent } from '@/lib/portal/events';
 import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
 import PortalHeader from '../../../_shared/PortalHeader';
@@ -20,10 +17,6 @@ interface ClientDetailParams {
 interface ClientDetailSearch {
   sent?: string;
   err?: string;
-  error_message?: string;
-  /** Magic-link URL returned by generateTestLoginAction — surfaced on
-   * the same page so the admin can copy it into a private window
-   * without spending a Supabase email quota. */
   test_link?: string;
   test_link_email?: string;
 }
@@ -143,19 +136,20 @@ function summaryCard(args: {
   );
 }
 
-// Resolve the absolute `/auth/callback` URL for the *current* deploy
-// by reading the live request headers. Used by every magic-link
-// server action so we never hardcode `localhost` or `NEXT_PUBLIC_SITE_URL`.
-// The forwarded headers are set by our reverse proxy (nginx) and fall
-// back to the regular `host` header for direct connections.
 async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
   const h = await headers();
-  return getPublicPortalOriginFromHeaders(h);
+  const proto =
+    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  return `${proto}://${host}/auth/callback?redirect=${encodeURIComponent(redirect)}`;
 }
 
-async function resolveEmailAuthRedirectUrl(redirect = '/portal'): Promise<string> {
-  const origin = await resolvePublicPortalOrigin();
-  return `${origin}/auth/complete?redirect=${encodeURIComponent(redirect)}`;
+async function resolveOrigin(): Promise<string> {
+  const h = await headers();
+  const proto =
+    h.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http');
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  return `${proto}://${host}`;
 }
 
 async function requireAdmin() {
@@ -212,23 +206,18 @@ async function inviteMemberAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const redirectTo = await resolveEmailAuthRedirectUrl('/portal');
+  const redirectTo = await resolveAuthCallbackUrl();
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
     redirectTo,
   });
 
   if (error) {
-    const params = new URLSearchParams({
-      err: 'invite_failed',
-      error_message: error.message,
-    });
-    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
+    redirect(`/portal/admin/clients/${clientId}?err=invite_failed`);
   }
   if (data?.user) {
-    await admin.from('client_members').insert({
-      client_id: clientId,
-      profile_id: data.user.id,
-    });
+    await admin
+      .from('client_members')
+      .insert({ client_id: clientId, profile_id: data.user.id });
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -244,8 +233,8 @@ async function generateTestLoginAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const redirectTo = await resolveEmailAuthRedirectUrl('/portal');
-  const origin = await resolvePublicPortalOrigin();
+  const redirectTo = await resolveAuthCallbackUrl();
+  const origin = await resolveOrigin();
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',
@@ -254,11 +243,7 @@ async function generateTestLoginAction(formData: FormData) {
   });
 
   if (error || !data?.properties?.hashed_token) {
-    const params = new URLSearchParams({
-      err: 'test_link_failed',
-      error_message: error?.message ?? 'Missing token hash in generateLink response',
-    });
-    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
+    redirect(`/portal/admin/clients/${clientId}?err=test_link_failed`);
   }
 
   const callbackParams = new URLSearchParams({
@@ -266,7 +251,7 @@ async function generateTestLoginAction(formData: FormData) {
     type: 'magiclink',
     redirect: '/portal',
   });
-  const link = `${origin}/auth/complete?${callbackParams.toString()}`;
+  const link = `${origin}/auth/callback?${callbackParams.toString()}`;
 
   const params = new URLSearchParams({
     test_link: link,
@@ -284,7 +269,7 @@ async function resendMagicLinkAction(formData: FormData) {
   if (!clientId || !email) return;
 
   const admin = createSupabaseAdminClient();
-  const emailRedirectTo = await resolveEmailAuthRedirectUrl('/portal');
+  const emailRedirectTo = await resolveAuthCallbackUrl();
   const { error } = await admin.auth.signInWithOtp({
     email,
     options: {
@@ -294,11 +279,7 @@ async function resendMagicLinkAction(formData: FormData) {
   });
 
   if (error) {
-    const params = new URLSearchParams({
-      err: 'resend_failed',
-      error_message: error.message,
-    });
-    redirect(`/portal/admin/clients/${clientId}?${params.toString()}`);
+    redirect(`/portal/admin/clients/${clientId}?err=resend_failed`);
   }
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -313,8 +294,7 @@ export default async function ClientDetailPage({
   searchParams: Promise<ClientDetailSearch>;
 }) {
   const { id } = await params;
-  const { sent, err, error_message, test_link, test_link_email } =
-    await searchParams;
+  const { sent, err, test_link, test_link_email } = await searchParams;
 
   const { user, profile } = await requireAdmin();
   const supabase = await createSupabaseServerClient();
@@ -440,7 +420,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
           value: clientNeedsAttention,
-          href: '/portal/admin/inbox?filter=attention',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=attention`,
           tone: 'accent',
           caption:
             locale === 'ru'
@@ -450,7 +430,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Непрочитано' : 'Unread',
           value: clientUnread,
-          href: '/portal/admin/inbox?filter=unread',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=unread`,
           caption:
             locale === 'ru'
               ? 'Непросмотренная активность по проектам этого клиента.'
@@ -459,7 +439,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
           value: clientApprovals,
-          href: '/portal/admin/inbox?filter=approvals',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=approvals`,
           caption:
             locale === 'ru'
               ? 'Ревью и подтверждения, относящиеся к этому клиенту.'
@@ -497,7 +477,7 @@ export default async function ClientDetailPage({
             </p>
           </div>
           <Link
-            href="/portal/admin/inbox"
+            href={`/portal/admin/inbox?clientId=${client.id}`}
             className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
@@ -561,7 +541,6 @@ export default async function ClientDetailPage({
         )}
       </section>
 
-      {/* Members + resend magic link */}
       <section className="mb-12">
         <h2 className="mb-4 font-display text-[22px] font-medium tracking-[-0.01em]">
           {t('admin.client.members')}

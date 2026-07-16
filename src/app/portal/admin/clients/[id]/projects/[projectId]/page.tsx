@@ -34,9 +34,6 @@ interface ProjectDetailParams {
   projectId: string;
 }
 
-// Whitelist of supported currencies in the meta form. Stored as plain
-// text in the DB (`currency` column) so adding new options is just an
-// edit here.
 const CURRENCY_OPTIONS = ['USD', 'EUR', 'RUB', 'USDT', 'BTC', 'ETH'] as const;
 
 function payloadString(payload: Record<string, unknown>, key: string) {
@@ -362,7 +359,7 @@ export default async function AdminProjectDetailPage({
             </p>
           </div>
           <Link
-            href="/portal/admin/inbox"
+            href={`/portal/admin/inbox?clientId=${id}&projectId=${project.id}`}
             className="self-start border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
@@ -424,7 +421,7 @@ export default async function AdminProjectDetailPage({
                     {activityActorLabel(item, locale)}
                   </p>
                   <Link
-                    href="/portal/admin/inbox"
+                    href={`/portal/admin/inbox?clientId=${id}&projectId=${project.id}`}
                     className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
                   >
                     {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
@@ -567,10 +564,6 @@ export default async function AdminProjectDetailPage({
             </button>
           </form>
 
-          {/* Portfolio publish: locked until the project reaches Final
-              OR has been wrapped early (status === 'archived'). Until
-              then the toggle is disabled and we show a hint explaining
-              why. Server action mirrors the same guard. */}
           {(() => {
             const canPublish =
               projectStatus === 'final' || projectStatus === 'archived';
@@ -667,11 +660,6 @@ export default async function AdminProjectDetailPage({
                   </span>
                 </div>
 
-                {/* Per-stage summary editor (admin only). Placeholder
-                    is stage-aware so the field obviously means
-                    "references" on Mood, "scene list" on Animatic,
-                    etc. — instead of repeating the project-level
-                    brief on every stage. */}
                 <form
                   action={updateStageSummaryAction}
                   className="flex flex-col gap-2 border-t border-[var(--hairline)] pt-4"
@@ -705,11 +693,6 @@ export default async function AdminProjectDetailPage({
 
                 {isCurrent && s.state !== 'approved' ? (
                   <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4">
-                    {/* Admin-only stage transitions. Each button has a
-                        clearly-worded label + a one-line hint so it's
-                        obvious what happens when it's pressed. The
-                        approve-and-advance step (next stage) lives in
-                        the global Progress Controls panel above. */}
                     <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
                       <span className="text-[var(--accent)]">◆</span>{' '}
                       {t('stageActions.adminLabel')}

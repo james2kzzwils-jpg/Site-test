@@ -19,6 +19,8 @@ import {
 
 interface AdminInboxSearch {
   filter?: string;
+  clientId?: string;
+  projectId?: string;
 }
 
 type InboxFilter = 'all' | 'attention' | 'unread' | 'approvals';
@@ -220,6 +222,16 @@ function matchesFilter(item: PortalInboxItem, filter: InboxFilter) {
   }
 }
 
+function matchesScope(
+  item: PortalInboxItem,
+  args: { clientId?: string; projectId?: string }
+) {
+  const { clientId, projectId } = args;
+  if (clientId && item.clientId !== clientId) return false;
+  if (projectId && item.projectId !== projectId) return false;
+  return true;
+}
+
 function filterLabel(filter: InboxFilter, locale: PortalLocale) {
   switch (filter) {
     case 'attention':
@@ -234,6 +246,19 @@ function filterLabel(filter: InboxFilter, locale: PortalLocale) {
   }
 }
 
+function scopedInboxHref(args: {
+  filter?: InboxFilter;
+  clientId?: string;
+  projectId?: string;
+}) {
+  const params = new URLSearchParams();
+  if (args.filter && args.filter !== 'all') params.set('filter', args.filter);
+  if (args.clientId) params.set('clientId', args.clientId);
+  if (args.projectId) params.set('projectId', args.projectId);
+  const query = params.toString();
+  return query ? `/portal/admin/inbox?${query}` : '/portal/admin/inbox';
+}
+
 export default async function AdminInboxPage({
   searchParams,
 }: {
@@ -241,6 +266,8 @@ export default async function AdminInboxPage({
 }) {
   const resolvedSearchParams = (await searchParams) ?? {};
   const activeFilter = normalizeFilter(resolvedSearchParams.filter);
+  const scopedClientId = resolvedSearchParams.clientId?.trim() || undefined;
+  const scopedProjectId = resolvedSearchParams.projectId?.trim() || undefined;
 
   const supabase = await createSupabaseServerClient();
   const locale = await getPortalLocale();
@@ -268,11 +295,25 @@ export default async function AdminInboxPage({
     return b.createdAt.localeCompare(a.createdAt);
   });
 
-  const filteredItems = items.filter((item) => matchesFilter(item, activeFilter));
-  const needsAttention = items.filter(isActionRequired).length;
-  const pendingApprovals = items.filter(isPendingApproval).length;
-  const unreadCount = items.filter((item) => item.readAt == null).length;
-  const recentActivity = items.length;
+  const scopedItems = items.filter((item) =>
+    matchesScope(item, {
+      clientId: scopedClientId,
+      projectId: scopedProjectId,
+    })
+  );
+
+  const filteredItems = scopedItems.filter((item) => matchesFilter(item, activeFilter));
+  const needsAttention = scopedItems.filter(isActionRequired).length;
+  const pendingApprovals = scopedItems.filter(isPendingApproval).length;
+  const unreadCount = scopedItems.filter((item) => item.readAt == null).length;
+  const recentActivity = scopedItems.length;
+
+  const scopedClient = scopedClientId
+    ? scopedItems.find((item) => item.clientId === scopedClientId)?.clientName ?? null
+    : null;
+  const scopedProject = scopedProjectId
+    ? scopedItems.find((item) => item.projectId === scopedProjectId)?.projectTitle ?? null
+    : null;
 
   const filters: Array<{ id: InboxFilter; count: number }> = [
     { id: 'all', count: recentActivity },
@@ -304,12 +345,30 @@ export default async function AdminInboxPage({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-col gap-3">
             <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
-              {locale === 'ru' ? 'Входящие по порталу' : 'Portal inbox'}
+              {scopedProject
+                ? locale === 'ru'
+                  ? `Inbox проекта: ${scopedProject}`
+                  : `Project inbox: ${scopedProject}`
+                : scopedClient
+                  ? locale === 'ru'
+                    ? `Inbox клиента: ${scopedClient}`
+                    : `Client inbox: ${scopedClient}`
+                  : locale === 'ru'
+                    ? 'Входящие по порталу'
+                    : 'Portal inbox'}
             </h1>
             <p className="max-w-3xl text-[14px] leading-[1.7] text-[var(--foreground)]/55">
-              {locale === 'ru'
-                ? 'Единая лента того, что требует внимания студии: новые ревью, правки, комментарии и загрузки файлов от клиентов.'
-                : 'A single queue for what needs studio attention across the portal: review requests, client changes, comments and file uploads.'}
+              {scopedProject
+                ? locale === 'ru'
+                  ? 'Сфокусированная лента событий по одному проекту: комментарии, правки, ревью и загрузки.'
+                  : 'A focused event stream for one project: comments, change requests, reviews and uploads.'
+                : scopedClient
+                  ? locale === 'ru'
+                    ? 'Сфокусированная лента событий по одному клиенту во всех его проектах.'
+                    : 'A focused event stream for one client across all of their projects.'
+                  : locale === 'ru'
+                    ? 'Единая лента того, что требует внимания студии: новые ревью, правки, комментарии и загрузки файлов от клиентов.'
+                    : 'A single queue for what needs studio attention across the portal: review requests, client changes, comments and file uploads.'}
             </p>
           </div>
           {unreadCount > 0 ? (
@@ -324,6 +383,27 @@ export default async function AdminInboxPage({
           ) : null}
         </div>
       </div>
+
+      {scopedClient || scopedProject ? (
+        <section className="mb-6 flex flex-wrap items-center gap-2">
+          {scopedClient ? (
+            <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
+              {locale === 'ru' ? 'Клиент' : 'Client'} · {scopedClient}
+            </span>
+          ) : null}
+          {scopedProject ? (
+            <span className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/60">
+              {locale === 'ru' ? 'Проект' : 'Project'} · {scopedProject}
+            </span>
+          ) : null}
+          <Link
+            href="/portal/admin/inbox"
+            className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Сбросить scope →' : 'Clear scope →'}
+          </Link>
+        </section>
+      ) : null}
 
       <section className="mb-8 grid gap-4 md:grid-cols-4">
         {summaryCard(
@@ -370,10 +450,11 @@ export default async function AdminInboxPage({
 
       <section className="mb-6 flex flex-wrap gap-2">
         {filters.map((filter) => {
-          const href =
-            filter.id === 'all'
-              ? '/portal/admin/inbox'
-              : `/portal/admin/inbox?filter=${filter.id}`;
+          const href = scopedInboxHref({
+            filter: filter.id,
+            clientId: scopedClientId,
+            projectId: scopedProjectId,
+          });
           const isActive = filter.id === activeFilter;
 
           return (
@@ -397,9 +478,17 @@ export default async function AdminInboxPage({
           <div className="py-10">
             <p className="text-[14px] leading-[1.7] text-[var(--foreground)]/55">
               {activeFilter === 'all'
-                ? locale === 'ru'
-                  ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
-                  : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'
+                ? scopedProject
+                  ? locale === 'ru'
+                    ? 'По этому проекту пока нет событий в inbox.'
+                    : 'There is no inbox activity for this project yet.'
+                  : scopedClient
+                    ? locale === 'ru'
+                      ? 'По этому клиенту пока нет событий в inbox.'
+                      : 'There is no inbox activity for this client yet.'
+                    : locale === 'ru'
+                      ? 'Событий пока нет. Как только клиенты начнут ревью, писать комментарии или загружать файлы, они появятся здесь.'
+                      : 'No activity yet. As soon as clients review stages, leave comments or upload files, the events will appear here.'
                 : locale === 'ru'
                   ? `По фильтру «${filterLabel(activeFilter, locale)}» пока ничего нет.`
                   : `Nothing currently matches the “${filterLabel(activeFilter, locale)}” filter.`}

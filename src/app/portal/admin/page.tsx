@@ -65,8 +65,6 @@ function summaryCard(args: {
   );
 }
 
-// Admin dashboard: list of all clients. RLS guarantees only admins can
-// read these rows, but the middleware redirected non-admins already.
 export default async function AdminClientsPage() {
   const supabase = await createSupabaseServerClient();
   const locale = await getPortalLocale();
@@ -253,7 +251,7 @@ export default async function AdminClientsPage() {
                   <div className="flex items-center gap-3">
                     {counts.attention > 0 || counts.unread > 0 ? (
                       <Link
-                        href={`/portal/admin/inbox?filter=${
+                        href={`/portal/admin/inbox?clientId=${c.id}&filter=${
                           counts.attention > 0 ? 'attention' : 'unread'
                         }`}
                         className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
