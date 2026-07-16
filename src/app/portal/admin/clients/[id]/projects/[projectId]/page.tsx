@@ -81,6 +81,14 @@ function isActionRequired(item: PortalInboxItem) {
   return false;
 }
 
+function isPendingApproval(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  return (
+    item.type === 'approval_requested' ||
+    (item.type === 'approval_decided' && decision === 'approved')
+  );
+}
+
 function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
   const stage = stageLabel(item);
   const decision = payloadString(item.payload, 'decision');
@@ -271,6 +279,10 @@ export default async function AdminProjectDetailPage({
   )
     ? selectedCurrency
     : 'USD';
+  const projectInboxBase = `/portal/admin/inbox?clientId=${id}&projectId=${project.id}`;
+  const projectNeedsAttention = activity.items.filter(isActionRequired).length;
+  const projectUnread = activity.items.filter((item) => item.readAt == null).length;
+  const projectApprovals = activity.items.filter(isPendingApproval).length;
 
   return (
     <>
@@ -361,12 +373,38 @@ export default async function AdminProjectDetailPage({
                 : 'Latest events for this project: reviews, comments, file uploads and status changes.'}
             </p>
           </div>
-          <Link
-            href="/portal/admin/inbox"
-            className="self-start border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-          >
-            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={projectInboxBase}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru' ? 'Все' : 'All'}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=attention`}
+              className="border border-[var(--accent)] bg-[var(--accent)]/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/16"
+            >
+              {locale === 'ru'
+                ? `Внимание ${projectNeedsAttention}`
+                : `Attention ${projectNeedsAttention}`}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=unread`}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru'
+                ? `Unread ${projectUnread}`
+                : `Unread ${projectUnread}`}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=approvals`}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru'
+                ? `Approval ${projectApprovals}`
+                : `Approval ${projectApprovals}`}
+            </Link>
+          </div>
         </div>
 
         {activity.status === 'not_ready' ? (
@@ -424,7 +462,15 @@ export default async function AdminProjectDetailPage({
                     {activityActorLabel(item, locale)}
                   </p>
                   <Link
-                    href="/portal/admin/inbox"
+                    href={
+                      isPendingApproval(item)
+                        ? `${projectInboxBase}&filter=approvals`
+                        : isActionRequired(item)
+                          ? `${projectInboxBase}&filter=attention`
+                          : item.readAt == null
+                            ? `${projectInboxBase}&filter=unread`
+                            : projectInboxBase
+                    }
                     className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
                   >
                     {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
