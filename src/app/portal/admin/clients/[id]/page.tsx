@@ -113,6 +113,17 @@ function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
   }
 }
 
+function scopedInboxHref(clientId: string, item: PortalInboxItem) {
+  const base = item.projectId
+    ? `/portal/admin/inbox?clientId=${clientId}&projectId=${item.projectId}`
+    : `/portal/admin/inbox?clientId=${clientId}`;
+
+  if (isPendingApproval(item)) return `${base}&filter=approvals`;
+  if (isActionRequired(item)) return `${base}&filter=attention`;
+  if (item.readAt == null) return `${base}&filter=unread`;
+  return base;
+}
+
 function summaryCard(args: {
   label: string;
   value: number;
@@ -545,14 +556,20 @@ export default async function ClientDetailPage({
                 </div>
                 <div className="flex flex-col items-start gap-2 lg:items-end">
                   <Link
+                    href={scopedInboxHref(client.id, item)}
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                  >
+                    {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
+                  </Link>
+                  <Link
                     href={
                       item.projectId
                         ? `/portal/admin/clients/${client.id}/projects/${item.projectId}`
                         : `/portal/admin/clients/${client.id}`
                     }
-                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
                   >
-                    {locale === 'ru' ? 'Открыть →' : 'Open →'}
+                    {locale === 'ru' ? 'Открыть проект →' : 'Open project →'}
                   </Link>
                 </div>
               </li>
