@@ -79,6 +79,35 @@ function summaryCard(args: {
   );
 }
 
+function workflowBucketCard(args: {
+  label: string;
+  value: number;
+  caption: string;
+  tone?: 'default' | 'accent';
+}) {
+  const { label, value, caption, tone = 'default' } = args;
+
+  return (
+    <div
+      className={`border p-4 ${
+        tone === 'accent'
+          ? 'border-[var(--accent)] bg-[var(--accent)]/8'
+          : 'border-[var(--hairline)]'
+      }`}
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+        {label}
+      </p>
+      <p className="mt-2 font-display text-[30px] leading-none tracking-[-0.04em]">
+        {value}
+      </p>
+      <p className="mt-3 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+        {caption}
+      </p>
+    </div>
+  );
+}
+
 // Admin dashboard: list of all clients. RLS guarantees only admins can
 // read these rows, but the middleware redirected non-admins already.
 export default async function AdminClientsPage() {
@@ -276,6 +305,55 @@ export default async function AdminClientsPage() {
               ? 'Быстрый переход в общую operational-ленту админа.'
               : 'Quick jump into the admin’s operational inbox feed.',
         })}
+      </section>
+
+      <section className="mb-8">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {locale === 'ru' ? 'Workflow buckets' : 'Workflow buckets'}
+            </h2>
+            <p className="mt-2 max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Быстрый operational-срез: где студия ждёт клиента, где команда ещё внутри продакшна и сколько проектов уже выбились по сроку.'
+                : 'A fast operational slice of where the studio is waiting on the client, where work is still in production, and how many live projects are already overdue.'}
+            </p>
+          </div>
+          <Link
+            href="/portal/admin/inbox"
+            className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Ждут клиента' : 'Waiting on client',
+            value: waitingOnClient,
+            tone: 'accent',
+            caption:
+              locale === 'ru'
+                ? 'Этапы уже отправлены на ревью и ждут утверждения или комментариев клиента.'
+                : 'Stages already handed off for review and currently waiting for client sign-off or feedback.',
+          })}
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Ждут студию' : 'Waiting on studio',
+            value: waitingOnStudio,
+            caption:
+              locale === 'ru'
+                ? 'Проекты, где команда ещё производит апдейт, дорабатывает правки или подтверждает клиентское approve.'
+                : 'Projects where the team is still producing the update, iterating on revisions, or confirming client approval.',
+          })}
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Просрочены' : 'Overdue',
+            value: overdueProjects,
+            caption:
+              locale === 'ru'
+                ? 'Живые проекты с дедлайном в прошлом. Полезно для ежедневного контроля нагрузки.'
+                : 'Live projects whose due date is already in the past. Useful as a daily load and risk check.',
+          })}
+        </div>
       </section>
 
       {inbox.status === 'not_ready' ? (
