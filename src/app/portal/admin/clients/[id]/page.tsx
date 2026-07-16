@@ -240,11 +240,21 @@ async function createProjectAction(formData: FormData) {
 
   const clientId = String(formData.get('client_id') ?? '');
   const title = String(formData.get('title') ?? '').trim();
+  const template = String(formData.get('template') ?? 'general').trim();
+  const briefInput = String(formData.get('brief') ?? '').trim();
   if (!clientId || !title) return;
+
+  const preset = resolveProjectTemplatePreset(template);
 
   const { data, error } = await supabase
     .from('projects')
-    .insert({ client_id: clientId, title })
+    .insert({
+      client_id: clientId,
+      title,
+      brief: briefInput || preset.brief,
+      due_date: dueDateFromNow(preset.dueDays),
+      currency: preset.currency,
+    })
     .select('id')
     .single();
   if (error || !data) throw new Error(error?.message ?? 'Failed to create project');
@@ -255,7 +265,7 @@ async function createProjectAction(formData: FormData) {
     clientId,
     actorId: user.id,
     type: 'project_created',
-    payload: { title },
+    payload: { title, template },
   });
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -843,23 +853,93 @@ export default async function ClientDetailPage({
       </section>
 
       <section>
-        <h2 className="mb-4 font-display text-[22px] font-medium tracking-[-0.01em]">
-          {t('admin.client.newProject')}
-        </h2>
-        <form action={createProjectAction} className="flex flex-col gap-4 sm:flex-row">
+        <div className="mb-4 flex flex-col gap-2">
+          <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+            {t('admin.client.newProject')}
+          </h2>
+          <p className="max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+            {locale === 'ru'
+              ? 'Выбери шаблон запуска — он сразу проставит стартовый brief, due date и валюту. Всё это можно потом поправить уже внутри проекта.'
+              : 'Pick a kickoff template — it will immediately set a starter brief, due date, and currency. Everything can still be edited inside the project right after creation.'}
+          </p>
+        </div>
+        <form action={createProjectAction} className="flex flex-col gap-4 border border-[var(--hairline)] p-5">
           <input type="hidden" name="client_id" value={client.id} />
-          <input
-            required
-            name="title"
-            placeholder={t('admin.client.newProject.title')}
-            className="flex-1 border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
-          />
-          <button
-            type="submit"
-            className="border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--background)]"
-          >
-            + {t('admin.client.newProject.create')}
-          </button>
+          <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <label className="flex flex-col gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                {t('admin.client.newProject.title')}
+              </span>
+              <input
+                required
+                name="title"
+                placeholder={t('admin.client.newProject.title')}
+                className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                {locale === 'ru' ? 'Шаблон запуска' : 'Kickoff template'}
+              </span>
+              <select
+                name="template"
+                defaultValue="general"
+                className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
+              >
+                {Object.entries(PROJECT_TEMPLATE_PRESETS).map(([key, preset]) => (
+                  <option key={key} value={key} className="bg-[var(--background)]">
+                    {preset.label[locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label className="flex flex-col gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+              {t('admin.client.newProject.brief')}
+            </span>
+            <textarea
+              name="brief"
+              rows={4}
+              placeholder={locale === 'ru'
+                ? 'Если оставить пустым, подтянется brief из выбранного шаблона.'
+                : 'Leave empty to use the starter brief from the selected template.'}
+              className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] leading-[1.6] outline-none focus:border-[var(--accent)]"
+            />
+          </label>
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {Object.entries(PROJECT_TEMPLATE_PRESETS).map(([key, preset]) => (
+              <div key={key} className="border border-[var(--hairline)] p-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                  {preset.label[locale]}
+                </p>
+                <p className="mt-2 text-[12px] leading-[1.6] text-[var(--foreground)]/60">
+                  {preset.hint[locale]}
+                </p>
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                  {locale === 'ru'
+                    ? `Due +${preset.dueDays}d · ${preset.currency}`
+                    : `Due +${preset.dueDays}d · ${preset.currency}`}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[12px] leading-[1.6] text-[var(--foreground)]/45">
+              {locale === 'ru'
+                ? 'После создания откроется страница проекта, где можно сразу поправить meta, NDA и stage notes.'
+                : 'Right after creation you will land on the project page, where meta, NDA, and stage notes can be refined immediately.'}
+            </p>
+            <button
+              type="submit"
+              className="border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--background)]"
+            >
+              + {t('admin.client.newProject.create')}
+            </button>
+          </div>
         </form>
       </section>
     </>
