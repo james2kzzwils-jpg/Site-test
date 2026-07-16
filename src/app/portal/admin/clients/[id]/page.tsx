@@ -28,77 +28,20 @@ interface ClientDetailSearch {
   test_link_email?: string;
 }
 
-type ProjectTemplatePreset = {
-  label: { en: string; ru: string };
-  hint: { en: string; ru: string };
-  brief: string;
-  dueDays: number;
-  currency: string;
-};
-
-const PROJECT_TEMPLATE_PRESETS = {
-  general: {
-    label: { en: 'General production', ru: 'Общий production' },
-    hint: {
-      en: 'Default starting point for a custom project with a one-week initial target.',
-      ru: 'Базовый старт для кастомного проекта с недельным первым ориентиром.',
-    },
-    brief:
-      'Scope the deliverable, confirm references, set the first review target, and lock the next production milestone.',
-    dueDays: 7,
-    currency: 'USD',
-  },
-  product_viz: {
-    label: { en: 'Product viz', ru: 'Product viz' },
-    hint: {
-      en: 'For product renders / stills with a tighter review window and ref-first kickoff.',
-      ru: 'Для продуктовых рендеров и stills: быстрый ревью-цикл и старт от референсов.',
-    },
-    brief:
-      'Collect product references, define hero angles, lock materials / palette, and prepare the first still review.',
-    dueDays: 5,
-    currency: 'USD',
-  },
-  animation: {
-    label: { en: 'Animation', ru: 'Animation' },
-    hint: {
-      en: 'For motion-heavy work where the first checkpoint should cover story / timing.',
-      ru: 'Для motion-проектов, где первый чекпоинт должен закрыть историю и тайминг.',
-    },
-    brief:
-      'Align on story beats, timing, references, and review cadence before the first animatic checkpoint.',
-    dueDays: 10,
-    currency: 'USD',
-  },
-  houdini_fx: {
-    label: { en: 'Houdini FX', ru: 'Houdini FX' },
-    hint: {
-      en: 'For simulation-driven work with extra room for lookdev and technical setup.',
-      ru: 'Для simulation-driven задач с запасом на lookdev и техническую сборку.',
-    },
-    brief:
-      'Confirm sim goal, technical constraints, reference motion, and delivery specs before the first R&D pass.',
-    dueDays: 12,
-    currency: 'USD',
-  },
-} as const satisfies Record<string, ProjectTemplatePreset>;
-
-function resolveProjectTemplatePreset(value: string) {
-  return (
-    PROJECT_TEMPLATE_PRESETS[
-      value as keyof typeof PROJECT_TEMPLATE_PRESETS
-    ] ?? PROJECT_TEMPLATE_PRESETS.general
-  );
+interface ProjectListRow {
+  id: string;
+  title: string;
+  status: string;
+  nda_until: string | null;
+  is_public_portfolio: boolean;
+  due_date: string | null;
+  is_under_nda: boolean;
 }
 
-function formatDateInput(value: Date) {
-  return value.toISOString().slice(0, 10);
-}
-
-function dueDateFromNow(days: number) {
-  const next = new Date();
-  next.setDate(next.getDate() + days);
-  return formatDateInput(next);
+interface StageLookupRow {
+  project_id: string;
+  kind: string;
+  state: string;
 }
 
 function payloadString(payload: Record<string, unknown>, key: string) {
@@ -184,6 +127,49 @@ function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
     default:
       return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
   }
+}
+
+function projectWorkflowHint(args: {
+  locale: PortalLocale;
+  status: string;
+  stageState: string | null;
+  dueDate: string | null;
+}) {
+  const { locale, status, stageState, dueDate } = args;
+
+  if (status === 'archived') {
+    return locale === 'ru'
+      ? 'Проект уже завершён. Это хорошая точка входа в финальные материалы и всю историю взаимодействия.'
+      : 'The project is already wrapped. This row now works as a quick entry point to final materials and the full delivery history.';
+  }
+
+  if (stageState === 'in_review') {
+    return locale === 'ru'
+      ? 'Сейчас у клиента есть deliverable на ревью — отсюда удобно сразу открыть проект и проверить feedback.'
+      : 'The client currently has a deliverable out for review — this is a good row to open first and inspect feedback.';
+  }
+
+  if (stageState === 'changes_requested') {
+    return locale === 'ru'
+      ? 'По текущему этапу уже пришли правки, значит студии может понадобиться быстрое follow-up действие.'
+      : 'Revisions already came in on the current stage, so this project may need a quicker studio follow-up.';
+  }
+
+  if (stageState === 'client_approved') {
+    return locale === 'ru'
+      ? 'Клиент уже утвердил этап. Осталось только закрыть handoff и двинуть проект дальше.'
+      : 'The client has already approved the current stage. The remaining move is the internal handoff into the next step.';
+  }
+
+  if (dueDate) {
+    return locale === 'ru'
+      ? `Следующий срок по проекту — ${dueDate}. Это удобный ориентир для контроля нагрузки по клиенту.`
+      : `The next project checkpoint is ${dueDate}. Use it as a quick timing anchor when scanning this client.`;
+  }
+
+  return locale === 'ru'
+    ? 'Проект идёт по обычному pipeline и пока не сигнализирует о срочном действии.'
+    : 'This project is moving through the normal pipeline and is not signalling an urgent action right now.';
 }
 
 function summaryCard(args: {
@@ -433,12 +419,29 @@ export default async function ClientDetailPage({
     .order('created_at', { ascending: false });
 
   const today = new Date().toISOString().slice(0, 10);
-  const projects = (projectRows ?? []).map((p) => ({
+  const projects: ProjectListRow[] = (projectRows ?? []).map((p) => ({
     ...p,
     is_under_nda:
       p.nda_until != null &&
       (p.nda_until === 'infinity' || p.nda_until > today),
   }));
+
+  const projectIds = projects.map((project) => project.id);
+  const { data: stageRows } = projectIds.length
+    ? await supabase
+        .from('stages')
+        .select('project_id, kind, state')
+        .in('project_id', projectIds)
+    : { data: [] as StageLookupRow[] };
+
+  const currentStageByProject = new Map<string, StageLookupRow>();
+  for (const project of projects) {
+    if (project.status === 'archived') continue;
+    const stage = (stageRows ?? []).find(
+      (row) => row.project_id === project.id && row.kind === project.status
+    );
+    if (stage) currentStageByProject.set(project.id, stage);
+  }
 
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const clientEvents = inbox.items
@@ -448,6 +451,31 @@ export default async function ClientDetailPage({
   const clientUnread = clientEvents.filter((item) => item.readAt == null).length;
   const clientApprovals = clientEvents.filter(isPendingApproval).length;
   const recentClientEvents = clientEvents.slice(0, 5);
+
+  const projectMetrics = new Map<
+    string,
+    { attention: number; unread: number; currentStageState: string | null; overdue: boolean }
+  >();
+
+  for (const project of projects) {
+    const currentStage = currentStageByProject.get(project.id);
+    projectMetrics.set(project.id, {
+      attention: 0,
+      unread: 0,
+      currentStageState: currentStage?.state ?? null,
+      overdue:
+        project.status !== 'archived' &&
+        project.due_date != null &&
+        project.due_date < today,
+    });
+  }
+
+  for (const item of clientEvents) {
+    const current = projectMetrics.get(item.projectId);
+    if (!current) continue;
+    if (isActionRequired(item)) current.attention += 1;
+    if (item.readAt == null) current.unread += 1;
+  }
 
   return (
     <>
@@ -744,33 +772,81 @@ export default async function ClientDetailPage({
             </p>
           ) : (
             <ul>
-              {projects.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between border-b border-[var(--hairline)] py-4"
-                >
-                  <div className="flex flex-col gap-1">
-                    <p className="font-display text-[18px] leading-[1.2] tracking-[-0.01em]">
-                      {p.title}
-                    </p>
-                    <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
-                      <span>{p.status}</span>
-                      {p.is_under_nda ? (
-                        <span className="text-[var(--accent)]">· NDA</span>
-                      ) : null}
-                      {p.is_public_portfolio ? (
-                        <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
-                      ) : null}
-                    </div>
-                  </div>
-                  <Link
-                    href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
-                    className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+              {projects.map((p) => {
+                const metrics = projectMetrics.get(p.id) ?? {
+                  attention: 0,
+                  unread: 0,
+                  currentStageState: null,
+                  overdue: false,
+                };
+
+                return (
+                  <li
+                    key={p.id}
+                    className="flex items-center justify-between gap-4 border-b border-[var(--hairline)] py-4"
                   >
-                    {t('common.open')} →
-                  </Link>
-                </li>
-              ))}
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <p className="font-display text-[18px] leading-[1.2] tracking-[-0.01em]">
+                        {p.title}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
+                        <span>{p.status}</span>
+                        {p.is_under_nda ? (
+                          <span className="text-[var(--accent)]">· NDA</span>
+                        ) : null}
+                        {p.is_public_portfolio ? (
+                          <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
+                        ) : null}
+                        {metrics.currentStageState === 'in_review' ? (
+                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 text-[var(--accent)]">
+                            {locale === 'ru' ? 'Review' : 'Review'}
+                          </span>
+                        ) : null}
+                        {metrics.currentStageState === 'changes_requested' ||
+                        metrics.currentStageState === 'pending' ||
+                        metrics.currentStageState === 'client_approved' ? (
+                          <span className="border border-[var(--hairline)] px-2 py-1 text-[var(--foreground)]/65">
+                            {locale === 'ru' ? 'Studio' : 'Studio'}
+                          </span>
+                        ) : null}
+                        {metrics.attention > 0 ? (
+                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 text-[var(--accent)]">
+                            {locale === 'ru'
+                              ? `Внимание ${metrics.attention}`
+                              : `Attention ${metrics.attention}`}
+                          </span>
+                        ) : null}
+                        {metrics.unread > 0 ? (
+                          <span className="border border-[var(--hairline)] px-2 py-1 text-[var(--foreground)]/65">
+                            {locale === 'ru'
+                              ? `Unread ${metrics.unread}`
+                              : `Unread ${metrics.unread}`}
+                          </span>
+                        ) : null}
+                        {metrics.overdue ? (
+                          <span className="border border-[var(--accent)] px-2 py-1 text-[var(--accent)]">
+                            {locale === 'ru' ? 'Просрочено' : 'Overdue'}
+                          </span>
+                        ) : null}
+                      </div>
+                      <p className="max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/58">
+                        {projectWorkflowHint({
+                          locale,
+                          status: p.status,
+                          stageState: metrics.currentStageState,
+                          dueDate: p.due_date,
+                        })}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
+                      className="shrink-0 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    >
+                      {t('common.open')} →
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
