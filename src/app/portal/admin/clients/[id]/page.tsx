@@ -7,11 +7,11 @@ import {
   createSupabaseAdminClient,
 } from '@/lib/supabase/server';
 import { insertPortalEvent } from '@/lib/portal/events';
-import { getPublicPortalOriginFromHeaders } from '@/lib/portal/public-origin';
+import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
 import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
 import CopyButton from '../../../_shared/CopyButton';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
 
 interface ClientDetailParams {
   id: string;
@@ -28,7 +28,127 @@ interface ClientDetailSearch {
   test_link_email?: string;
 }
 
-async function resolvePublicPortalOrigin(): Promise<string> {
+function payloadString(payload: Record<string, unknown>, key: string) {
+  const value = payload[key];
+  return typeof value === 'string' ? value : null;
+}
+
+function isActionRequired(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  if (item.type === 'approval_requested') return true;
+  if (item.type === 'approval_decided' && decision === 'changes_requested') {
+    return true;
+  }
+  if (
+    (item.type === 'comment_added' || item.type === 'file_uploaded') &&
+    item.actorRole === 'client'
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function isPendingApproval(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  return (
+    item.type === 'approval_requested' ||
+    (item.type === 'approval_decided' && decision === 'approved')
+  );
+}
+
+function formatDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
+
+function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
+  const stage =
+    payloadString(item.payload, 'stage_kind') ??
+    payloadString(item.payload, 'to_stage') ??
+    payloadString(item.payload, 'from_stage');
+  const decision = payloadString(item.payload, 'decision');
+
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `Этап ${stage ?? 'текущий'} отправлен на ревью`
+        : `${stage ?? 'Current stage'} sent for review`;
+    case 'approval_decided':
+      if (decision === 'changes_requested') {
+        return locale === 'ru'
+          ? `Клиент запросил правки по ${stage ?? 'этапу'}`
+          : `Client requested changes on ${stage ?? 'the stage'}`;
+      }
+      return locale === 'ru'
+        ? `Клиент утвердил ${stage ?? 'этап'}`
+        : `Client approved ${stage ?? 'the stage'}`;
+    case 'comment_added':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Новый комментарий от клиента'
+          : 'New client comment'
+        : locale === 'ru'
+          ? 'Новый комментарий от студии'
+          : 'New studio comment';
+    case 'file_uploaded':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Клиент загрузил файл'
+          : 'Client uploaded a file'
+        : locale === 'ru'
+          ? 'Студия загрузила файл'
+          : 'Studio uploaded a file';
+    case 'project_created':
+      return locale === 'ru' ? 'Создан новый проект' : 'New project created';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `Этап переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
+        : `Stage moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
+    case 'nda_signed':
+      return locale === 'ru' ? 'Подписан NDA' : 'NDA signed';
+    default:
+      return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
+  }
+}
+
+function summaryCard(args: {
+  label: string;
+  value: number;
+  href: string;
+  tone?: 'default' | 'accent';
+  caption: string;
+}) {
+  const { label, value, href, tone = 'default', caption } = args;
+  return (
+    <Link
+      href={href}
+      className={`border p-4 transition-colors ${
+        tone === 'accent'
+          ? 'border-[var(--accent)] bg-[var(--accent)]/8 hover:bg-[var(--accent)]/14'
+          : 'border-[var(--hairline)] hover:border-[var(--accent)]'
+      }`}
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+        {label}
+      </p>
+      <p className="mt-2 font-display text-[36px] leading-none tracking-[-0.04em]">
+        {value}
+      </p>
+      <p className="mt-3 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+        {caption}
+      </p>
+    </Link>
+  );
+}
+
+// Resolve the absolute `/auth/callback` URL for the *current* deploy
+// by reading the live request headers. Used by every magic-link
+// server action so we never hardcode `localhost` or `NEXT_PUBLIC_SITE_URL`.
+// The forwarded headers are set by our reverse proxy (nginx) and fall
+// back to the regular `host` header for direct connections.
+async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
   const h = await headers();
   return getPublicPortalOriginFromHeaders(h);
 }
@@ -237,6 +357,15 @@ export default async function ClientDetailPage({
       (p.nda_until === 'infinity' || p.nda_until > today),
   }));
 
+  const inbox = await loadAdminInbox({ supabase, limit: 50 });
+  const clientEvents = inbox.items
+    .filter((item) => item.clientId === id)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const clientNeedsAttention = clientEvents.filter(isActionRequired).length;
+  const clientUnread = clientEvents.filter((item) => item.readAt == null).length;
+  const clientApprovals = clientEvents.filter(isPendingApproval).length;
+  const recentClientEvents = clientEvents.slice(0, 5);
+
   return (
     <>
       <PortalHeader
@@ -258,25 +387,18 @@ export default async function ClientDetailPage({
         </div>
       ) : null}
       {err ? (
-        <div className="mb-6 flex flex-col gap-2 border border-red-500/40 bg-red-500/10 px-4 py-3 text-red-400">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em]">
-            {err === 'resend_failed'
+        <div className="mb-6 border border-red-500/40 bg-red-500/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-red-400">
+          {err === 'resend_failed'
+            ? locale === 'ru'
+              ? 'Не удалось отправить ссылку. Проверь email.'
+              : "Couldn't send magic link. Check the email."
+            : err === 'test_link_failed'
               ? locale === 'ru'
-                ? 'Не удалось отправить ссылку. Проверь email.'
-                : "Couldn't send magic link. Check the email."
-              : err === 'test_link_failed'
-                ? locale === 'ru'
-                  ? 'Не удалось сгенерировать тестовую ссылку.'
-                  : "Couldn't generate test login link."
-                : locale === 'ru'
-                  ? 'Приглашение не отправлено.'
-                  : 'Invite failed.'}
-          </div>
-          {error_message ? (
-            <div className="text-[12px] leading-[1.6] text-red-200">
-              {error_message}
-            </div>
-          ) : null}
+                ? 'Не удалось сгенерировать тестовую ссылку.'
+                : "Couldn't generate test login link."
+              : locale === 'ru'
+                ? 'Приглашение не отправлено.'
+                : 'Invite failed.'}
         </div>
       ) : null}
 
@@ -314,6 +436,132 @@ export default async function ClientDetailPage({
         ) : null}
       </div>
 
+      <section className="mb-12 grid gap-4 md:grid-cols-4">
+        {summaryCard({
+          label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
+          value: clientNeedsAttention,
+          href: '/portal/admin/inbox?filter=attention',
+          tone: 'accent',
+          caption:
+            locale === 'ru'
+              ? 'События по этому клиенту, где студии нужно реагировать.'
+              : 'Events for this client where the studio should act.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Непрочитано' : 'Unread',
+          value: clientUnread,
+          href: '/portal/admin/inbox?filter=unread',
+          caption:
+            locale === 'ru'
+              ? 'Непросмотренная активность по проектам этого клиента.'
+              : 'Untriaged activity across this client’s projects.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
+          value: clientApprovals,
+          href: '/portal/admin/inbox?filter=approvals',
+          caption:
+            locale === 'ru'
+              ? 'Ревью и подтверждения, относящиеся к этому клиенту.'
+              : 'Review and approval events linked to this client.',
+        })}
+        {summaryCard({
+          label: locale === 'ru' ? 'Проекты' : 'Projects',
+          value: projects.length,
+          href: `/portal/admin/clients/${client.id}`,
+          caption:
+            locale === 'ru'
+              ? 'Быстрый индикатор масштаба работы по этому клиенту.'
+              : 'Quick sense of how much active project surface this client has.',
+        })}
+      </section>
+
+      {inbox.status === 'not_ready' ? (
+        <div className="mb-8 border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
+          {locale === 'ru'
+            ? 'Сводка активности клиента начнёт работать после применения migration 0008_portal_events.sql в Supabase.'
+            : 'The client activity summary will start working once migration 0008_portal_events.sql is applied in Supabase.'}
+        </div>
+      ) : null}
+
+      <section className="mb-12">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {locale === 'ru' ? 'Последняя активность клиента' : 'Recent client activity'}
+            </h2>
+            <p className="mt-2 max-w-2xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Последние события по всем проектам этого клиента, чтобы быстро понять контекст перед ответом или созвоном.'
+                : 'Latest events across this client’s projects so the studio can quickly regain context before replying or reviewing.'}
+            </p>
+          </div>
+          <Link
+            href="/portal/admin/inbox"
+            className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
+          </Link>
+        </div>
+
+        {recentClientEvents.length === 0 ? (
+          <div className="border border-[var(--hairline)] p-5 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+            {locale === 'ru'
+              ? 'По этому клиенту пока нет событий в activity feed.'
+              : 'There is no client activity in the feed yet.'}
+          </div>
+        ) : (
+          <ul className="border-t border-[var(--hairline)]">
+            {recentClientEvents.map((item) => (
+              <li
+                key={item.id}
+                className={`grid gap-4 border-b border-[var(--hairline)] py-4 lg:grid-cols-[1fr_auto] lg:items-start ${
+                  item.readAt == null ? 'bg-[var(--accent)]/5' : ''
+                }`}
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isActionRequired(item) ? (
+                      <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
+                        {locale === 'ru' ? 'Нужно действие' : 'Action required'}
+                      </span>
+                    ) : null}
+                    {item.readAt == null ? (
+                      <span className="border border-[var(--foreground)]/15 bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/60">
+                        {locale === 'ru' ? 'Непрочитано' : 'Unread'}
+                      </span>
+                    ) : null}
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/40">
+                      {formatDate(locale, item.createdAt)}
+                    </span>
+                  </div>
+                  <p className="font-display text-[20px] leading-[1.15] tracking-[-0.02em]">
+                    {activityTitle(item, locale)}
+                  </p>
+                  <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/60">
+                    {item.projectTitle ??
+                      (locale === 'ru' ? 'Проект без названия' : 'Untitled project')}
+                  </p>
+                </div>
+                <div className="flex flex-col items-start gap-2 lg:items-end">
+                  <Link
+                    href={
+                      item.projectId
+                        ? `/portal/admin/clients/${client.id}/projects/${item.projectId}`
+                        : `/portal/admin/clients/${client.id}`
+                    }
+                    className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                  >
+                    {locale === 'ru' ? 'Открыть →' : 'Open →'}
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Members + resend magic link */}
       <section className="mb-12">
         <h2 className="mb-4 font-display text-[22px] font-medium tracking-[-0.01em]">
           {t('admin.client.members')}
