@@ -454,20 +454,11 @@ export default async function ClientDetailPage({
 
   const projectMetrics = new Map<
     string,
-    { attention: number; unread: number; currentStageState: string | null; overdue: boolean }
+    { attention: number; unread: number; approvals: number }
   >();
 
   for (const project of projects) {
-    const currentStage = currentStageByProject.get(project.id);
-    projectMetrics.set(project.id, {
-      attention: 0,
-      unread: 0,
-      currentStageState: currentStage?.state ?? null,
-      overdue:
-        project.status !== 'archived' &&
-        project.due_date != null &&
-        project.due_date < today,
-    });
+    projectMetrics.set(project.id, { attention: 0, unread: 0, approvals: 0 });
   }
 
   for (const item of clientEvents) {
@@ -475,6 +466,7 @@ export default async function ClientDetailPage({
     if (!current) continue;
     if (isActionRequired(item)) current.attention += 1;
     if (item.readAt == null) current.unread += 1;
+    if (isPendingApproval(item)) current.approvals += 1;
   }
 
   return (
@@ -776,9 +768,9 @@ export default async function ClientDetailPage({
                 const metrics = projectMetrics.get(p.id) ?? {
                   attention: 0,
                   unread: 0,
-                  currentStageState: null,
-                  overdue: false,
+                  approvals: 0,
                 };
+                const projectInboxBase = `/portal/admin/inbox?clientId=${client.id}&projectId=${p.id}`;
 
                 return (
                   <li
@@ -797,46 +789,45 @@ export default async function ClientDetailPage({
                         {p.is_public_portfolio ? (
                           <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
                         ) : null}
-                        {metrics.currentStageState === 'in_review' ? (
-                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 text-[var(--accent)]">
-                            {locale === 'ru' ? 'Review' : 'Review'}
-                          </span>
-                        ) : null}
-                        {metrics.currentStageState === 'changes_requested' ||
-                        metrics.currentStageState === 'pending' ||
-                        metrics.currentStageState === 'client_approved' ? (
-                          <span className="border border-[var(--hairline)] px-2 py-1 text-[var(--foreground)]/65">
-                            {locale === 'ru' ? 'Studio' : 'Studio'}
-                          </span>
-                        ) : null}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Link
+                          href={projectInboxBase}
+                          className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                        >
+                          {locale === 'ru' ? 'Inbox →' : 'Inbox →'}
+                        </Link>
                         {metrics.attention > 0 ? (
-                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 text-[var(--accent)]">
+                          <Link
+                            href={`${projectInboxBase}&filter=attention`}
+                            className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]"
+                          >
                             {locale === 'ru'
                               ? `Внимание ${metrics.attention}`
                               : `Attention ${metrics.attention}`}
-                          </span>
+                          </Link>
                         ) : null}
                         {metrics.unread > 0 ? (
-                          <span className="border border-[var(--hairline)] px-2 py-1 text-[var(--foreground)]/65">
+                          <Link
+                            href={`${projectInboxBase}&filter=unread`}
+                            className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60"
+                          >
                             {locale === 'ru'
                               ? `Unread ${metrics.unread}`
                               : `Unread ${metrics.unread}`}
-                          </span>
+                          </Link>
                         ) : null}
-                        {metrics.overdue ? (
-                          <span className="border border-[var(--accent)] px-2 py-1 text-[var(--accent)]">
-                            {locale === 'ru' ? 'Просрочено' : 'Overdue'}
-                          </span>
+                        {metrics.approvals > 0 ? (
+                          <Link
+                            href={`${projectInboxBase}&filter=approvals`}
+                            className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60"
+                          >
+                            {locale === 'ru'
+                              ? `Approval ${metrics.approvals}`
+                              : `Approval ${metrics.approvals}`}
+                          </Link>
                         ) : null}
                       </div>
-                      <p className="max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/58">
-                        {projectWorkflowHint({
-                          locale,
-                          status: p.status,
-                          stageState: metrics.currentStageState,
-                          dueDate: p.due_date,
-                        })}
-                      </p>
                     </div>
                     <Link
                       href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
