@@ -3,110 +3,93 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
 import {
-  getPortalLocale,
-  tFactory,
-  type PortalLocale,
-} from '@/lib/portal/i18n';
-import type { ProjectStatus, StageKind, StageState } from '@/lib/portal/stages';
+  loadProjectActivity,
+  type PortalInboxItem,
+} from '@/lib/portal/inbox';
 
-interface ProjectRow {
-  id: string;
-  title: string;
-  status: ProjectStatus;
-  due_date: string | null;
+function payloadString(payload: Record<string, unknown>, key: string) {
+  const value = payload[key];
+  return typeof value === 'string' ? value : null;
 }
 
-interface StageLookupRow {
-  project_id: string;
-  kind: StageKind;
-  title: string;
-  state: StageState;
+function formatActivityDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
 }
 
-function projectStatusSummary(args: {
-  locale: PortalLocale;
-  project: ProjectRow;
-  currentStage: StageLookupRow | null;
-}) {
-  const { locale, project, currentStage } = args;
+function latestActivityTitle(item: PortalInboxItem, locale: PortalLocale) {
+  const stage =
+    payloadString(item.payload, 'stage_kind') ??
+    payloadString(item.payload, 'to_stage') ??
+    payloadString(item.payload, 'from_stage');
+  const decision = payloadString(item.payload, 'decision');
 
-  if (project.status === 'archived') {
-    return {
-      tone: 'default' as const,
-      label: locale === 'ru' ? 'Завершён' : 'Wrapped',
-      hint:
-        locale === 'ru'
-          ? 'Финальные материалы уже собраны. Можно открыть проект и вернуться к файлам или договорённостям.'
-          : 'Delivery is wrapped. Open the project anytime to revisit files or final notes.',
-    };
-  }
-
-  if (!currentStage) {
-    return {
-      tone: 'default' as const,
-      label: locale === 'ru' ? 'Обновляется' : 'Updating',
-      hint:
-        locale === 'ru'
-          ? 'Статус проекта уже обновлён, а следующая стадия скоро появится внутри проекта.'
-          : 'The project status already moved forward and the next stage will appear inside the project shortly.',
-    };
-  }
-
-  switch (currentStage.state) {
-    case 'in_review':
-      return {
-        tone: 'accent' as const,
-        label: locale === 'ru' ? 'Нужно твоё ревью' : 'Needs your review',
-        hint:
-          locale === 'ru'
-            ? `${currentStage.title} готов к проверке. Открой проект, чтобы утвердить этап или запросить правки.`
-            : `${currentStage.title} is ready for review. Open the project to approve the stage or request changes.`,
-      };
-    case 'client_approved':
-      return {
-        tone: 'default' as const,
-        label: locale === 'ru' ? 'Утверждение записано' : 'Approval recorded',
-        hint:
-          locale === 'ru'
-            ? 'Твоё подтверждение уже сохранено. Студия сейчас подтверждает передачу и двигает проект дальше.'
-            : 'Your approval is already recorded. The studio is confirming the handoff and moving the project forward.',
-      };
-    case 'changes_requested':
-      return {
-        tone: 'default' as const,
-        label: locale === 'ru' ? 'Студия вносит правки' : 'Studio revising',
-        hint:
-          locale === 'ru'
-            ? 'Правки уже зафиксированы. Следующий апдейт появится после нового раунда.'
-            : 'Your change requests are already logged. The next update will arrive after the next revision round.',
-      };
-    case 'approved':
-      return {
-        tone: 'default' as const,
-        label: locale === 'ru' ? 'Этап закрыт' : 'Stage complete',
-        hint:
-          locale === 'ru'
-            ? 'Текущий этап уже закрыт. Студия готовит следующий шаг проекта.'
-            : 'The current stage is complete. The studio is preparing the next project step.',
-      };
-    case 'pending':
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `Этап ${stage ?? 'текущий'} готов к ревью`
+        : `${stage ?? 'Current stage'} is ready for review`;
+    case 'approval_decided':
+      return decision === 'changes_requested'
+        ? locale === 'ru'
+          ? 'По этапу зафиксированы правки'
+          : 'Changes were requested on the stage'
+        : locale === 'ru'
+          ? 'Твое approval уже записано'
+          : 'Your approval is already recorded';
+    case 'comment_added':
+      return item.actorRole === 'admin'
+        ? locale === 'ru'
+          ? 'Студия оставила новый комментарий'
+          : 'The studio left a new comment'
+        : locale === 'ru'
+          ? 'В треде появился новый комментарий'
+          : 'There is a new comment in the thread';
+    case 'file_uploaded':
+      return item.actorRole === 'admin'
+        ? locale === 'ru'
+          ? 'Студия загрузила новый файл'
+          : 'The studio uploaded a new file'
+        : locale === 'ru'
+          ? 'В проект добавлен новый файл'
+          : 'A new file was added to the project';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `Проект переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
+        : `The project moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
+    case 'project_created':
+      return locale === 'ru' ? 'Проект создан' : 'Project created';
     default:
-      return {
-        tone: 'default' as const,
-        label: locale === 'ru' ? 'Студия работает' : 'Studio working',
-        hint:
-          locale === 'ru'
-            ? `${currentStage.title} сейчас в работе. От тебя ничего не требуется, пока этап не перейдёт в ревью.`
-            : `${currentStage.title} is currently in progress. You do not need to do anything until the stage moves into review.`,
-      };
+      return locale === 'ru' ? 'Есть новое обновление' : 'There is a new update';
   }
 }
 
-function summaryToneClasses(tone: 'default' | 'accent') {
-  return tone === 'accent'
-    ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]'
-    : 'border-[var(--hairline)] text-[var(--foreground)]/65';
+function fallbackProjectHint(args: {
+  locale: PortalLocale;
+  status: string;
+  dueDate: string | null;
+}) {
+  const { locale, status, dueDate } = args;
+
+  if (status === 'archived') {
+    return locale === 'ru'
+      ? 'Проект уже завершён. Здесь остаётся доступ к финальным материалам и всей истории обсуждений.'
+      : 'This project is already wrapped. You can still return here for final assets and the full delivery history.';
+  }
+
+  if (dueDate) {
+    return locale === 'ru'
+      ? `Следующий ориентир по сроку — ${dueDate}. Когда появится новый review или файл, это будет видно здесь.`
+      : `The next timing checkpoint is ${dueDate}. As soon as a new review or file lands, it will show up here.`;
+  }
+
+  return locale === 'ru'
+    ? 'Проект движется по pipeline. Следующее заметное обновление появится в этой строке.'
+    : 'The project is moving through the pipeline. The next meaningful update will appear in this row.';
 }
 
 // Client landing: list all projects visible to the signed-in client
@@ -133,38 +116,32 @@ export default async function ClientProjectsPage() {
     .select('id, title, status, due_date')
     .order('created_at', { ascending: false });
 
-  const projects = (projectsRaw ?? []) as ProjectRow[];
-  const projectIds = projects.map((project) => project.id);
+  const activityByProject = new Map<
+    string,
+    { item: PortalInboxItem | null; status: 'ready' | 'not_ready' | 'error' }
+  >();
 
-  const { data: stagesRaw } = projectIds.length
-    ? await supabase
-        .from('stages')
-        .select('project_id, kind, title, state')
-        .in('project_id', projectIds)
-    : { data: [] as StageLookupRow[] };
+  await Promise.all(
+    (projects ?? []).map(async (project) => {
+      const result = await loadProjectActivity({
+        supabase,
+        projectId: project.id,
+        limit: 1,
+      });
 
-  const stages = (stagesRaw ?? []) as StageLookupRow[];
-  const currentStageByProject = new Map<string, StageLookupRow>();
+      activityByProject.set(project.id, {
+        item: result.items[0] ?? null,
+        status: result.status,
+      });
+    })
+  );
 
-  for (const project of projects) {
-    if (project.status === 'archived') continue;
-    const currentStage = stages.find(
-      (stage) =>
-        stage.project_id === project.id &&
-        stage.kind === (project.status as StageKind)
-    );
-    if (currentStage) currentStageByProject.set(project.id, currentStage);
-  }
-
-  const needsReviewCount = projects.filter((project) => {
-    const currentStage = currentStageByProject.get(project.id);
-    return currentStage?.state === 'in_review';
-  }).length;
-  const inProgressCount = projects.filter((project) => {
-    const currentStage = currentStageByProject.get(project.id);
-    return currentStage?.state === 'pending' || currentStage?.state === 'changes_requested';
-  }).length;
-  const wrappedCount = projects.filter((project) => project.status === 'archived').length;
+  const hasActivityPreview = [...activityByProject.values()].some(
+    (entry) => entry.item != null
+  );
+  const hasNotReadyActivity = [...activityByProject.values()].some(
+    (entry) => entry.status === 'not_ready'
+  );
 
   return (
     <>
@@ -183,33 +160,18 @@ export default async function ClientProjectsPage() {
         {t('client.subtitle')}
       </p>
 
-      {(projects ?? []).length > 0 ? (
-        <section className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="border border-[var(--accent)] bg-[var(--accent)]/8 p-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--accent)]">
-              {locale === 'ru' ? 'Ждут твоего ревью' : 'Waiting for your review'}
-            </p>
-            <p className="mt-2 font-display text-[36px] leading-none tracking-[-0.04em]">
-              {needsReviewCount}
-            </p>
-          </div>
-          <div className="border border-[var(--hairline)] p-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
-              {locale === 'ru' ? 'Студия в работе' : 'Studio in progress'}
-            </p>
-            <p className="mt-2 font-display text-[36px] leading-none tracking-[-0.04em]">
-              {inProgressCount}
-            </p>
-          </div>
-          <div className="border border-[var(--hairline)] p-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
-              {locale === 'ru' ? 'Завершено' : 'Wrapped'}
-            </p>
-            <p className="mt-2 font-display text-[36px] leading-none tracking-[-0.04em]">
-              {wrappedCount}
-            </p>
-          </div>
-        </section>
+      {hasNotReadyActivity ? (
+        <div className="mb-8 border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
+          {locale === 'ru'
+            ? 'Лента быстрых обновлений начнёт показываться здесь после активации portal events на сервере.'
+            : 'Quick activity previews will start showing here once portal events are active on the server.'}
+        </div>
+      ) : hasActivityPreview ? (
+        <div className="mb-8 border border-[var(--hairline)] p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/65">
+          {locale === 'ru'
+            ? 'Теперь в списке проектов сразу видно последнее заметное обновление по каждому проекту — без необходимости открывать каждый по очереди.'
+            : 'The project list now shows the latest meaningful update for each project, so you do not need to open them one by one just to see what changed.'}
+        </div>
       ) : null}
 
       <div className="border-t border-[var(--hairline)]">
@@ -219,49 +181,43 @@ export default async function ClientProjectsPage() {
           </p>
         ) : (
           <ul>
-            {projects.map((project) => {
-              const currentStage = currentStageByProject.get(project.id) ?? null;
-              const summary = projectStatusSummary({
-                locale,
-                project,
-                currentStage,
-              });
+            {projects!.map((p) => {
+              const latest = activityByProject.get(p.id);
+              const latestItem = latest?.item ?? null;
 
               return (
                 <li
-                  key={project.id}
-                  className="flex flex-col gap-4 border-b border-[var(--hairline)] py-5 lg:flex-row lg:items-center lg:justify-between"
+                  key={p.id}
+                  className="flex items-center justify-between gap-6 border-b border-[var(--hairline)] py-5"
                 >
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
-                        {project.title}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
+                      {p.title}
+                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
+                      {p.status}
+                      {p.due_date ? ` · ${t('admin.project.due')} ${p.due_date}` : ''}
+                    </p>
+                    <div className="mt-3 flex flex-col gap-1">
+                      <p className="text-[13px] leading-[1.6] text-[var(--foreground)]/72">
+                        {latestItem
+                          ? latestActivityTitle(latestItem, locale)
+                          : fallbackProjectHint({
+                              locale,
+                              status: p.status,
+                              dueDate: p.due_date,
+                            })}
                       </p>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/45">
-                        {project.status}
-                        {project.due_date
-                          ? ` · ${t('admin.project.due')} ${project.due_date}`
-                          : ''}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <span
-                        className={`w-fit border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] ${summaryToneClasses(
-                          summary.tone
-                        )}`}
-                      >
-                        {summary.label}
-                      </span>
-                      <p className="max-w-2xl text-[13px] leading-[1.7] text-[var(--foreground)]/60">
-                        {summary.hint}
-                      </p>
+                      {latestItem ? (
+                        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/38">
+                          {formatActivityDate(locale, latestItem.createdAt)}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
-
                   <Link
-                    href={`/portal/client/${project.id}`}
-                    className="w-fit font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                    href={`/portal/client/${p.id}`}
+                    className="shrink-0 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
                   >
                     {t('common.open')} →
                   </Link>
