@@ -28,6 +28,22 @@ interface ClientDetailSearch {
   test_link_email?: string;
 }
 
+interface ProjectListRow {
+  id: string;
+  title: string;
+  status: string;
+  nda_until: string | null;
+  is_public_portfolio: boolean;
+  due_date: string | null;
+  is_under_nda: boolean;
+}
+
+interface StageLookupRow {
+  project_id: string;
+  kind: string;
+  state: string;
+}
+
 function payloadString(payload: Record<string, unknown>, key: string) {
   const value = payload[key];
   return typeof value === 'string' ? value : null;
@@ -113,6 +129,49 @@ function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
   }
 }
 
+function projectWorkflowHint(args: {
+  locale: PortalLocale;
+  status: string;
+  stageState: string | null;
+  dueDate: string | null;
+}) {
+  const { locale, status, stageState, dueDate } = args;
+
+  if (status === 'archived') {
+    return locale === 'ru'
+      ? 'Проект уже завершён. Это хорошая точка входа в финальные материалы и всю историю взаимодействия.'
+      : 'The project is already wrapped. This row now works as a quick entry point to final materials and the full delivery history.';
+  }
+
+  if (stageState === 'in_review') {
+    return locale === 'ru'
+      ? 'Сейчас у клиента есть deliverable на ревью — отсюда удобно сразу открыть проект и проверить feedback.'
+      : 'The client currently has a deliverable out for review — this is a good row to open first and inspect feedback.';
+  }
+
+  if (stageState === 'changes_requested') {
+    return locale === 'ru'
+      ? 'По текущему этапу уже пришли правки, значит студии может понадобиться быстрое follow-up действие.'
+      : 'Revisions already came in on the current stage, so this project may need a quicker studio follow-up.';
+  }
+
+  if (stageState === 'client_approved') {
+    return locale === 'ru'
+      ? 'Клиент уже утвердил этап. Осталось только закрыть handoff и двинуть проект дальше.'
+      : 'The client has already approved the current stage. The remaining move is the internal handoff into the next step.';
+  }
+
+  if (dueDate) {
+    return locale === 'ru'
+      ? `Следующий срок по проекту — ${dueDate}. Это удобный ориентир для контроля нагрузки по клиенту.`
+      : `The next project checkpoint is ${dueDate}. Use it as a quick timing anchor when scanning this client.`;
+  }
+
+  return locale === 'ru'
+    ? 'Проект идёт по обычному pipeline и пока не сигнализирует о срочном действии.'
+    : 'This project is moving through the normal pipeline and is not signalling an urgent action right now.';
+}
+
 function summaryCard(args: {
   label: string;
   value: number;
@@ -181,11 +240,21 @@ async function createProjectAction(formData: FormData) {
 
   const clientId = String(formData.get('client_id') ?? '');
   const title = String(formData.get('title') ?? '').trim();
+  const template = String(formData.get('template') ?? 'general').trim();
+  const briefInput = String(formData.get('brief') ?? '').trim();
   if (!clientId || !title) return;
+
+  const preset = resolveProjectTemplatePreset(template);
 
   const { data, error } = await supabase
     .from('projects')
-    .insert({ client_id: clientId, title })
+    .insert({
+      client_id: clientId,
+      title,
+      brief: briefInput || preset.brief,
+      due_date: dueDateFromNow(preset.dueDays),
+      currency: preset.currency,
+    })
     .select('id')
     .single();
   if (error || !data) throw new Error(error?.message ?? 'Failed to create project');
@@ -196,7 +265,7 @@ async function createProjectAction(formData: FormData) {
     clientId,
     actorId: user.id,
     type: 'project_created',
-    payload: { title },
+    payload: { title, template },
   });
 
   revalidatePath(`/portal/admin/clients/${clientId}`);
@@ -350,12 +419,29 @@ export default async function ClientDetailPage({
     .order('created_at', { ascending: false });
 
   const today = new Date().toISOString().slice(0, 10);
-  const projects = (projectRows ?? []).map((p) => ({
+  const projects: ProjectListRow[] = (projectRows ?? []).map((p) => ({
     ...p,
     is_under_nda:
       p.nda_until != null &&
       (p.nda_until === 'infinity' || p.nda_until > today),
   }));
+
+  const projectIds = projects.map((project) => project.id);
+  const { data: stageRows } = projectIds.length
+    ? await supabase
+        .from('stages')
+        .select('project_id, kind, state')
+        .in('project_id', projectIds)
+    : { data: [] as StageLookupRow[] };
+
+  const currentStageByProject = new Map<string, StageLookupRow>();
+  for (const project of projects) {
+    if (project.status === 'archived') continue;
+    const stage = (stageRows ?? []).find(
+      (row) => row.project_id === project.id && row.kind === project.status
+    );
+    if (stage) currentStageByProject.set(project.id, stage);
+  }
 
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const clientEvents = inbox.items
@@ -457,7 +543,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
           value: clientNeedsAttention,
-          href: '/portal/admin/inbox?filter=attention',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=attention`,
           tone: 'accent',
           caption:
             locale === 'ru'
@@ -467,7 +553,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Непрочитано' : 'Unread',
           value: clientUnread,
-          href: '/portal/admin/inbox?filter=unread',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=unread`,
           caption:
             locale === 'ru'
               ? 'Непросмотренная активность по проектам этого клиента.'
@@ -476,7 +562,7 @@ export default async function ClientDetailPage({
         {summaryCard({
           label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
           value: clientApprovals,
-          href: '/portal/admin/inbox?filter=approvals',
+          href: `/portal/admin/inbox?clientId=${client.id}&filter=approvals`,
           caption:
             locale === 'ru'
               ? 'Ревью и подтверждения, относящиеся к этому клиенту.'
@@ -514,7 +600,7 @@ export default async function ClientDetailPage({
             </p>
           </div>
           <Link
-            href="/portal/admin/inbox"
+            href={`/portal/admin/inbox?clientId=${client.id}`}
             className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
@@ -758,23 +844,93 @@ export default async function ClientDetailPage({
       </section>
 
       <section>
-        <h2 className="mb-4 font-display text-[22px] font-medium tracking-[-0.01em]">
-          {t('admin.client.newProject')}
-        </h2>
-        <form action={createProjectAction} className="flex flex-col gap-4 sm:flex-row">
+        <div className="mb-4 flex flex-col gap-2">
+          <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+            {t('admin.client.newProject')}
+          </h2>
+          <p className="max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+            {locale === 'ru'
+              ? 'Выбери шаблон запуска — он сразу проставит стартовый brief, due date и валюту. Всё это можно потом поправить уже внутри проекта.'
+              : 'Pick a kickoff template — it will immediately set a starter brief, due date, and currency. Everything can still be edited inside the project right after creation.'}
+          </p>
+        </div>
+        <form action={createProjectAction} className="flex flex-col gap-4 border border-[var(--hairline)] p-5">
           <input type="hidden" name="client_id" value={client.id} />
-          <input
-            required
-            name="title"
-            placeholder={t('admin.client.newProject.title')}
-            className="flex-1 border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
-          />
-          <button
-            type="submit"
-            className="border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--background)]"
-          >
-            + {t('admin.client.newProject.create')}
-          </button>
+          <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <label className="flex flex-col gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                {t('admin.client.newProject.title')}
+              </span>
+              <input
+                required
+                name="title"
+                placeholder={t('admin.client.newProject.title')}
+                className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+                {locale === 'ru' ? 'Шаблон запуска' : 'Kickoff template'}
+              </span>
+              <select
+                name="template"
+                defaultValue="general"
+                className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] outline-none focus:border-[var(--accent)]"
+              >
+                {Object.entries(PROJECT_TEMPLATE_PRESETS).map(([key, preset]) => (
+                  <option key={key} value={key} className="bg-[var(--background)]">
+                    {preset.label[locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label className="flex flex-col gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55">
+              {t('admin.client.newProject.brief')}
+            </span>
+            <textarea
+              name="brief"
+              rows={4}
+              placeholder={locale === 'ru'
+                ? 'Если оставить пустым, подтянется brief из выбранного шаблона.'
+                : 'Leave empty to use the starter brief from the selected template.'}
+              className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] leading-[1.6] outline-none focus:border-[var(--accent)]"
+            />
+          </label>
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {Object.entries(PROJECT_TEMPLATE_PRESETS).map(([key, preset]) => (
+              <div key={key} className="border border-[var(--hairline)] p-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/55">
+                  {preset.label[locale]}
+                </p>
+                <p className="mt-2 text-[12px] leading-[1.6] text-[var(--foreground)]/60">
+                  {preset.hint[locale]}
+                </p>
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                  {locale === 'ru'
+                    ? `Due +${preset.dueDays}d · ${preset.currency}`
+                    : `Due +${preset.dueDays}d · ${preset.currency}`}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[12px] leading-[1.6] text-[var(--foreground)]/45">
+              {locale === 'ru'
+                ? 'После создания откроется страница проекта, где можно сразу поправить meta, NDA и stage notes.'
+                : 'Right after creation you will land on the project page, where meta, NDA, and stage notes can be refined immediately.'}
+            </p>
+            <button
+              type="submit"
+              className="border border-[var(--accent)] bg-[var(--accent)] px-6 py-3 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--background)]"
+            >
+              + {t('admin.client.newProject.create')}
+            </button>
+          </div>
         </form>
       </section>
     </>
