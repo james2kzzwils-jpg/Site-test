@@ -4,20 +4,12 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
 import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
-import {
-  loadAdminInbox,
-  type PortalInboxItem,
-} from '@/lib/portal/inbox';
-import type {
-  ProjectStatus,
-  StageKind,
-  StageState,
-} from '@/lib/portal/stages';
+import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
+import type { ProjectStatus, StageKind, StageState } from '@/lib/portal/stages';
 
 interface ProjectRow {
   id: string;
   client_id: string;
-  title: string;
   status: ProjectStatus;
   due_date: string | null;
 }
@@ -141,7 +133,7 @@ export default async function AdminClientsPage() {
 
   const { data: projectsRaw } = await supabase
     .from('projects')
-    .select('id, client_id, title, status, due_date')
+    .select('id, client_id, status, due_date')
     .order('created_at', { ascending: false });
 
   const projects = (projectsRaw ?? []) as ProjectRow[];
@@ -160,34 +152,15 @@ export default async function AdminClientsPage() {
 
   for (const project of projects) {
     if (project.status === 'archived') continue;
+
     const currentStage = stages.find(
       (stage) =>
         stage.project_id === project.id &&
         stage.kind === (project.status as StageKind)
     );
+
     if (currentStage) currentStageByProject.set(project.id, currentStage);
   }
-
-  const waitingOnClient = projects.filter((project) => {
-    const currentStage = currentStageByProject.get(project.id);
-    return currentStage?.state === 'in_review';
-  }).length;
-
-  const waitingOnStudio = projects.filter((project) => {
-    const currentStage = currentStageByProject.get(project.id);
-    return (
-      currentStage?.state === 'pending' ||
-      currentStage?.state === 'changes_requested' ||
-      currentStage?.state === 'client_approved'
-    );
-  }).length;
-
-  const overdueProjects = projects.filter(
-    (project) =>
-      project.status !== 'archived' &&
-      project.due_date != null &&
-      project.due_date < today
-  ).length;
 
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const needsAttention = inbox.items.filter(isActionRequired).length;
@@ -197,8 +170,48 @@ export default async function AdminClientsPage() {
 
   const countsByClient = new Map<
     string,
-    { attention: number; unread: number; approvals: number }
+    {
+      attention: number;
+      unread: number;
+      approvals: number;
+      waitingOnClient: number;
+      waitingOnStudio: number;
+      overdue: number;
+    }
   >();
+
+  for (const project of projects) {
+    if (!project.client_id) continue;
+
+    const current = countsByClient.get(project.client_id) ?? {
+      attention: 0,
+      unread: 0,
+      approvals: 0,
+      waitingOnClient: 0,
+      waitingOnStudio: 0,
+      overdue: 0,
+    };
+
+    const currentStage = currentStageByProject.get(project.id);
+
+    if (currentStage?.state === 'in_review') current.waitingOnClient += 1;
+    if (
+      currentStage?.state === 'pending' ||
+      currentStage?.state === 'changes_requested' ||
+      currentStage?.state === 'client_approved'
+    ) {
+      current.waitingOnStudio += 1;
+    }
+    if (
+      project.status !== 'archived' &&
+      project.due_date != null &&
+      project.due_date < today
+    ) {
+      current.overdue += 1;
+    }
+
+    countsByClient.set(project.client_id, current);
+  }
 
   for (const item of inbox.items) {
     if (!item.clientId) continue;
@@ -207,6 +220,9 @@ export default async function AdminClientsPage() {
       attention: 0,
       unread: 0,
       approvals: 0,
+      waitingOnClient: 0,
+      waitingOnStudio: 0,
+      overdue: 0,
     };
 
     if (isActionRequired(item)) current.attention += 1;
@@ -360,6 +376,9 @@ export default async function AdminClientsPage() {
                 attention: 0,
                 unread: 0,
                 approvals: 0,
+                waitingOnClient: 0,
+                waitingOnStudio: 0,
+                overdue: 0,
               };
 
               return (
@@ -396,6 +415,27 @@ export default async function AdminClientsPage() {
                           {locale === 'ru'
                             ? `Approve ${counts.approvals}`
                             : `Approvals ${counts.approvals}`}
+                        </span>
+                      ) : null}
+                      {counts.waitingOnClient > 0 ? (
+                        <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                          {locale === 'ru'
+                            ? `Ждут клиента ${counts.waitingOnClient}`
+                            : `Client review ${counts.waitingOnClient}`}
+                        </span>
+                      ) : null}
+                      {counts.waitingOnStudio > 0 ? (
+                        <span className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60">
+                          {locale === 'ru'
+                            ? `В работе ${counts.waitingOnStudio}`
+                            : `Studio ${counts.waitingOnStudio}`}
+                        </span>
+                      ) : null}
+                      {counts.overdue > 0 ? (
+                        <span className="border border-[var(--accent)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                          {locale === 'ru'
+                            ? `Просрочено ${counts.overdue}`
+                            : `Overdue ${counts.overdue}`}
                         </span>
                       ) : null}
                     </div>
