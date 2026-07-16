@@ -111,7 +111,7 @@ export default async function ClientProjectsPage() {
     .maybeSingle();
   if (profile?.role === 'admin') redirect('/portal/admin');
 
-  const { data: projects } = await supabase
+  const { data: projectsRaw } = await supabase
     .from('projects')
     .select('id, title, status, due_date')
     .order('created_at', { ascending: false });
@@ -156,7 +156,7 @@ export default async function ClientProjectsPage() {
       <h1 className="mb-3 font-display text-[clamp(2rem,4.5vw,3rem)] font-medium leading-[1.05] tracking-[-0.03em]">
         {t('client.title')}
       </h1>
-      <p className="mb-10 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
+      <p className="mb-8 text-[14px] leading-[1.7] text-[var(--foreground)]/55">
         {t('client.subtitle')}
       </p>
 
@@ -175,7 +175,7 @@ export default async function ClientProjectsPage() {
       ) : null}
 
       <div className="border-t border-[var(--hairline)]">
-        {(projects ?? []).length === 0 ? (
+        {projects.length === 0 ? (
           <p className="py-10 font-mono text-[11px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
             {t('client.empty')}
           </p>

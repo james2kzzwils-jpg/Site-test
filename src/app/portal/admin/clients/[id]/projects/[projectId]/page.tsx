@@ -21,6 +21,8 @@ import {
 } from '@/lib/portal/stages';
 import {
   advanceStageAction,
+  confirmAndAdvanceAction,
+  navigateStageAction,
   resetProjectAction,
   setStageStateAction,
   togglePublishAction,
@@ -79,6 +81,14 @@ function isActionRequired(item: PortalInboxItem) {
     return true;
   }
   return false;
+}
+
+function isPendingApproval(item: PortalInboxItem) {
+  const decision = payloadString(item.payload, 'decision');
+  return (
+    item.type === 'approval_requested' ||
+    (item.type === 'approval_decided' && decision === 'approved')
+  );
 }
 
 function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
@@ -169,6 +179,21 @@ function activityHint(item: PortalInboxItem, locale: PortalLocale) {
       return locale === 'ru'
         ? `${actor} обновил активность проекта.`
         : `${actor} updated project activity.`;
+  }
+}
+
+function stageStateLabel(locale: PortalLocale, state: StageRow['state']) {
+  switch (state) {
+    case 'pending':
+      return locale === 'ru' ? 'студия в работе' : 'studio in progress';
+    case 'in_review':
+      return locale === 'ru' ? 'ждёт клиента' : 'waiting on client';
+    case 'changes_requested':
+      return locale === 'ru' ? 'нужны правки' : 'changes requested';
+    case 'client_approved':
+      return locale === 'ru' ? 'клиент утвердил' : 'client approved';
+    case 'approved':
+      return locale === 'ru' ? 'утверждено' : 'approved';
   }
 }
 
@@ -271,6 +296,74 @@ export default async function AdminProjectDetailPage({
   )
     ? selectedCurrency
     : 'USD';
+  const projectInboxBase = `/portal/admin/inbox?clientId=${id}&projectId=${project.id}`;
+  const projectNeedsAttention = activity.items.filter(isActionRequired).length;
+  const projectUnread = activity.items.filter((item) => item.readAt == null).length;
+  const projectApprovals = activity.items.filter(isPendingApproval).length;
+
+  const currentStage =
+    projectStatus === 'archived'
+      ? null
+      : stages.find((stage) => stage.kind === (projectStatus as StageKind)) ?? null;
+  const currentStageIndex = currentStage
+    ? STAGE_ORDER.indexOf(currentStage.kind as StageKind)
+    : -1;
+  const previousStage =
+    currentStageIndex > 0
+      ? stages.find((stage) => stage.kind === STAGE_ORDER[currentStageIndex - 1]) ?? null
+      : null;
+  const nextStage =
+    currentStageIndex >= 0 && currentStageIndex < STAGE_ORDER.length - 1
+      ? stages.find((stage) => stage.kind === STAGE_ORDER[currentStageIndex + 1]) ?? null
+      : null;
+
+  const stagePanelTitle = !currentStage
+    ? locale === 'ru'
+      ? 'Проект завершён'
+      : 'Project wrapped'
+    : currentStage.state === 'pending'
+      ? locale === 'ru'
+        ? `Сейчас студия готовит этап ${currentStage.title}`
+        : `Studio is preparing ${currentStage.title}`
+      : currentStage.state === 'in_review'
+        ? locale === 'ru'
+          ? `${currentStage.title} отправлен клиенту на ревью`
+          : `${currentStage.title} is out for client review`
+        : currentStage.state === 'changes_requested'
+          ? locale === 'ru'
+            ? `По ${currentStage.title} пришли правки`
+            : `${currentStage.title} needs revision work`
+          : currentStage.state === 'client_approved'
+            ? locale === 'ru'
+              ? `Клиент утвердил ${currentStage.title}`
+              : `Client approved ${currentStage.title}`
+            : locale === 'ru'
+              ? `${currentStage.title} готов к переходу дальше`
+              : `${currentStage.title} is ready to move forward`;
+
+  const stagePanelHint = !currentStage
+    ? locale === 'ru'
+      ? 'Проект уже закрыт. Можно вернуться на предыдущий этап только если нужно переоткрыть работу.'
+      : 'The project is already wrapped. You only need to step back if work must be reopened.'
+    : currentStage.state === 'pending'
+      ? locale === 'ru'
+        ? 'Когда текущий deliverable готов, одним действием отправь этап клиенту на review. Если нужно, можно быстро прыгнуть вперёд или назад по pipeline.'
+        : 'Once the current deliverable is ready, send the stage to the client for review in one step. You can also jump backward or forward in the pipeline if needed.'
+      : currentStage.state === 'in_review'
+        ? locale === 'ru'
+          ? 'Сейчас мяч у клиента. Админу не нужно открывать лишние блоки: отсюда можно быстро вернуть этап в работу или зафиксировать, что пошли правки.'
+          : 'The ball is with the client right now. From here the admin can quickly pull the stage back into production or mark that revision work started.'
+        : currentStage.state === 'changes_requested'
+          ? locale === 'ru'
+            ? 'Клиент уже дал feedback. Когда команда снова собирает deliverable, верни этап в studio work или сразу повторно отправь на review.'
+            : 'The client already left feedback. Once the team starts iterating again, move the stage back into studio work or resend it for review right away.'
+          : currentStage.state === 'client_approved'
+            ? locale === 'ru'
+              ? `Осталось только подтвердить handoff и перевести проект в ${nextStage?.title ?? 'следующий этап'}.`
+              : `All that remains is confirming the handoff and moving the project into ${nextStage?.title ?? 'the next stage'}.`
+            : locale === 'ru'
+              ? 'Текущий этап уже отмечен как approved. Можно сразу перевести проект дальше.'
+              : 'The current stage is already marked approved. You can move the project forward immediately.';
 
   return (
     <>
@@ -311,39 +404,282 @@ export default async function AdminProjectDetailPage({
 
       <StageStepper stages={stages} projectStatus={projectStatus} />
 
-      <section className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto] lg:items-start">
-        <div className="flex flex-col gap-3">
-          <h2 className="font-display text-[18px] font-medium tracking-[-0.01em]">
-            {t('progress.title')}
-          </h2>
-          <p className="max-w-md text-[13px] leading-[1.7] text-[var(--foreground)]/55">
-            {t('progress.help')}
-          </p>
+      <section className="mb-12 border border-[var(--hairline)] p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex max-w-3xl flex-col gap-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+              <span className="text-[var(--accent)]">◆</span>{' '}
+              {locale === 'ru' ? 'Stage action panel' : 'Stage action panel'}
+            </p>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {stagePanelTitle}
+            </h2>
+            <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {stagePanelHint}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {currentStage ? (
+              <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
+                {stageStateLabel(locale, currentStage.state)}
+              </span>
+            ) : null}
+            {nextStage ? (
+              <span className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55">
+                {locale === 'ru'
+                  ? `Далее ${nextStage.title}`
+                  : `Next ${nextStage.title}`}
+              </span>
+            ) : null}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <form action={advanceStageAction}>
-            <input type="hidden" name="client_id" value={id} />
-            <input type="hidden" name="project_id" value={project.id} />
-            <button
-              type="submit"
-              disabled={projectStatus === 'archived'}
-              className="border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--background)] disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {projectStatus === 'archived'
-                ? t('progress.archived')
-                : projectStatus === 'final'
-                  ? t('progress.finish')
-                  : t('progress.advance')}
-            </button>
-          </form>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {currentStage?.state === 'pending' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="in_review" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--accent)] bg-[var(--accent)] px-4 py-4 text-left text-[var(--background)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Отправить на review' : 'Send for review'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--background)]/85">
+                  {locale === 'ru'
+                    ? 'Клиент сразу увидит, что deliverable готов к просмотру и approval.'
+                    : 'The client immediately sees that the deliverable is ready for review and approval.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'in_review' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="pending" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Вернуть в studio work' : 'Return to studio work'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'Полезно, если review ушёл слишком рано или нужно быстро доработать результат.'
+                    : 'Useful if review went out too early or the team needs to tighten the deliverable first.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'in_review' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="changes_requested" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Зафиксировать правки' : 'Mark changes requested'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'Если feedback уже пришёл вне портала, можно сразу перевести этап в режим правок.'
+                    : 'If feedback already arrived outside the portal, move the stage straight into revisions.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'changes_requested' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="pending" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--accent)] bg-[var(--accent)] px-4 py-4 text-left text-[var(--background)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Вернуть в работу' : 'Resume studio work'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--background)]/85">
+                  {locale === 'ru'
+                    ? 'Основной сценарий после client feedback — команда снова берёт этап в производство.'
+                    : 'This is the default move after client feedback — the team takes the stage back into production.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'changes_requested' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="in_review" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Снова отправить на review' : 'Resend for review'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'Когда правки уже внесены, можно одним кликом вернуть этап клиенту.'
+                    : 'Once revisions are in, one click sends the stage back to the client.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'client_approved' ? (
+            <form action={confirmAndAdvanceAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--accent)] bg-[var(--accent)] px-4 py-4 text-left text-[var(--background)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {nextStage
+                    ? locale === 'ru'
+                      ? `Подтвердить и в ${nextStage.title}`
+                      : `Confirm and move to ${nextStage.title}`
+                    : locale === 'ru'
+                      ? 'Подтвердить и завершить проект'
+                      : 'Confirm and wrap project'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--background)]/85">
+                  {locale === 'ru'
+                    ? 'Самый быстрый путь после client approval: зафиксировать handoff и перевести проект дальше.'
+                    : 'The fastest move after client approval: lock the handoff and move the project forward.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'client_approved' ? (
+            <form action={setStageStateAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="stage_id" value={currentStage.id} />
+              <input type="hidden" name="state" value="pending" />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru' ? 'Переоткрыть в работу' : 'Reopen in studio'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'Если после approval всплыл новый контекст, этап можно быстро вернуть команде.'
+                    : 'If new context appears after approval, the stage can be handed back to the team immediately.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {currentStage?.state === 'approved' ? (
+            <form action={advanceStageAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--accent)] bg-[var(--accent)] px-4 py-4 text-left text-[var(--background)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {nextStage
+                    ? locale === 'ru'
+                      ? `Перевести в ${nextStage.title}`
+                      : `Move into ${nextStage.title}`
+                    : locale === 'ru'
+                      ? 'Завершить проект'
+                      : 'Wrap project'}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--background)]/85">
+                  {locale === 'ru'
+                    ? 'Текущий этап уже approved — осталось только двинуть сам проект по pipeline.'
+                    : 'The current stage is already approved — all that remains is moving the project itself along the pipeline.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {previousStage ? (
+            <form action={navigateStageAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="target_kind" value={previousStage.kind} />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru'
+                    ? `Вернуться к ${previousStage.title}`
+                    : `Step back to ${previousStage.title}`}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'Быстрый rollback без поиска нужного этапа вручную.'
+                    : 'A quick rollback without manually hunting for the right stage.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
+          {nextStage && currentStage?.state !== 'client_approved' && currentStage?.state !== 'approved' ? (
+            <form action={navigateStageAction}>
+              <input type="hidden" name="client_id" value={id} />
+              <input type="hidden" name="project_id" value={project.id} />
+              <input type="hidden" name="target_kind" value={nextStage.kind} />
+              <button
+                type="submit"
+                className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                  {locale === 'ru'
+                    ? `Прыгнуть к ${nextStage.title}`
+                    : `Jump to ${nextStage.title}`}
+                </span>
+                <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                  {locale === 'ru'
+                    ? 'На случай, если этап уже фактически закрыт вне обычного потока и нужно просто синхронизировать статус.'
+                    : 'Useful when the work is effectively done outside the normal flow and the status just needs to catch up.'}
+                </span>
+              </button>
+            </form>
+          ) : null}
+
           <form action={resetProjectAction}>
             <input type="hidden" name="client_id" value={id} />
             <input type="hidden" name="project_id" value={project.id} />
             <button
               type="submit"
-              className="border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              className="flex h-full w-full flex-col items-start gap-2 border border-[var(--hairline)] px-4 py-4 text-left transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
             >
-              {t('progress.reset')}
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em]">
+                {t('progress.reset')}
+              </span>
+              <span className="text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+                {locale === 'ru'
+                  ? 'Полный reset проекта обратно в Discovery, если нужно переоткрыть весь flow.'
+                  : 'Full project reset back to Discovery if the whole workflow has to be reopened.'}
+              </span>
             </button>
           </form>
         </div>
@@ -361,12 +697,38 @@ export default async function AdminProjectDetailPage({
                 : 'Latest events for this project: reviews, comments, file uploads and status changes.'}
             </p>
           </div>
-          <Link
-            href="/portal/admin/inbox"
-            className="self-start border border-[var(--hairline)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-          >
-            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={projectInboxBase}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru' ? 'Все' : 'All'}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=attention`}
+              className="border border-[var(--accent)] bg-[var(--accent)]/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/16"
+            >
+              {locale === 'ru'
+                ? `Внимание ${projectNeedsAttention}`
+                : `Attention ${projectNeedsAttention}`}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=unread`}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru'
+                ? `Unread ${projectUnread}`
+                : `Unread ${projectUnread}`}
+            </Link>
+            <Link
+              href={`${projectInboxBase}&filter=approvals`}
+              className="border border-[var(--hairline)] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            >
+              {locale === 'ru'
+                ? `Approval ${projectApprovals}`
+                : `Approval ${projectApprovals}`}
+            </Link>
+          </div>
         </div>
 
         {activity.status === 'not_ready' ? (
@@ -424,7 +786,15 @@ export default async function AdminProjectDetailPage({
                     {activityActorLabel(item, locale)}
                   </p>
                   <Link
-                    href="/portal/admin/inbox"
+                    href={
+                      isPendingApproval(item)
+                        ? `${projectInboxBase}&filter=approvals`
+                        : isActionRequired(item)
+                          ? `${projectInboxBase}&filter=attention`
+                          : item.readAt == null
+                            ? `${projectInboxBase}&filter=unread`
+                            : projectInboxBase
+                    }
                     className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
                   >
                     {locale === 'ru' ? 'Открыть в inbox →' : 'Open in inbox →'}
@@ -657,13 +1027,7 @@ export default async function AdminProjectDetailPage({
                     ) : null}
                   </div>
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55">
-                    {s.state === 'pending'
-                      ? t('stageState.pending')
-                      : s.state === 'in_review'
-                        ? t('stageState.in_review')
-                        : s.state === 'changes_requested'
-                          ? t('stageState.changes_requested')
-                          : t('stageState.approved')}
+                    {stageStateLabel(locale, s.state)}
                   </span>
                 </div>
 
@@ -708,8 +1072,8 @@ export default async function AdminProjectDetailPage({
                     {/* Admin-only stage transitions. Each button has a
                         clearly-worded label + a one-line hint so it's
                         obvious what happens when it's pressed. The
-                        approve-and-advance step (next stage) lives in
-                        the global Progress Controls panel above. */}
+                        approve-and-advance step now also lives in the
+                        stage action panel above for faster triage. */}
                     <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/45">
                       <span className="text-[var(--accent)]">◆</span>{' '}
                       {t('stageActions.adminLabel')}
