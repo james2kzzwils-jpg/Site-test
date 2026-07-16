@@ -3,8 +3,22 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import PortalHeader from '../_shared/PortalHeader';
 import Breadcrumb from '../_shared/Breadcrumb';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
 import { loadAdminInbox, type PortalInboxItem } from '@/lib/portal/inbox';
+import type { ProjectStatus, StageKind, StageState } from '@/lib/portal/stages';
+
+interface ProjectRow {
+  id: string;
+  client_id: string;
+  status: ProjectStatus;
+  due_date: string | null;
+}
+
+interface StageLookupRow {
+  project_id: string;
+  kind: StageKind;
+  state: StageState;
+}
 
 function payloadString(payload: Record<string, unknown>, key: string) {
   const value = payload[key];
@@ -82,6 +96,35 @@ function summaryCard(args: {
   );
 }
 
+function workflowBucketCard(args: {
+  label: string;
+  value: number;
+  caption: string;
+  tone?: 'default' | 'accent';
+}) {
+  const { label, value, caption, tone = 'default' } = args;
+
+  return (
+    <div
+      className={`border p-4 ${
+        tone === 'accent'
+          ? 'border-[var(--accent)] bg-[var(--accent)]/8'
+          : 'border-[var(--hairline)]'
+      }`}
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+        {label}
+      </p>
+      <p className="mt-2 font-display text-[30px] leading-none tracking-[-0.04em]">
+        {value}
+      </p>
+      <p className="mt-3 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+        {caption}
+      </p>
+    </div>
+  );
+}
+
 // Admin dashboard: list of all clients. RLS guarantees only admins can
 // read these rows, but the middleware redirected non-admins already.
 export default async function AdminClientsPage() {
@@ -105,6 +148,37 @@ export default async function AdminClientsPage() {
     .select('id, name, company, created_at')
     .order('created_at', { ascending: false });
 
+  const { data: projectsRaw } = await supabase
+    .from('projects')
+    .select('id, client_id, status, due_date')
+    .order('created_at', { ascending: false });
+
+  const projects = (projectsRaw ?? []) as ProjectRow[];
+  const projectIds = projects.map((project) => project.id);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data: stagesRaw } = projectIds.length
+    ? await supabase
+        .from('stages')
+        .select('project_id, kind, state')
+        .in('project_id', projectIds)
+    : { data: [] as StageLookupRow[] };
+
+  const stages = (stagesRaw ?? []) as StageLookupRow[];
+  const currentStageByProject = new Map<string, StageLookupRow>();
+
+  for (const project of projects) {
+    if (project.status === 'archived') continue;
+
+    const currentStage = stages.find(
+      (stage) =>
+        stage.project_id === project.id &&
+        stage.kind === (project.status as StageKind)
+    );
+
+    if (currentStage) currentStageByProject.set(project.id, currentStage);
+  }
+
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const needsAttention = inbox.items.filter(isActionRequired).length;
   const unreadCount = inbox.items.filter((item) => item.readAt == null).length;
@@ -113,8 +187,49 @@ export default async function AdminClientsPage() {
 
   const countsByClient = new Map<
     string,
-    { attention: number; unread: number; approvals: number }
+    {
+      attention: number;
+      unread: number;
+      approvals: number;
+      waitingOnClient: number;
+      waitingOnStudio: number;
+      overdue: number;
+    }
   >();
+  const latestByClient = new Map<string, PortalInboxItem>();
+
+  for (const project of projects) {
+    if (!project.client_id) continue;
+
+    const current = countsByClient.get(project.client_id) ?? {
+      attention: 0,
+      unread: 0,
+      approvals: 0,
+      waitingOnClient: 0,
+      waitingOnStudio: 0,
+      overdue: 0,
+    };
+
+    const currentStage = currentStageByProject.get(project.id);
+
+    if (currentStage?.state === 'in_review') current.waitingOnClient += 1;
+    if (
+      currentStage?.state === 'pending' ||
+      currentStage?.state === 'changes_requested' ||
+      currentStage?.state === 'client_approved'
+    ) {
+      current.waitingOnStudio += 1;
+    }
+    if (
+      project.status !== 'archived' &&
+      project.due_date != null &&
+      project.due_date < today
+    ) {
+      current.overdue += 1;
+    }
+
+    countsByClient.set(project.client_id, current);
+  }
 
   for (const item of inbox.items) {
     if (!item.clientId) continue;
@@ -123,6 +238,9 @@ export default async function AdminClientsPage() {
       attention: 0,
       unread: 0,
       approvals: 0,
+      waitingOnClient: 0,
+      waitingOnStudio: 0,
+      overdue: 0,
     };
 
     if (isActionRequired(item)) current.attention += 1;
@@ -130,6 +248,10 @@ export default async function AdminClientsPage() {
     if (isPendingApproval(item)) current.approvals += 1;
 
     countsByClient.set(item.clientId, current);
+
+    if (!latestByClient.has(item.clientId)) {
+      latestByClient.set(item.clientId, item);
+    }
   }
 
   return (
@@ -207,6 +329,55 @@ export default async function AdminClientsPage() {
         })}
       </section>
 
+      <section className="mb-8">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {locale === 'ru' ? 'Workflow buckets' : 'Workflow buckets'}
+            </h2>
+            <p className="mt-2 max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Быстрый operational-срез: где студия ждёт клиента, где команда ещё внутри продакшна и сколько проектов уже выбились по сроку.'
+                : 'A fast operational slice of where the studio is waiting on the client, where work is still in production, and how many live projects are already overdue.'}
+            </p>
+          </div>
+          <Link
+            href="/portal/admin/inbox"
+            className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Открыть inbox →' : 'Open inbox →'}
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Ждут клиента' : 'Waiting on client',
+            value: waitingOnClient,
+            tone: 'accent',
+            caption:
+              locale === 'ru'
+                ? 'Этапы уже отправлены на ревью и ждут утверждения или комментариев клиента.'
+                : 'Stages already handed off for review and currently waiting for client sign-off or feedback.',
+          })}
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Ждут студию' : 'Waiting on studio',
+            value: waitingOnStudio,
+            caption:
+              locale === 'ru'
+                ? 'Проекты, где команда ещё производит апдейт, дорабатывает правки или подтверждает клиентское approve.'
+                : 'Projects where the team is still producing the update, iterating on revisions, or confirming client approval.',
+          })}
+          {workflowBucketCard({
+            label: locale === 'ru' ? 'Просрочены' : 'Overdue',
+            value: overdueProjects,
+            caption:
+              locale === 'ru'
+                ? 'Живые проекты с дедлайном в прошлом. Полезно для ежедневного контроля нагрузки.'
+                : 'Live projects whose due date is already in the past. Useful as a daily load and risk check.',
+          })}
+        </div>
+      </section>
+
       {inbox.status === 'not_ready' ? (
         <div className="mb-8 border border-[var(--accent)] bg-[var(--accent)]/10 p-4 text-[13px] leading-[1.7] text-[var(--foreground)]/75">
           {locale === 'ru'
@@ -227,14 +398,18 @@ export default async function AdminClientsPage() {
                 attention: 0,
                 unread: 0,
                 approvals: 0,
+                waitingOnClient: 0,
+                waitingOnStudio: 0,
+                overdue: 0,
               };
+              const latest = latestByClient.get(c.id);
 
               return (
                 <li
                   key={c.id}
                   className="flex items-center justify-between gap-4 border-b border-[var(--hairline)] py-5"
                 >
-                  <div className="flex flex-col gap-2">
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <p className="font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
                       {c.name}
                     </p>
@@ -265,7 +440,44 @@ export default async function AdminClientsPage() {
                             : `Approvals ${counts.approvals}`}
                         </span>
                       ) : null}
+                      {counts.waitingOnClient > 0 ? (
+                        <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                          {locale === 'ru'
+                            ? `Ждут клиента ${counts.waitingOnClient}`
+                            : `Client review ${counts.waitingOnClient}`}
+                        </span>
+                      ) : null}
+                      {counts.waitingOnStudio > 0 ? (
+                        <span className="border border-[var(--hairline)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/60">
+                          {locale === 'ru'
+                            ? `В работе ${counts.waitingOnStudio}`
+                            : `Studio ${counts.waitingOnStudio}`}
+                        </span>
+                      ) : null}
+                      {counts.overdue > 0 ? (
+                        <span className="border border-[var(--accent)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                          {locale === 'ru'
+                            ? `Просрочено ${counts.overdue}`
+                            : `Overdue ${counts.overdue}`}
+                        </span>
+                      ) : null}
                     </div>
+                    {latest ? (
+                      <div className="flex flex-col gap-1">
+                        <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/62">
+                          {activityTitle(latest, locale)}
+                        </p>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/38">
+                          {formatDate(locale, latest.createdAt)}
+                        </p>
+                      </div>
+                    ) : inbox.status === 'ready' ? (
+                      <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/45">
+                        {locale === 'ru'
+                          ? 'Пока без недавней активности по порталу.'
+                          : 'No recent portal activity yet.'}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-3">
                     {counts.attention > 0 || counts.unread > 0 || counts.approvals > 0 ? (
