@@ -16,15 +16,25 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { SHOW_SHOP } from '@/lib/features';
 
 export default function HomePage() {
-  const { t } = useLanguage();
-  const marqueeItems = [
-    t.brand.name,
-    t.brand.roles[0],
-    t.brand.roles[1],
-    t.brand.roles[2],
-    'Houdini · Blender · After Effects · DaVinci Resolve',
-    '2026',
-  ];
+  const { locale, t } = useLanguage();
+  const marqueeItems =
+    locale === 'ru'
+      ? [
+          'Авторская CGI / Motion Lab',
+          'Premium CGI',
+          'Product Visuals',
+          'Procedural Motion',
+          'Houdini-Driven Workflows',
+          'Remote Worldwide',
+        ]
+      : [
+          'Founder-Led Creative Lab',
+          'Premium CGI',
+          'Product Visuals',
+          'Procedural Motion',
+          'Houdini-Driven Workflows',
+          'Remote Worldwide',
+        ];
 
   return (
     <>

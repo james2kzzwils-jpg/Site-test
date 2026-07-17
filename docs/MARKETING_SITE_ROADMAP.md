@@ -94,6 +94,11 @@ Planned insertion points:
 3. Final CTA
 4. optional secondary use in Services / Process if it supports clarity
 
+### Hero CTA decision
+- primary CTA: **Showreel**
+- secondary CTA: **Start a Project**
+- selected works should be reached by scroll, not by a dedicated hero button
+
 ### Heavy 3D / cinematic motion is not phase one
 The following are **not blocked forever**, but are **not phase-one priorities**:
 - complex hero particle system
