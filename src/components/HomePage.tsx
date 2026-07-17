@@ -2,6 +2,7 @@
 
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
+import TrustStrip from '@/components/TrustStrip';
 import Works from '@/components/Works';
 import Services from '@/components/Services';
 import Shop from '@/components/Shop';
@@ -45,6 +46,8 @@ export default function HomePage() {
         <div className="border-y border-[var(--hairline)] py-5 font-mono text-[12px] uppercase tracking-[0.32em] text-[var(--foreground)]/55">
           <Marquee items={marqueeItems} />
         </div>
+
+        <TrustStrip />
 
         <Works />
         <Services />
