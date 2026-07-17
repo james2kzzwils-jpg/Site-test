@@ -64,6 +64,29 @@ const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 const [showAll, setShowAll] = useState(false);
 const { ref, shown } = useReveal<HTMLElement>();
 
+// Floating cover preview (clan.team-style): a small thumbnail follows
+// the cursor with inertia while a project row is hovered. Desktop only.
+const previewRef = useRef<HTMLDivElement>(null);
+const previewState = useRef({ x: 0, y: 0, tx: 0, ty: 0, visible: false });
+const [previewCover, setPreviewCover] = useState<string | null>(null);
+
+useEffect(() => {
+  let raf = 0;
+  const loop = () => {
+    const el = previewRef.current;
+    const s = previewState.current;
+    if (el) {
+      s.x += (s.tx - s.x) * 0.16;
+      s.y += (s.ty - s.y) * 0.16;
+      el.style.transform = `translate3d(${(s.x + 28).toFixed(1)}px, ${(s.y - 90).toFixed(1)}px, 0)`;
+      el.style.opacity = s.visible ? '1' : '0';
+    }
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
+  return () => cancelAnimationFrame(raf);
+}, []);
+
 const total = t.works.projects.length;
 const counts = useMemo(() => {
   const c: Record<string, number> = { all: total };
@@ -105,6 +128,10 @@ return (
     id="works"
     ref={ref}
     className="relative py-14 sm:py-24 lg:py-36"
+    onMouseMove={(e) => {
+      previewState.current.tx = e.clientX;
+      previewState.current.ty = e.clientY;
+    }}
   >
     <AmbientParticles highlight={highlight} count={260} seed={101} />
     <div className="relative z-10 mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
@@ -162,8 +189,15 @@ return (
                 shown ? 'reveal is-in' : 'reveal'
               }`}
               style={{ transitionDelay: `${120 + i * 90}ms` }}
-              onMouseEnter={handleCardEnter}
-              onMouseLeave={handleCardLeave}
+              onMouseEnter={(e) => {
+                handleCardEnter(e);
+                setPreviewCover(project.cover ?? null);
+                previewState.current.visible = Boolean(project.cover);
+              }}
+              onMouseLeave={() => {
+                handleCardLeave();
+                previewState.current.visible = false;
+              }}
               data-cursor="view"
               data-cursor-label={t.works.view_project}
             >
@@ -270,6 +304,21 @@ return (
         </span>
         <span>↗ index</span>
       </div>
+    </div>
+
+    {/* Floating cover preview that follows the cursor (desktop only) */}
+    <div
+      ref={previewRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed left-0 top-0 z-40 hidden opacity-0 transition-opacity duration-300 lg:block"
+    >
+      {previewCover ? (
+        <img
+          src={previewCover}
+          alt=""
+          className="h-[150px] w-[240px] rounded-md border border-[var(--hairline-strong)] object-cover shadow-[0_24px_70px_rgba(0,0,0,0.55)]"
+        />
+      ) : null}
     </div>
   </section>
 );

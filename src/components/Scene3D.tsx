@@ -11,36 +11,28 @@ import { useMediaQuery } from './useMediaQuery';
  *  - Inner ambient shell (~4.5k pts, accent-tinted). Slow rotation +
  *    soft mouse parallax. Always present.
  *  - Outer morph layer (~6k pts, foreground-cream). Loops through
- *    `shell → A → E → shell`. The shell phase is a thicker spheroid
- *    cloud, the letter phases sample each glyph drawn on an offscreen
- *    canvas and slide every particle toward its sampled pixel target.
- *    Morph transitions use a quintic in-out ease plus a mid-transition
- *    "rush" in the follow factor — slow gathering, fast flight,
- *    gentle settle — for proper motion-design contrast.
- *  - Comet layer: a handful of faint drifting particles crossing the
- *    scene from the left, each with a fading trail — a quiet cosmic
- *    depth cue. Deliberately sparse (~7 comets) to keep the scene calm.
+ *    `shell → A → E → shell`. Morph transitions use a quintic in-out
+ *    ease plus a mid-transition "rush" in the follow factor.
+ *  - Comet layer: a handful of faint drifting particles with fading
+ *    trails — a quiet cosmic depth cue.
+ *
+ * Interactions:
+ *  - Cursor swirl (Lusion-style): particles near the pointer get
+ *    pushed aside with a tangential swirl, so the field feels touchable.
+ *  - Scroll dispersal (owater-style): as the visitor scrolls out of
+ *    the hero the field inflates, drifts up and fades — the planet
+ *    "blows away" — and reassembles on the way back up.
+ *  - Showreel choreography (`reelOpen`): the field converges on the
+ *    anchor axis, shrinks and dims, and an elliptical exclusion zone
+ *    displaces particles into a halo around the video panel.
  *
  * The field is anchored horizontally at FOCUS_FRACTION of the viewport
- * width (right of centre) — on desktop that lands right under the
- * "CG Generalist" role chip, in the deliberately empty half of the
- * hero, away from the left-aligned typography. Because the anchor is a
- * fraction of the live viewport, it tracks the chip across screen
- * sizes instead of drifting like a fixed world coordinate would.
+ * width — on desktop that lands right under the "CG Generalist" role
+ * chip, in the deliberately empty half of the hero.
  *
- * Everything runs on the CPU with `Float32Array` position buffers —
- * cheap on the GPU and lets us morph without writing a shader. The
- * morph state lives at module scope so the per-frame `useFrame` loop
- * is free to mutate it; React's immutability rules apply only to
- * values returned from hooks (useState / useMemo / useRef).
- *
- * When the showreel opens (`reelOpen`), the field gently converges on
- * the same anchor axis (the panel is centred on it too), shrinks and
- * dims. On top of that, an elliptical exclusion zone around the panel
- * displaces particles outward, so they form a living halo around the
- * video: the reel and the particles share one space, and the panel
- * visibly "pushes" the field aside. Closing the reel releases
- * everything back to ambient.
+ * Everything runs on the CPU with `Float32Array` position buffers.
+ * Morph state lives at module scope so the per-frame `useFrame` loop
+ * is free to mutate it.
  */
 
 const MORPH_COUNT = 6000;
@@ -60,11 +52,13 @@ const LETTER_SLAB = 0.4;
 const FOCUS_FRACTION = 0.267;
 
 // Elliptical exclusion zone around the video panel (world units).
-// Particles are displaced out of it so the reel sits inside the field
-// as a physical object — a halo forms around the video instead of
-// particles hiding behind it.
 const PANEL_HALF_W = 1.15;
 const PANEL_HALF_H = 1.75;
+
+// Cursor interaction (Lusion-style): particles within this world-unit
+// radius of the pointer get pushed aside with a tangential swirl.
+const CURSOR_R = 1.1;
+const CURSOR_R2 = CURSOR_R * CURSOR_R;
 
 // Comet layer — kept deliberately tiny so the scene stays calm.
 const COMET_COUNT = 7;
@@ -359,6 +353,8 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
   const mouseRef = useRef({ x: 0, y: 0 });
   // Eased 0→1 influence of the open showreel on the field.
   const reelRef = useRef(0);
+  // Eased 0→1 scroll dispersal (owater-style "blow away").
+  const scrollRef = useRef(0);
 
   const { innerGeometry, morphGeometry } = getMorphState();
 
@@ -381,28 +377,41 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     reelRef.current += ((reelOpen ? 1 : 0) - reelRef.current) * 0.045;
     const reel = reelRef.current;
 
+    // Scroll dispersal — as the visitor scrolls out of the hero, the
+    // field inflates, drifts upward and fades; scrolling back up
+    // reassembles it.
+    const scrollTarget = Math.min(
+      1,
+      Math.max(0, window.scrollY / (window.innerHeight * 0.8))
+    );
+    scrollRef.current += (scrollTarget - scrollRef.current) * 0.08;
+    const disperse = scrollRef.current;
+
     if (groupRef.current) {
       groupRef.current.rotation.y = t * 0.04 + reel * 0.6;
       groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.14 * (1 - reel);
       // The field idles on the anchor axis and stays there while the
       // reel is open; mouse parallax fades out with reel.
       const targetX = focusX + mouseRef.current.x * 0.4 * (1 - reel);
-      const targetY = -mouseRef.current.y * 0.3 * (1 - reel);
+      const targetY =
+        -mouseRef.current.y * 0.3 * (1 - reel) + disperse * 2.4;
       groupRef.current.position.x +=
         (targetX - groupRef.current.position.x) * 0.04;
       groupRef.current.position.y +=
         (targetY - groupRef.current.position.y) * 0.04;
-      groupRef.current.scale.setScalar(1 - 0.55 * reel);
+      groupRef.current.scale.setScalar(
+        (1 - 0.55 * reel) * (1 + 0.75 * disperse)
+      );
     }
     if (innerRef.current) {
       innerRef.current.rotation.y = -t * 0.08;
       innerRef.current.rotation.z = t * 0.025;
       (innerRef.current.material as THREE.PointsMaterial).opacity =
-        0.55 * (1 - 0.45 * reel);
+        0.55 * (1 - 0.45 * reel) * (1 - disperse);
     }
     if (morphRef.current) {
       (morphRef.current.material as THREE.PointsMaterial).opacity =
-        0.55 * (1 - 0.45 * reel);
+        0.55 * (1 - 0.45 * reel) * (1 - disperse);
     }
 
     // Resolve the active phase. PHASES is small, so linear search is
@@ -438,10 +447,7 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     // Panel repulsion — while the reel is open, particles that would
     // land inside the elliptical zone around the video panel get
     // displaced outward (in world space), forming a halo around the
-    // reel. The zone is defined in world coordinates on the anchor
-    // axis, so we project each morph target through the group
-    // transform (rotation.x fades to 0 while the reel is open, so only
-    // Y-rotation matters).
+    // reel.
     const g = groupRef.current;
     const repel = reel > 0.01 && g !== null;
     const gs = g ? g.scale.x : 1;
@@ -450,6 +456,13 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     const rotY = g ? g.rotation.y : 0;
     const cosY = Math.cos(rotY);
     const sinY = Math.sin(rotY);
+
+    // Cursor swirl — pointer position in world units (r3f pointer is
+    // -1..1 with +y up). Fades out while the reel is open or the field
+    // is dispersed by scroll.
+    const cx = mouseRef.current.x * (frame.viewport.width / 2);
+    const cy = mouseRef.current.y * (frame.viewport.height / 2);
+    const swirl = (1 - reel) * (1 - disperse) * 0.6;
 
     for (let p = 0; p < MORPH_COUNT; p++) {
       const i = p * 3;
@@ -473,6 +486,28 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
           tx += (cosY * pxWorld) / gs;
           tz += (sinY * pxWorld) / gs;
           ty += pyWorld / gs;
+        }
+      }
+
+      if (swirl > 0.02) {
+        // Lusion-style cursor interaction: radial push + tangential
+        // swirl around the pointer, in world space.
+        const wxc = (cosY * tx + sinY * tz) * gs + ggx;
+        const wyc = ty * gs + ggy;
+        const dxc = wxc - cx;
+        const dyc = wyc - cy;
+        const dc2 = dxc * dxc + dyc * dyc;
+        if (dc2 < CURSOR_R2 && dc2 > 1e-6) {
+          const dc = Math.sqrt(dc2);
+          const q = 1 - dc / CURSOR_R;
+          const k = q * q * swirl;
+          const nx = dxc / dc;
+          const ny = dyc / dc;
+          const oxw = (nx - ny * 0.8) * k;
+          const oyw = (ny + nx * 0.8) * k;
+          tx += (cosY * oxw) / gs;
+          tz += (sinY * oxw) / gs;
+          ty += oyw / gs;
         }
       }
 
