@@ -422,14 +422,14 @@
   "services": {
     "section_label": "Services",
     "title": "Services",
-    "subtitle": "End-to-end creative and technical solutions for brands, studios, and direct clients.",
+    "subtitle": "Three ways to hire the lab — each scoped around the outcome you need, not just the tools behind it.",
     "items": [
       {
         "number": "01",
         "title": "Procedural Animation & FX",
         "price": "from 15,000 ₽ / from $250",
         "description": "Houdini & Blender (Advanced Geometry Nodes). High-end alternative to Cinema 4D. Vellum simulations for cloth, soft bodies, and particles.",
-        "bizDescription": "Hyper-realistic physical behavior (liquids, fabrics, dynamic elements) that cannot be filmed with a real camera. Perfect for premium product reveals.",
+        "bizDescription": "Product reveals that stop the scroll: physics no camera can capture — liquids, fabrics, and dynamic elements that make a premium launch look premium.",
         "tools": [
           "Houdini",
           "Vellum",
@@ -443,7 +443,7 @@
         "title": "Full-Cycle CG Production",
         "price": "from 25,000 ₽ / from $400",
         "description": "End-to-end pipeline: Scene layout (Blender) → FX (Houdini) → Compositing (After Effects) → Color (DaVinci). Caravaggio/Rembrandt lighting style.",
-        "bizDescription": "A turnkey solution. You hand over the brief, I deliver a fully polished, color-graded video ready for all digital platforms. No need to hire extra artists.",
+        "bizDescription": "One brief in — a launch-ready, color-graded film out, with cut-downs for every platform. No extra artists to hire, no quality lost between hands.",
         "tools": [
           "Blender",
           "Houdini",
@@ -456,7 +456,7 @@
         "title": "Lookdev & Art Direction",
         "price": "from 10,000 ₽ / from $150",
         "description": "Complex shader creation, lighting setups, and procedural environment generation. Focus on photorealism and stylized aesthetics.",
-        "bizDescription": "Creating a unique visual identity for your product. We define the mood, lighting, and textures before full production starts, saving time and budget.",
+        "bizDescription": "Your product gets a distinct visual signature before full production starts — mood, light, and materials locked early, so the expensive stage runs without surprises or wasted budget.",
         "tools": [
           "Blender",
           "Cycles",
