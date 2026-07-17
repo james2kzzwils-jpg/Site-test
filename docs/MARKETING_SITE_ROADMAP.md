@@ -266,7 +266,7 @@ It should not feel like influencer lifestyle content.
 - [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
 - [x] fix weak English phrasing — done: unified `Showreel` spelling, US spelling consistency (program, recognizable), clearer revision-rounds note, natural FAQ wording (rates, staying in control), `neural references` → `AI-generated references`; hero i18n block untouched (live hero copy is in Hero.tsx)
 - [ ] review public prices for premium fit
-- [ ] remove over-literal schedule/address language if not needed
+- [x] remove over-literal schedule/address language if not needed — done: public street address replaced with `Moscow / Remote Worldwide` and the weekday work-schedule line replaced with a premium availability line (`Open for new projects — limited slots each month`) in EN/RU; booking-calendar UI copy kept as functional text
 
 ### P2 — design and conversion enhancement
 - [ ] add professional founder imagery
