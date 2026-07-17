@@ -22,8 +22,11 @@ export default function Hero() {
 
   const kicker =
     locale === 'ru' ? 'Авторская CGI / Motion Lab' : 'Founder-Led Creative Lab';
-  const titleLine1 = 'Giving Form';
-  const titleLine2 = 'to the Invisible';
+  // EN keeps the brand line; RU gets a clear, matter-of-fact headline
+  // instead of a poetic translation.
+  const titleLine1 = locale === 'ru' ? 'CGI и моушн-дизайн' : 'Giving Form';
+  const titleLine2 =
+    locale === 'ru' ? 'для брендов и продуктов' : 'to the Invisible';
   const subtitle =
     locale === 'ru'
       ? 'Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.'
