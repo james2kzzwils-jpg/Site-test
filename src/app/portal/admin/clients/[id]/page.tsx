@@ -153,6 +153,29 @@ function formatDate(locale: PortalLocale, value: string) {
   }).format(new Date(value));
 }
 
+function formatCalendarDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+  }).format(new Date(`${value}T00:00:00`));
+}
+
+function projectStageStateLabel(locale: PortalLocale, state: string) {
+  switch (state) {
+    case 'in_review':
+      return locale === 'ru' ? 'Ждём клиента' : 'Waiting on client';
+    case 'changes_requested':
+      return locale === 'ru' ? 'Нужны правки' : 'Changes requested';
+    case 'client_approved':
+      return locale === 'ru' ? 'Клиент утвердил' : 'Client approved';
+    case 'approved':
+      return locale === 'ru' ? 'Утверждено' : 'Approved';
+    case 'archived':
+      return locale === 'ru' ? 'Архив' : 'Archived';
+    default:
+      return locale === 'ru' ? 'В работе' : 'In progress';
+  }
+}
+
 function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
   const stage =
     payloadString(item.payload, 'stage_kind') ??
@@ -211,6 +234,18 @@ function scopedInboxHref(clientId: string, item: PortalInboxItem) {
   if (isPendingApproval(item)) return `${base}&filter=approvals`;
   if (isActionRequired(item)) return `${base}&filter=attention`;
   if (item.readAt == null) return `${base}&filter=unread`;
+  return base;
+}
+
+function projectInboxHref(
+  clientId: string,
+  projectId: string,
+  counts: { attention: number; unread: number; approvals: number }
+) {
+  const base = `/portal/admin/inbox?clientId=${clientId}&projectId=${projectId}`;
+  if (counts.attention > 0) return `${base}&filter=attention`;
+  if (counts.approvals > 0) return `${base}&filter=approvals`;
+  if (counts.unread > 0) return `${base}&filter=unread`;
   return base;
 }
 
@@ -810,9 +845,16 @@ export default async function ClientDetailPage({
 
       <section className="mb-12">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
-            {t('admin.client.projects')}
-          </h2>
+          <div>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {t('admin.client.projects')}
+            </h2>
+            <p className="mt-2 max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Теперь по каждому проекту сразу видно delivery-риски, workflow state и куда перейти в inbox без лишних кликов.'
+                : 'Each project now surfaces delivery risk, workflow state, and the fastest scoped inbox route without extra clicks.'}
+            </p>
+          </div>
         </div>
 
         <div className="border-t border-[var(--hairline)]">
@@ -824,13 +866,25 @@ export default async function ClientDetailPage({
             <ul>
               {projects.map((p) => {
                 const latest = latestProjectEvent.get(p.id);
+                const metrics = projectMetrics.get(p.id) ?? {
+                  attention: 0,
+                  unread: 0,
+                  approvals: 0,
+                };
+                const currentStage = currentStageByProject.get(p.id);
+                const inboxHref = projectInboxHref(client.id, p.id, metrics);
+                const isOverdue =
+                  p.due_date != null &&
+                  p.due_date < today &&
+                  p.status !== 'approved' &&
+                  p.status !== 'archived';
 
                 return (
                   <li
                     key={p.id}
                     className="flex items-start justify-between gap-4 border-b border-[var(--hairline)] py-4"
                   >
-                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                    <div className="flex min-w-0 flex-1 flex-col gap-3">
                       <p className="font-display text-[18px] leading-[1.2] tracking-[-0.01em]">
                         {p.title}
                       </p>
@@ -843,6 +897,47 @@ export default async function ClientDetailPage({
                           <span>· {locale === 'ru' ? 'портфолио' : 'portfolio'}</span>
                         ) : null}
                       </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {currentStage ? (
+                          <span className="border border-[var(--hairline)] bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/62">
+                            {projectStageStateLabel(locale, currentStage.state)}
+                          </span>
+                        ) : null}
+                        {isOverdue ? (
+                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                            {locale === 'ru' ? 'Просрочено' : 'Overdue'}
+                          </span>
+                        ) : p.due_date ? (
+                          <span className="border border-[var(--hairline)] bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/55">
+                            {locale === 'ru'
+                              ? `Срок ${formatCalendarDate(locale, p.due_date)}`
+                              : `Due ${formatCalendarDate(locale, p.due_date)}`}
+                          </span>
+                        ) : null}
+                        {metrics.attention > 0 ? (
+                          <span className="border border-[var(--accent)] bg-[var(--accent)]/10 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)]">
+                            {locale === 'ru'
+                              ? `Внимание ${metrics.attention}`
+                              : `Attention ${metrics.attention}`}
+                          </span>
+                        ) : null}
+                        {metrics.unread > 0 ? (
+                          <span className="border border-[var(--hairline)] bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/62">
+                            {locale === 'ru'
+                              ? `Непрочитано ${metrics.unread}`
+                              : `Unread ${metrics.unread}`}
+                          </span>
+                        ) : null}
+                        {metrics.approvals > 0 ? (
+                          <span className="border border-[var(--hairline)] bg-[var(--background)] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--foreground)]/62">
+                            {locale === 'ru'
+                              ? `Подтверждения ${metrics.approvals}`
+                              : `Approvals ${metrics.approvals}`}
+                          </span>
+                        ) : null}
+                      </div>
+
                       {latest ? (
                         <div className="flex flex-col gap-1">
                           <p className="text-[13px] leading-[1.7] text-[var(--foreground)]/62">
@@ -860,12 +955,20 @@ export default async function ClientDetailPage({
                         </p>
                       ) : null}
                     </div>
-                    <Link
-                      href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
-                      className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
-                    >
-                      {t('common.open')} →
-                    </Link>
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <Link
+                        href={inboxHref}
+                        className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/55 hover:text-[var(--accent)]"
+                      >
+                        {locale === 'ru' ? 'В inbox →' : 'In inbox →'}
+                      </Link>
+                      <Link
+                        href={`/portal/admin/clients/${client.id}/projects/${p.id}`}
+                        className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+                      >
+                        {t('common.open')} →
+                      </Link>
+                    </div>
                   </li>
                 );
               })}
@@ -924,9 +1027,11 @@ export default async function ClientDetailPage({
             <textarea
               name="brief"
               rows={4}
-              placeholder={locale === 'ru'
-                ? 'Если оставить пустым, подтянется brief из выбранного шаблона.'
-                : 'Leave empty to use the starter brief from the selected template.'}
+              placeholder={
+                locale === 'ru'
+                  ? 'Если оставить пустым, подтянется brief из выбранного шаблона.'
+                  : 'Leave empty to use the starter brief from the selected template.'
+              }
               className="border border-[var(--hairline)] bg-transparent px-4 py-3 text-[14px] leading-[1.6] outline-none focus:border-[var(--accent)]"
             />
           </label>
