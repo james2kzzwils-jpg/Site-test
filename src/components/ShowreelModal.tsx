@@ -6,12 +6,14 @@ import { useEffect, useRef, useState, useCallback } from 'react';
  * Showreel overlay — the reel is "born from the particles": the hero
  * particle field converges toward the panel spot (see Scene3D `reelOpen`),
  * the backdrop stays translucent so the field keeps living behind, and
- * the 9:16 panel scales up out of the glow. The panel lives on the
- * RIGHT — in the intentionally empty half of the hero composition,
- * opposite the left-aligned typography. Muted autoplay gives an
- * instant start; sound is one tap away via the custom toggle. Native
- * controls are replaced by an accent progress bar; click the video to
- * pause / resume. Escape / backdrop / × to close.
+ * the 9:16 panel scales up out of the glow. The panel is centred on
+ * the same anchor axis as the particle planet — ~77% of the viewport
+ * width, right under the "CG Generalist" role chip on desktop — in the
+ * intentionally empty half of the hero, opposite the left-aligned
+ * typography. Muted autoplay gives an instant start; sound is one tap
+ * away via the custom toggle. Native controls are replaced by an
+ * accent progress bar; click the video to pause / resume. Escape /
+ * backdrop / × to close.
  */
 
 // TODO(showreel): switch to the compressed export `/showreel/showreel.mp4`
@@ -123,12 +125,14 @@ export default function ShowreelModal({
         <span className="text-[var(--accent)]">◆</span> Showreel 2026
       </p>
 
-      {/* Video container — 9:16 vertical, offset RIGHT into the empty
-          half of the hero, born out of the particle convergence point.
-          Centered on mobile. Opening is delayed 250ms so the field has
-          visibly begun gathering before the panel scales in. */}
+      {/* Video container — 9:16 vertical, centred on the same anchor
+          axis as the particle planet (~77% of viewport width — the
+          "CG Generalist" chip axis): margin-right ≈ 23.3vw minus half
+          the panel width. Centered on mobile. Opening is delayed 250ms
+          so the field has visibly begun gathering before the panel
+          scales in. */}
       <div
-        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 sm:ml-auto sm:mr-[clamp(1rem,12vw,18vw)] ${
+        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 sm:ml-auto sm:mr-[max(1rem,calc(23.3vw-min(22.5vh,170px)))] ${
           open ? 'scale-100 opacity-100' : 'scale-[0.4] opacity-0'
         }`}
         style={{
@@ -233,7 +237,7 @@ export default function ShowreelModal({
         </p>
       </div>
 
-      {/* Left side decorative text (desktop only) — moved to the left
+      {/* Left side decorative text (desktop only) — sits on the left
           edge so it never collides with the right-hand video panel. */}
       <div className="absolute left-10 top-1/2 hidden -translate-y-1/2 lg:block">
         <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/15 [writing-mode:vertical-rl]">

@@ -21,9 +21,12 @@ import { useMediaQuery } from './useMediaQuery';
  *    scene from the left, each with a fading trail — a quiet cosmic
  *    depth cue. Deliberately sparse (~7 comets) to keep the scene calm.
  *
- * The whole field idles right of centre (BASE_FOCUS_X), so the A / E
- * letters assemble in the deliberately empty right half of the hero —
- * away from the left-aligned typography.
+ * The field is anchored horizontally at FOCUS_FRACTION of the viewport
+ * width (right of centre) — on desktop that lands right under the
+ * "CG Generalist" role chip, in the deliberately empty half of the
+ * hero, away from the left-aligned typography. Because the anchor is a
+ * fraction of the live viewport, it tracks the chip across screen
+ * sizes instead of drifting like a fixed world coordinate would.
  *
  * Everything runs on the CPU with `Float32Array` position buffers —
  * cheap on the GPU and lets us morph without writing a shader. The
@@ -31,13 +34,13 @@ import { useMediaQuery } from './useMediaQuery';
  * is free to mutate it; React's immutability rules apply only to
  * values returned from hooks (useState / useMemo / useRef).
  *
- * When the showreel opens (`reelOpen`), the field gently converges
- * toward the video panel spot (REEL_FOCUS_X), shrinks and dims. On top
- * of that, an elliptical exclusion zone around the panel displaces
- * particles outward, so they form a living halo around the video: the
- * reel and the particles share one space, and the panel visibly
- * "pushes" the field aside. Closing the reel releases everything back
- * to ambient.
+ * When the showreel opens (`reelOpen`), the field gently converges on
+ * the same anchor axis (the panel is centred on it too), shrinks and
+ * dims. On top of that, an elliptical exclusion zone around the panel
+ * displaces particles outward, so they form a living halo around the
+ * video: the reel and the particles share one space, and the panel
+ * visibly "pushes" the field aside. Closing the reel releases
+ * everything back to ambient.
  */
 
 const MORPH_COUNT = 6000;
@@ -49,15 +52,12 @@ const LETTER_WIDTH = 4.4;
 const LETTER_HEIGHT = 4.4;
 const LETTER_SLAB = 0.4;
 
-// Where the ambient field idles — shifted right of centre so the A / E
-// letter morphs assemble in the empty half of the hero, next to where
-// the showreel panel is born.
-const BASE_FOCUS_X = 2.1;
-
-// Where the particle group drifts while the showreel is open — matches
-// the video panel spot (right of centre, in the empty half of the hero)
-// in world units at z=0.
-const REEL_FOCUS_X = 2.2;
+// Horizontal anchor of the field, as a signed fraction of the live
+// viewport width measured from the centre. 0.267 → the centre sits at
+// ~77% of the screen — directly under the "CG Generalist" role chip on
+// desktop. The showreel panel is centred on the same axis (see
+// ShowreelModal), so the field converges exactly onto the panel spot.
+const FOCUS_FRACTION = 0.267;
 
 // Elliptical exclusion zone around the video panel (world units).
 // Particles are displaced out of it so the reel sits inside the field
@@ -371,6 +371,10 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     const state = getMorphState();
     const t = frame.clock.elapsedTime;
 
+    // The anchor axis, in world units, derived from the live viewport
+    // — tracks the "CG Generalist" chip across screen sizes.
+    const focusX = FOCUS_FRACTION * frame.viewport.width;
+
     // Showreel influence — eases toward 1 while the reel is open and
     // back to 0 when it closes. Drives the "particles gather to give
     // birth to the video" choreography.
@@ -380,12 +384,9 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     if (groupRef.current) {
       groupRef.current.rotation.y = t * 0.04 + reel * 0.6;
       groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.14 * (1 - reel);
-      // The field idles right of centre and drifts to the reel spot
-      // while the showreel is open; mouse parallax fades out with reel.
-      const targetX =
-        BASE_FOCUS_X * (1 - reel) +
-        REEL_FOCUS_X * reel +
-        mouseRef.current.x * 0.4 * (1 - reel);
+      // The field idles on the anchor axis and stays there while the
+      // reel is open; mouse parallax fades out with reel.
+      const targetX = focusX + mouseRef.current.x * 0.4 * (1 - reel);
       const targetY = -mouseRef.current.y * 0.3 * (1 - reel);
       groupRef.current.position.x +=
         (targetX - groupRef.current.position.x) * 0.04;
@@ -437,9 +438,10 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     // Panel repulsion — while the reel is open, particles that would
     // land inside the elliptical zone around the video panel get
     // displaced outward (in world space), forming a halo around the
-    // reel. The zone is defined in world coordinates, so we project
-    // each morph target through the group transform (rotation.x fades
-    // to 0 while the reel is open, so only Y-rotation matters).
+    // reel. The zone is defined in world coordinates on the anchor
+    // axis, so we project each morph target through the group
+    // transform (rotation.x fades to 0 while the reel is open, so only
+    // Y-rotation matters).
     const g = groupRef.current;
     const repel = reel > 0.01 && g !== null;
     const gs = g ? g.scale.x : 1;
@@ -459,7 +461,7 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
         // Approximate world position of this morph target.
         const wx = (cosY * tx + sinY * tz) * gs + ggx;
         const wy = ty * gs + ggy;
-        const ex = (wx - REEL_FOCUS_X) / PANEL_HALF_W;
+        const ex = (wx - focusX) / PANEL_HALF_W;
         const ey = wy / PANEL_HALF_H;
         const d2 = ex * ex + ey * ey;
         if (d2 < 1) {
