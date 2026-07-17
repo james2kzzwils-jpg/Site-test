@@ -1,12 +1,21 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
- * Showreel overlay — the 9:16 vertical video flies onto the screen
- * and sits over the hero particle field, offset to the left.
- * Cinematic black backdrop, Escape / backdrop / × to close.
+ * Showreel overlay — the reel is "born from the particles": the hero
+ * particle field converges toward the panel spot (see Scene3D `reelOpen`),
+ * the backdrop stays translucent so the field keeps living behind, and
+ * the 9:16 panel scales up out of the glow. Muted autoplay gives an
+ * instant start; sound is one tap away via the custom toggle. Native
+ * controls are replaced by an accent progress bar; click the video to
+ * pause / resume. Escape / backdrop / × to close.
  */
+
+// TODO(showreel): switch to the compressed export `/showreel/showreel.mp4`
+// once it is produced — see the showreel tasks in docs/MARKETING_SITE_ROADMAP.md.
+const SHOWREEL_SRC = '/showreel/Andrey Epov Showreel.mp4';
+
 export default function ShowreelModal({
   open,
   onClose,
@@ -16,6 +25,8 @@ export default function ShowreelModal({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [muted, setMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   // Close on Escape
   useEffect(() => {
@@ -39,12 +50,16 @@ export default function ShowreelModal({
     };
   }, [open]);
 
-  // Auto-play / pause
+  // Instant muted autoplay on open — the reel starts the moment the
+  // panel is born, nobody waits for a loading spinner.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     if (open) {
       v.currentTime = 0;
+      v.muted = true;
+      setMuted(true);
+      setProgress(0);
       v.play().catch(() => {});
     } else {
       v.pause();
@@ -58,6 +73,24 @@ export default function ShowreelModal({
     [onClose],
   );
 
+  const toggleMute = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const next = !v.muted;
+    v.muted = next;
+    setMuted(next);
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, []);
+
   return (
     <div
       ref={backdropRef}
@@ -65,7 +98,7 @@ export default function ShowreelModal({
       aria-modal="true"
       aria-label="Showreel"
       onClick={handleBackdropClick}
-      className={`fixed inset-0 z-[9998] flex items-center bg-black/90 backdrop-blur-md transition-all duration-500 ${
+      className={`fixed inset-0 z-[9998] flex items-center bg-black/55 transition-all duration-500 ${
         open
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0'
@@ -88,22 +121,23 @@ export default function ShowreelModal({
         <span className="text-[var(--accent)]">◆</span> Showreel 2026
       </p>
 
-      {/* Video container — 9:16 vertical, offset left on desktop, centered on mobile */}
+      {/* Video container — 9:16 vertical, offset left, born out of the
+          particle convergence point. Opening is delayed 250ms so the
+          field has visibly begun gathering before the panel scales in. */}
       <div
         className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 ${
-          open
-            ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
-            : '-translate-x-12 translate-y-8 scale-90 opacity-0'
+          open ? 'scale-100 opacity-100' : 'scale-[0.4] opacity-0'
         }`}
         style={{
           /* Offset ~20% from left on desktop, centered on mobile */
           marginLeft: 'clamp(1rem, 15vw, 20vw)',
+          transitionDelay: open ? '250ms' : '0ms',
         }}
       >
-        {/* Accent glow behind the video */}
+        {/* Accent glow behind the video — the "birth" light */}
         <div
           aria-hidden="true"
-          className="absolute -inset-4 rounded-2xl opacity-30 blur-3xl"
+          className="absolute -inset-4 rounded-2xl opacity-40 blur-3xl"
           style={{
             background:
               'radial-gradient(ellipse at 50% 50%, var(--accent-glow) 0%, transparent 70%)',
@@ -122,15 +156,74 @@ export default function ShowreelModal({
             <video
               ref={videoRef}
               className="h-full w-full object-cover"
-              src="/showreel/showreel.mp4"
-              controls
+              src={SHOWREEL_SRC}
+              muted
+              loop
               playsInline
               preload="metadata"
+              onClick={togglePlay}
+              onTimeUpdate={() => {
+                const v = videoRef.current;
+                if (v && v.duration > 0) {
+                  setProgress(v.currentTime / v.duration);
+                }
+              }}
+              style={{ cursor: 'pointer' }}
             />
           </div>
 
           {/* Scanline overlay */}
           <div className="pointer-events-none absolute inset-0 mix-blend-overlay opacity-[0.06] [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.03)_0px,rgba(255,255,255,0.03)_1px,transparent_1px,transparent_3px)]" />
+
+          {/* Sound toggle — one tap to bring the audio in */}
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? 'Unmute' : 'Mute'}
+            className="absolute bottom-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--hairline-strong)] bg-black/50 text-white/80 backdrop-blur-sm transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            style={{ cursor: 'pointer' }}
+          >
+            {muted ? (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </button>
+
+          {/* Accent progress bar instead of native controls */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[2px] bg-white/10">
+            <div
+              className="h-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent-glow)]"
+              style={{ width: `${Math.min(progress * 100, 100)}%` }}
+            />
+          </div>
         </div>
 
         {/* Bottom caption */}

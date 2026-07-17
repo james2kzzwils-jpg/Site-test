@@ -49,8 +49,9 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
-      {/* Subtle 3D scene behind */}
-      <Scene3D />
+      {/* Subtle 3D scene behind — reacts to the showreel opening: the
+          particle field converges toward the video panel spot. */}
+      <Scene3D reelOpen={showReel} />
 
       {/* Top gradient that fades the 3D toward the type */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/30 to-[#050505]" />

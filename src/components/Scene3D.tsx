@@ -20,6 +20,11 @@ import { useMediaQuery } from './useMediaQuery';
  * morph state lives at module scope so the per-frame `useFrame` loop
  * is free to mutate it; React's immutability rules apply only to
  * values returned from hooks (useState / useMemo / useRef).
+ *
+ * When the showreel opens (`reelOpen`), the whole field gently
+ * converges toward the video panel spot on the left, shrinks and dims
+ * — the reel looks like it is born out of the particles. Closing the
+ * reel releases the field back to its ambient behaviour.
  */
 
 const MORPH_COUNT = 6000;
@@ -30,6 +35,10 @@ const INNER_COUNT = 4500;
 const LETTER_WIDTH = 4.4;
 const LETTER_HEIGHT = 4.4;
 const LETTER_SLAB = 0.4;
+
+// Where the particle group drifts while the showreel is open — matches
+// the video panel spot (left of centre) in world units at z=0.
+const REEL_FOCUS_X = -2.2;
 
 // Phase machine (seconds). Picks an ease and a target for every frame.
 const PHASES: { duration: number; from: 'shell' | 'A' | 'E'; to: 'shell' | 'A' | 'E' }[] = [
@@ -176,11 +185,13 @@ function getMorphState(): MorphState {
   return cachedState;
 }
 
-function ParticleField() {
+function ParticleField({ reelOpen }: { reelOpen: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Points>(null);
   const morphRef = useRef<THREE.Points>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  // Eased 0→1 influence of the open showreel on the field.
+  const reelRef = useRef(0);
 
   const { innerGeometry, morphGeometry } = getMorphState();
 
@@ -192,17 +203,34 @@ function ParticleField() {
   useFrame((frame) => {
     const state = getMorphState();
     const t = frame.clock.elapsedTime;
+
+    // Showreel influence — eases toward 1 while the reel is open and
+    // back to 0 when it closes. Drives the "particles gather to give
+    // birth to the video" choreography.
+    reelRef.current += ((reelOpen ? 1 : 0) - reelRef.current) * 0.045;
+    const reel = reelRef.current;
+
     if (groupRef.current) {
-      groupRef.current.rotation.y = t * 0.04;
-      groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.14;
+      groupRef.current.rotation.y = t * 0.04 + reel * 0.6;
+      groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.14 * (1 - reel);
+      const targetX =
+        mouseRef.current.x * 0.4 * (1 - reel) + REEL_FOCUS_X * reel;
+      const targetY = -mouseRef.current.y * 0.3 * (1 - reel);
       groupRef.current.position.x +=
-        (mouseRef.current.x * 0.4 - groupRef.current.position.x) * 0.04;
+        (targetX - groupRef.current.position.x) * 0.04;
       groupRef.current.position.y +=
-        (-mouseRef.current.y * 0.3 - groupRef.current.position.y) * 0.04;
+        (targetY - groupRef.current.position.y) * 0.04;
+      groupRef.current.scale.setScalar(1 - 0.55 * reel);
     }
     if (innerRef.current) {
       innerRef.current.rotation.y = -t * 0.08;
       innerRef.current.rotation.z = t * 0.025;
+      (innerRef.current.material as THREE.PointsMaterial).opacity =
+        0.55 * (1 - 0.45 * reel);
+    }
+    if (morphRef.current) {
+      (morphRef.current.material as THREE.PointsMaterial).opacity =
+        0.55 * (1 - 0.45 * reel);
     }
 
     // Resolve the active phase. PHASES is small, so linear search is
@@ -273,7 +301,11 @@ function ParticleField() {
   );
 }
 
-export default function Scene3D() {
+export default function Scene3D({
+  reelOpen = false,
+}: {
+  reelOpen?: boolean;
+}) {
   // SSR-safe: returns `false` during SSR, real value on client.
   const reduce = useMediaQuery('(prefers-reduced-motion: reduce)', false);
   const supportsCanvas = useMediaQuery('all', true); // proxy for client mount
@@ -302,7 +334,7 @@ export default function Scene3D() {
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>
-          <ParticleField />
+          <ParticleField reelOpen={reelOpen} />
         </Suspense>
       </Canvas>
     </div>
