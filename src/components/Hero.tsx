@@ -52,10 +52,12 @@ export default function Hero() {
   const scrollLabel =
     locale === 'ru' ? 'Листай к selected work' : 'Scroll to selected work';
 
-  // Both hero CTAs share the exact same accent treatment — identical
-  // shape, border, glow and typography.
-  const ctaClass =
-    'group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]';
+  // The two CTAs keep their own visual styles (accent primary vs
+  // neutral secondary) but share identical dimensions: the grid
+  // container stretches both to the width of the larger one, and
+  // padding / border / typography are the same.
+  const ctaBase =
+    'inline-flex items-center justify-center gap-3 rounded-full border-2 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] transition-all duration-300';
 
   useEffect(() => {
     const el = containerRef.current;
@@ -148,14 +150,17 @@ export default function Hero() {
               {subtitle}
             </p>
 
+            {/* Equal-width CTA pair: inline-grid stretches both buttons
+                to the width of the larger one — stacked on mobile, side
+                by side from sm up. */}
             <div
               data-reveal
-              className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6"
+              className="reveal inline-grid auto-cols-fr grid-flow-row justify-items-stretch gap-4 self-start sm:grid-flow-col sm:gap-6"
             >
               <button
                 type="button"
                 onClick={() => setShowReel(true)}
-                className={ctaClass}
+                className={`${ctaBase} border-[var(--accent)] bg-[var(--accent)]/[0.08] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]`}
                 data-cursor="hover"
               >
                 <span aria-hidden="true" className="text-[14px]">
@@ -163,9 +168,13 @@ export default function Hero() {
                 </span>
                 {showreelCta}
               </button>
-              <a href="#contact" className={ctaClass} data-cursor="hover">
+              <a
+                href="#contact"
+                className={`${ctaBase} group border-[var(--foreground)]/30 text-[var(--foreground)]/80 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]`}
+                data-cursor="hover"
+              >
                 {startProjectCta}
-                <span aria-hidden="true" className="text-[14px]">
+                <span aria-hidden="true" className="text-[var(--accent)]">
                   ↗
                 </span>
               </a>
