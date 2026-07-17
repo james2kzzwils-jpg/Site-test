@@ -12,6 +12,7 @@ import PortalHeader from '../../../_shared/PortalHeader';
 import Breadcrumb from '../../../_shared/Breadcrumb';
 import CopyButton from '../../../_shared/CopyButton';
 import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
+import { getPublicPortalOriginFromHeaders } from '@/lib/portal/public-origin';
 
 interface ClientDetailParams {
   id: string;
@@ -26,6 +27,79 @@ interface ClientDetailSearch {
    * without spending a Supabase email quota. */
   test_link?: string;
   test_link_email?: string;
+}
+
+type ProjectTemplatePreset = {
+  label: { en: string; ru: string };
+  hint: { en: string; ru: string };
+  brief: string;
+  dueDays: number;
+  currency: string;
+};
+
+const PROJECT_TEMPLATE_PRESETS = {
+  general: {
+    label: { en: 'General production', ru: 'Общий production' },
+    hint: {
+      en: 'Default starting point for a custom project with a one-week initial target.',
+      ru: 'Базовый старт для кастомного проекта с недельным первым ориентиром.',
+    },
+    brief:
+      'Scope the deliverable, confirm references, set the first review target, and lock the next production milestone.',
+    dueDays: 7,
+    currency: 'USD',
+  },
+  product_viz: {
+    label: { en: 'Product viz', ru: 'Product viz' },
+    hint: {
+      en: 'For product renders / stills with a tighter review window and ref-first kickoff.',
+      ru: 'Для продуктовых рендеров и stills: быстрый ревью-цикл и старт от референсов.',
+    },
+    brief:
+      'Collect product references, define hero angles, lock materials / palette, and prepare the first still review.',
+    dueDays: 5,
+    currency: 'USD',
+  },
+  animation: {
+    label: { en: 'Animation', ru: 'Animation' },
+    hint: {
+      en: 'For motion-heavy work where the first checkpoint should cover story / timing.',
+      ru: 'Для motion-проектов, где первый чекпоинт должен закрыть историю и тайминг.',
+    },
+    brief:
+      'Align on story beats, timing, references, and review cadence before the first animatic checkpoint.',
+    dueDays: 10,
+    currency: 'USD',
+  },
+  houdini_fx: {
+    label: { en: 'Houdini FX', ru: 'Houdini FX' },
+    hint: {
+      en: 'For simulation-driven work with extra room for lookdev and technical setup.',
+      ru: 'Для simulation-driven задач с запасом на lookdev и техническую сборку.',
+    },
+    brief:
+      'Confirm sim goal, technical constraints, reference motion, and delivery specs before the first R&D pass.',
+    dueDays: 12,
+    currency: 'USD',
+  },
+} as const satisfies Record<string, ProjectTemplatePreset>;
+
+function resolveProjectTemplatePreset(value: string) {
+  return (
+    PROJECT_TEMPLATE_PRESETS[
+      value as keyof typeof PROJECT_TEMPLATE_PRESETS
+    ] ?? PROJECT_TEMPLATE_PRESETS.general
+  );
+}
+
+function formatDateInput(value: Date) {
+  return value.toISOString().slice(0, 10);
+}
+
+function dueDateFromNow(days: number) {
+  const next = new Date();
+  next.setDate(next.getDate() + days);
+  return formatDateInput(next);
 }
 
 interface ProjectListRow {
@@ -181,7 +255,8 @@ async function resolveAuthCallbackUrl(redirect = '/portal'): Promise<string> {
 }
 
 async function resolveEmailAuthRedirectUrl(redirect = '/portal'): Promise<string> {
-  const origin = await resolvePublicPortalOrigin();
+  const h = await headers();
+  const origin = getPublicPortalOriginFromHeaders(h);
   return `${origin}/auth/complete?redirect=${encodeURIComponent(redirect)}`;
 }
 
@@ -282,7 +357,8 @@ async function generateTestLoginAction(formData: FormData) {
 
   const admin = createSupabaseAdminClient();
   const redirectTo = await resolveEmailAuthRedirectUrl('/portal');
-  const origin = await resolvePublicPortalOrigin();
+  const h = await headers();
+  const origin = getPublicPortalOriginFromHeaders(h);
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: 'magiclink',
