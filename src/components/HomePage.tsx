@@ -53,8 +53,8 @@ export default function HomePage() {
         <Services />
         {SHOW_SHOP && <Shop />}
         <About />
-        <ScheduleCalendar />
         <Faq />
+        <ScheduleCalendar />
         <Contact />
         <Footer />
       </main>
