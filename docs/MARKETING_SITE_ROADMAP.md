@@ -271,7 +271,7 @@ It should not feel like influencer lifestyle content.
 ### P2 — design and conversion enhancement
 - [ ] add professional founder imagery
 - [ ] add stronger trust signals
-- [ ] strengthen FAQ and project-start guidance
+- [x] strengthen FAQ and project-start guidance — done (copy layer): FAQ now opens with a new default-open `How do I start a project?` item that routes channels and spells out the path (reply in 2h → exact quote in 24h → short call locking scope, timeline, start date; written brief built together at Discovery); the rates answer now cites the public starting prices from Services (Lookdev from 10 000 ₽ / $150, FX from 15 000 ₽ / $250, Full-Cycle from 25 000 ₽ / $400); the process-control answer now matches the real five-stage approach with the included revision round (EN/RU, PR #68); visual/UX qualification of the contact flow stays in `qualify contact flow more clearly`
 - [ ] qualify contact flow more clearly
 
 ### P3 — motion and spectacle layer
