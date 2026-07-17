@@ -118,11 +118,11 @@ Goal: explain the offer in 5 seconds.
 Tasks:
 - [ ] finalize public brand model
 - [ ] choose the primary audience priority
-- [ ] rewrite the first-screen positioning
+- [x] rewrite the first-screen positioning — done: founder-led hero reframe (PR #57)
 - [ ] define one main CTA and one secondary CTA
 - [ ] remove weak or contradictory copy
-- [ ] fix naming / language consistency such as `Epov Creative Lab's`
-- [ ] fix project naming issues such as `Parfume` → `Perfume`
+- [x] fix naming / language consistency such as `Epov Creative Lab's` — done: unified to `Epov Creative Labs` in EN/RU i18n (site metadata already used the correct name)
+- [x] fix project naming issues such as `Parfume` → `Perfume` — done: EN project title corrected (internal id/asset paths and the Behance URL intentionally kept as-is)
 
 ### Workstream B — founder presence and trust
 Goal: show the person behind the work without collapsing into a generic freelancer image.
@@ -254,7 +254,7 @@ It should not feel like influencer lifestyle content.
 - [ ] define primary target audience priority
 
 ### P1 — homepage foundation
-- [ ] rewrite Hero
+- [x] rewrite Hero — done: founder-led hero reframe (PR #57)
 - [ ] add proof / trust strip after Hero
 - [ ] re-sequence homepage blocks
 - [ ] define 3 flagship work stories
@@ -263,7 +263,7 @@ It should not feel like influencer lifestyle content.
 - [ ] strengthen final CTA
 
 ### P1 — premium consistency fixes
-- [ ] fix brand naming inconsistencies
+- [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
 - [ ] fix weak English phrasing
 - [ ] review public prices for premium fit
 - [ ] remove over-literal schedule/address language if not needed
