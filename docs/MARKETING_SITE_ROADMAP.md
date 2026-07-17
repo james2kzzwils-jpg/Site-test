@@ -121,8 +121,8 @@ Tasks:
 - [ ] rewrite the first-screen positioning
 - [ ] define one main CTA and one secondary CTA
 - [ ] remove weak or contradictory copy
-- [ ] fix naming / language consistency such as `Epov Creative Lab's`
-- [ ] fix project naming issues such as `Parfume` → `Perfume`
+- [x] fix naming / language consistency such as `Epov Creative Lab's`
+- [x] fix project naming issues such as `Parfume` → `Perfume`
 
 ### Workstream B — founder presence and trust
 Goal: show the person behind the work without collapsing into a generic freelancer image.
@@ -263,7 +263,7 @@ It should not feel like influencer lifestyle content.
 - [ ] strengthen final CTA
 
 ### P1 — premium consistency fixes
-- [ ] fix brand naming inconsistencies
+- [x] fix brand naming inconsistencies
 - [ ] fix weak English phrasing
 - [ ] review public prices for premium fit
 - [ ] remove over-literal schedule/address language if not needed
@@ -349,3 +349,13 @@ The first strong marketing-site version is done when:
 - [ ] Положить результат как `public/showreel/showreel.mp4`, обновить константу `SHOWREEL_SRC` в `src/components/ShowreelModal.tsx` (там стоит TODO-комментарий) и удалить старый 45-МБ файл из репозитория.
 - [ ] Экспортировать постер-кадр (яркий кадр рила, JPEG ~100–150 КБ, 1080×1920) как `public/showreel/poster.jpg` и добавить `poster="/showreel/poster.jpg"` на `<video>` в `ShowreelModal.tsx`, чтобы красивый кадр был виден мгновенно ещё до загрузки видео.
 - [ ] Проверить на деплое: клик по «Watch Showreel» → частицы стягиваются вправо и панель «рождается» из них в пустой правой части экрана; видео стартует сразу без звука; кнопка звука включает аудио; Esc / крестик / клик по фону закрывают, и частицы возвращаются в обычный режим.
+
+---
+
+## 13. Отметка о проверке — дизайн-ревьюер (2026-07-17, ~17:00 CET)
+
+Проверены новые коммиты с прошлой проверки: `731edc9` + `7e5be77` (футер: CSS-глоу в акцентной палитре вместо растрового фона, удалён `footer-bg.webp`), `f3b9b75` (унификация бренд-нейминга и исправление «Perfume»), `aa8cbe3` + `55a648c9` (шоурил «из частиц», панель справа) и docs-коммиты по роадмапам.
+
+- Замены «Epov Creative Lab's» → «Epov Creative Labs» и «Parfume. Simulation» → «Perfume. Simulation» подтверждены в `src/i18n/en.json` и `src/i18n/ru.json`; поиск по репозиторию не находит оставшихся вхождений «Lab's» / «Parfume». Соответствующие пункты Workstream A и P1 отмечены выполненными.
+- Футер и шоурил на уровне кода соответствуют плану (только существующая акцентная палитра, без новых цветов; primary CTA — Showreel). Пиксельная сверка с макетом Figma в этот запуск не выполнена: макет открыть не удалось — расхождения не фиксируются без оснований.
+- Задачи по видеофайлу шоурила из раздела 12 остаются открытыми (видео всё ещё 45,5 МБ, постер не добавлен).
