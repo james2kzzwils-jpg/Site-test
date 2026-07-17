@@ -12,6 +12,7 @@ import ScheduleCalendar from '@/components/ScheduleCalendar';
 import ScrollToTop from '@/components/ScrollToTop';
 import Footer from '@/components/Footer';
 import Marquee from '@/components/Marquee';
+import AmbientMoments from '@/components/AmbientMoments';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { SHOW_SHOP } from '@/lib/features';
 
@@ -55,6 +56,9 @@ export default function HomePage() {
         <Contact />
         <Footer />
       </main>
+      {/* Rare decorative micro-events (comets / hopping ball / ◆ burst)
+          that play while scrolling below the hero. */}
+      <AmbientMoments />
       <ScrollToTop />
     </>
   );
