@@ -338,3 +338,14 @@ The first strong marketing-site version is done when:
 - [ ] designer-ready homepage brief
 - [ ] section-by-section notes
 - [ ] art-direction references
+
+---
+
+## 12. Задачи от дизайн-ревьюера — видеофайл шоурила (добавлено 2026-07-17)
+
+Контекст: анимация появления шоурила «из частиц», мгновенный muted-автостарт, кнопка вкл/выкл звука и акцентный прогресс-бар уже реализованы в коде (`src/components/ShowreelModal.tsx`, `Scene3D.tsx`, `Hero.tsx`). Остались задачи по самому видеофайлу — без них шоурил грузится медленно:
+
+- [ ] Пережать `public/showreel/Andrey Epov Showreel.mp4` (сейчас **45,5 МБ**) до ~6–10 МБ: H.264, 1080×1920, CRF 22–24, `-movflags +faststart`, аудио AAC 128k. Пример: `ffmpeg -i "Andrey Epov Showreel.mp4" -c:v libx264 -crf 23 -preset slow -vf scale=1080:-2 -movflags +faststart -c:a aac -b:a 128k showreel.mp4`
+- [ ] Положить результат как `public/showreel/showreel.mp4`, обновить константу `SHOWREEL_SRC` в `src/components/ShowreelModal.tsx` (там стоит TODO-комментарий) и удалить старый 45-МБ файл из репозитория.
+- [ ] Экспортировать постер-кадр (яркий кадр рила, JPEG ~100–150 КБ, 1080×1920) как `public/showreel/poster.jpg` и добавить `poster="/showreel/poster.jpg"` на `<video>` в `ShowreelModal.tsx`, чтобы красивый кадр был виден мгновенно ещё до загрузки видео.
+- [ ] Проверить на деплое: клик по «Watch Showreel» → частицы стягиваются влево и панель «рождается» из них; видео стартует сразу без звука; кнопка звука включает аудио; Esc / крестик / клик по фону закрывают, и частицы возвращаются в обычный режим.
