@@ -116,13 +116,20 @@ export default async function ClientProjectsPage() {
     .select('id, title, status, due_date')
     .order('created_at', { ascending: false });
 
+  const projects = (projectsRaw ?? []) as Array<{
+    id: string;
+    title: string;
+    status: string;
+    due_date: string | null;
+  }>;
+
   const activityByProject = new Map<
     string,
     { item: PortalInboxItem | null; status: 'ready' | 'not_ready' | 'error' }
   >();
 
   await Promise.all(
-    (projects ?? []).map(async (project) => {
+    projects.map(async (project) => {
       const result = await loadProjectActivity({
         supabase,
         projectId: project.id,
@@ -181,7 +188,7 @@ export default async function ClientProjectsPage() {
           </p>
         ) : (
           <ul>
-            {projects!.map((p) => {
+            {projects.map((p) => {
               const latest = activityByProject.get(p.id);
               const latestItem = latest?.item ?? null;
 
