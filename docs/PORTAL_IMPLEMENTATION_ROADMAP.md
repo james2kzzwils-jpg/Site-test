@@ -1,7 +1,10 @@
 # Portal implementation roadmap
 
-Updated: 2026-07-16
+Updated: 2026-07-17
 Base branch: `redesignLinda`
+
+This file is the working execution plan for the **client portal only**.
+Marketing-site planning now lives separately in `docs/MARKETING_SITE_ROADMAP.md`.
 
 This file is the working execution plan for the portal. Completed items are struck through. Open items stay active until they are shipped.
 
