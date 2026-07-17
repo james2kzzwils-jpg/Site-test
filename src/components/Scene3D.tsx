@@ -22,9 +22,10 @@ import { useMediaQuery } from './useMediaQuery';
  * values returned from hooks (useState / useMemo / useRef).
  *
  * When the showreel opens (`reelOpen`), the whole field gently
- * converges toward the video panel spot on the left, shrinks and dims
- * — the reel looks like it is born out of the particles. Closing the
- * reel releases the field back to its ambient behaviour.
+ * converges toward the video panel spot on the right — the empty half
+ * of the hero composition — shrinks and dims, so the reel looks like
+ * it is born out of the particles. Closing the reel releases the
+ * field back to its ambient behaviour.
  */
 
 const MORPH_COUNT = 6000;
@@ -37,8 +38,9 @@ const LETTER_HEIGHT = 4.4;
 const LETTER_SLAB = 0.4;
 
 // Where the particle group drifts while the showreel is open — matches
-// the video panel spot (left of centre) in world units at z=0.
-const REEL_FOCUS_X = -2.2;
+// the video panel spot (right of centre, in the empty half of the hero)
+// in world units at z=0.
+const REEL_FOCUS_X = 2.2;
 
 // Phase machine (seconds). Picks an ease and a target for every frame.
 const PHASES: { duration: number; from: 'shell' | 'A' | 'E'; to: 'shell' | 'A' | 'E' }[] = [

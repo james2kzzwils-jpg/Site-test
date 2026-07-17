@@ -6,7 +6,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
  * Showreel overlay — the reel is "born from the particles": the hero
  * particle field converges toward the panel spot (see Scene3D `reelOpen`),
  * the backdrop stays translucent so the field keeps living behind, and
- * the 9:16 panel scales up out of the glow. Muted autoplay gives an
+ * the 9:16 panel scales up out of the glow. The panel lives on the
+ * RIGHT — in the intentionally empty half of the hero composition,
+ * opposite the left-aligned typography. Muted autoplay gives an
  * instant start; sound is one tap away via the custom toggle. Native
  * controls are replaced by an accent progress bar; click the video to
  * pause / resume. Escape / backdrop / × to close.
@@ -121,16 +123,15 @@ export default function ShowreelModal({
         <span className="text-[var(--accent)]">◆</span> Showreel 2026
       </p>
 
-      {/* Video container — 9:16 vertical, offset left, born out of the
-          particle convergence point. Opening is delayed 250ms so the
-          field has visibly begun gathering before the panel scales in. */}
+      {/* Video container — 9:16 vertical, offset RIGHT into the empty
+          half of the hero, born out of the particle convergence point.
+          Centered on mobile. Opening is delayed 250ms so the field has
+          visibly begun gathering before the panel scales in. */}
       <div
-        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 ${
+        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 sm:ml-auto sm:mr-[clamp(1rem,12vw,18vw)] ${
           open ? 'scale-100 opacity-100' : 'scale-[0.4] opacity-0'
         }`}
         style={{
-          /* Offset ~20% from left on desktop, centered on mobile */
-          marginLeft: 'clamp(1rem, 15vw, 20vw)',
           transitionDelay: open ? '250ms' : '0ms',
         }}
       >
@@ -232,8 +233,9 @@ export default function ShowreelModal({
         </p>
       </div>
 
-      {/* Right side decorative text (desktop only) */}
-      <div className="absolute right-10 top-1/2 hidden -translate-y-1/2 lg:block">
+      {/* Left side decorative text (desktop only) — moved to the left
+          edge so it never collides with the right-hand video panel. */}
+      <div className="absolute left-10 top-1/2 hidden -translate-y-1/2 lg:block">
         <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/15 [writing-mode:vertical-rl]">
           CG Generalist & Motion Designer
         </p>
