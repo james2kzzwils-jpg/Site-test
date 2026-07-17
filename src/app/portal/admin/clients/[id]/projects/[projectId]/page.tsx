@@ -197,6 +197,43 @@ function stageStateLabel(locale: PortalLocale, state: StageRow['state']) {
   }
 }
 
+function projectHealthCard(args: {
+  label: string;
+  value: string | number;
+  caption: string;
+  href?: string;
+  tone?: 'default' | 'accent';
+}) {
+  const { label, value, caption, href, tone = 'default' } = args;
+  const className = `border p-4 transition-colors ${
+    tone === 'accent'
+      ? 'border-[var(--accent)] bg-[var(--accent)]/8'
+      : 'border-[var(--hairline)]'
+  } ${href ? 'hover:border-[var(--accent)] hover:text-[var(--accent)]' : ''}`;
+
+  const content = (
+    <>
+      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+        {label}
+      </p>
+      <p className="mt-2 font-display text-[28px] leading-none tracking-[-0.03em]">
+        {value}
+      </p>
+      <p className="mt-3 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+        {caption}
+      </p>
+    </>
+  );
+
+  return href ? (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+}
+
 export default async function AdminProjectDetailPage({
   params,
 }: {
@@ -282,6 +319,10 @@ export default async function AdminProjectDetailPage({
   const isUnderNda =
     project.nda_until != null &&
     (project.nda_until === 'infinity' || project.nda_until > today);
+  const isOverdue =
+    project.status !== 'archived' &&
+    project.due_date != null &&
+    project.due_date < today;
 
   const budgetValue =
     typeof project.budget_cents === 'number'
@@ -300,6 +341,7 @@ export default async function AdminProjectDetailPage({
   const projectNeedsAttention = activity.items.filter(isActionRequired).length;
   const projectUnread = activity.items.filter((item) => item.readAt == null).length;
   const projectApprovals = activity.items.filter(isPendingApproval).length;
+  const latestActivity = activity.items[0] ?? null;
 
   const currentStage =
     projectStatus === 'archived'
@@ -365,6 +407,34 @@ export default async function AdminProjectDetailPage({
               ? 'Текущий этап уже отмечен как approved. Можно сразу перевести проект дальше.'
               : 'The current stage is already marked approved. You can move the project forward immediately.';
 
+  const deliveryCardValue = project.due_date
+    ? isOverdue
+      ? locale === 'ru'
+        ? 'Просрочен'
+        : 'Overdue'
+      : project.due_date
+    : locale === 'ru'
+      ? 'Не задан'
+      : 'Not set';
+  const deliveryCardCaption = isOverdue
+    ? locale === 'ru'
+      ? 'Срок уже прошёл — полезно быстро проверить action panel и активность ниже.'
+      : 'The due date is already in the past — a quick check of the action panel and feed below is recommended.'
+    : currentStage
+      ? `${currentStage.title} · ${stageStateLabel(locale, currentStage.state)}`
+      : locale === 'ru'
+        ? 'Проект уже закрыт и остаётся как delivery hub.'
+        : 'The project is already wrapped and now acts as the delivery hub.';
+
+  const latestSignalCaption = latestActivity
+    ? `${activityTitle(latestActivity, locale)} · ${formatActivityDate(
+        locale,
+        latestActivity.createdAt
+      )}`
+    : locale === 'ru'
+      ? 'Как только появится новый комментарий, файл или review-сигнал, он покажется здесь.'
+      : 'As soon as a new comment, file, or review signal arrives, it will surface here.';
+
   return (
     <>
       <PortalHeader
@@ -403,6 +473,90 @@ export default async function AdminProjectDetailPage({
       </div>
 
       <StageStepper stages={stages} projectStatus={projectStatus} />
+
+      <section className="mb-12">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="font-display text-[22px] font-medium tracking-[-0.01em]">
+              {locale === 'ru' ? 'Project health snapshot' : 'Project health snapshot'}
+            </h2>
+            <p className="mt-2 max-w-3xl text-[13px] leading-[1.7] text-[var(--foreground)]/55">
+              {locale === 'ru'
+                ? 'Короткий operational-срез перед stage actions: где прямо сейчас нужен фокус, что не прочитано и есть ли риск по сроку.'
+                : 'A quick operational slice before touching stage actions: where focus is needed right now, what is still unread, and whether the timeline is drifting.'}
+            </p>
+          </div>
+          <Link
+            href={projectInboxBase}
+            className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/45 hover:text-[var(--accent)]"
+          >
+            {locale === 'ru' ? 'Открыть project inbox →' : 'Open project inbox →'}
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {projectHealthCard({
+            label: locale === 'ru' ? 'Требует внимания' : 'Needs attention',
+            value: projectNeedsAttention,
+            href: `${projectInboxBase}&filter=attention`,
+            tone: projectNeedsAttention > 0 ? 'accent' : 'default',
+            caption:
+              locale === 'ru'
+                ? 'Комментарий клиента, новые правки и review-сигналы, где студии нужно реагировать.'
+                : 'Client comments, revision signals, and review events where the studio needs to act.',
+          })}
+          {projectHealthCard({
+            label: locale === 'ru' ? 'Непрочитано' : 'Unread',
+            value: projectUnread,
+            href: `${projectInboxBase}&filter=unread`,
+            caption:
+              locale === 'ru'
+                ? 'Быстрый вход во всё, что ещё не просмотрено по этому проекту.'
+                : 'A fast entry into everything that still has not been triaged for this project.',
+          })}
+          {projectHealthCard({
+            label: locale === 'ru' ? 'Подтверждения' : 'Approvals',
+            value: projectApprovals,
+            href: `${projectInboxBase}&filter=approvals`,
+            caption:
+              locale === 'ru'
+                ? 'Полезно, когда нужно быстро проверить review-stage или клиентский approve.'
+                : 'Useful when you want a quick pass over review-stage work and client sign-off signals.',
+          })}
+          {projectHealthCard({
+            label: locale === 'ru' ? 'Delivery target' : 'Delivery target',
+            value: deliveryCardValue,
+            tone: isOverdue ? 'accent' : 'default',
+            caption: deliveryCardCaption,
+          })}
+        </div>
+
+        <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="border border-[var(--hairline)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+              {locale === 'ru' ? 'Последний сигнал' : 'Latest signal'}
+            </p>
+            <p className="mt-2 text-[13px] leading-[1.7] text-[var(--foreground)]/62">
+              {latestSignalCaption}
+            </p>
+          </div>
+          <div className="border border-[var(--hairline)] p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[var(--foreground)]/45">
+              {locale === 'ru' ? 'Текущий этап' : 'Current stage'}
+            </p>
+            <p className="mt-2 font-display text-[20px] leading-[1.2] tracking-[-0.01em]">
+              {currentStage ? currentStage.title : locale === 'ru' ? 'Проект закрыт' : 'Project wrapped'}
+            </p>
+            <p className="mt-2 text-[12px] leading-[1.6] text-[var(--foreground)]/55">
+              {currentStage
+                ? stageStateLabel(locale, currentStage.state)
+                : locale === 'ru'
+                  ? 'Этапы уже завершены, проект остался как delivery hub.'
+                  : 'All stages are complete and the project now acts as a delivery hub.'}
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="mb-12 border border-[var(--hairline)] p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
