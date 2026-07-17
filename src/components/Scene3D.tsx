@@ -23,9 +23,11 @@ import { useMediaQuery } from './useMediaQuery';
  *
  * When the showreel opens (`reelOpen`), the whole field gently
  * converges toward the video panel spot on the right — the empty half
- * of the hero composition — shrinks and dims, so the reel looks like
- * it is born out of the particles. Closing the reel releases the
- * field back to its ambient behaviour.
+ * of the hero composition — shrinks and dims. On top of that, an
+ * elliptical exclusion zone around the panel displaces particles
+ * outward, so they form a living halo around the video: the reel and
+ * the particles share one space, and the panel visibly "pushes" the
+ * field aside. Closing the reel releases everything back to ambient.
  */
 
 const MORPH_COUNT = 6000;
@@ -41,6 +43,13 @@ const LETTER_SLAB = 0.4;
 // the video panel spot (right of centre, in the empty half of the hero)
 // in world units at z=0.
 const REEL_FOCUS_X = 2.2;
+
+// Elliptical exclusion zone around the video panel (world units).
+// Particles are displaced out of it so the reel sits inside the field
+// as a physical object — a halo forms around the video instead of
+// particles hiding behind it.
+const PANEL_HALF_W = 1.15;
+const PANEL_HALF_H = 1.75;
 
 // Phase machine (seconds). Picks an ease and a target for every frame.
 const PHASES: { duration: number; from: 'shell' | 'A' | 'E'; to: 'shell' | 'A' | 'E' }[] = [
@@ -258,9 +267,50 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     // factor so particles gently drift even when from === to.
     const followFactor = phase.from === phase.to ? 0.06 : 0.12;
     const live = state.livePositions;
-    for (let i = 0; i < MORPH_COUNT * 3; i++) {
-      const target = from[i] + (to[i] - from[i]) * eased;
-      live[i] += (target - live[i]) * followFactor;
+
+    // Panel repulsion — while the reel is open, particles that would
+    // land inside the elliptical zone around the video panel get
+    // displaced outward (in world space), forming a halo around the
+    // reel. The zone is defined in world coordinates, so we project
+    // each morph target through the group transform (rotation.x fades
+    // to 0 while the reel is open, so only Y-rotation matters).
+    const g = groupRef.current;
+    const repel = reel > 0.01 && g !== null;
+    const gs = g ? g.scale.x : 1;
+    const ggx = g ? g.position.x : 0;
+    const ggy = g ? g.position.y : 0;
+    const rotY = g ? g.rotation.y : 0;
+    const cosY = Math.cos(rotY);
+    const sinY = Math.sin(rotY);
+
+    for (let p = 0; p < MORPH_COUNT; p++) {
+      const i = p * 3;
+      let tx = from[i] + (to[i] - from[i]) * eased;
+      let ty = from[i + 1] + (to[i + 1] - from[i + 1]) * eased;
+      let tz = from[i + 2] + (to[i + 2] - from[i + 2]) * eased;
+
+      if (repel) {
+        // Approximate world position of this morph target.
+        const wx = (cosY * tx + sinY * tz) * gs + ggx;
+        const wy = ty * gs + ggy;
+        const ex = (wx - REEL_FOCUS_X) / PANEL_HALF_W;
+        const ey = wy / PANEL_HALF_H;
+        const d2 = ex * ex + ey * ey;
+        if (d2 < 1) {
+          const d = Math.sqrt(d2) || 1e-4;
+          const push = (1 - d) * reel;
+          const pxWorld = (ex / d) * push * PANEL_HALF_W;
+          const pyWorld = (ey / d) * push * PANEL_HALF_H;
+          // Transform the world-space push back into group-local space.
+          tx += (cosY * pxWorld) / gs;
+          tz += (sinY * pxWorld) / gs;
+          ty += pyWorld / gs;
+        }
+      }
+
+      live[i] += (tx - live[i]) * followFactor;
+      live[i + 1] += (ty - live[i + 1]) * followFactor;
+      live[i + 2] += (tz - live[i + 2]) * followFactor;
     }
 
     const attr = state.morphGeometry.attributes

@@ -99,7 +99,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Hero type */}
+        {/* Hero type — everything stays in the left column; the right
+            half of the hero is deliberately empty. That emptiness is the
+            stage where the showreel panel is born from the particles. */}
         <div className="mt-auto pt-14">
           <h1
             data-reveal
@@ -114,7 +116,7 @@ export default function Hero() {
             </span>
           </h1>
 
-          <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+          <div className="flex flex-col gap-8">
             <p
               data-reveal
               className="reveal max-w-xl text-[16px] leading-[1.65] text-[var(--foreground)]/55"
@@ -124,7 +126,7 @@ export default function Hero() {
 
             <div
               data-reveal
-              className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-end sm:gap-6"
+              className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6"
             >
               <button
                 type="button"
