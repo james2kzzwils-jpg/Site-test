@@ -599,7 +599,7 @@
   "contact": {
     "section_label": "Contact",
     "title": "Let's Work Together",
-    "subtitle": "Got an idea? Let's talk it through. We'll plan it all and make this world a touch more beautiful.",
+    "subtitle": "Send a brief or a rough idea — you'll get a reply within 2 hours and an exact quote within 24. Then a short call locks scope, timeline, and start date.",
     "form": {
       "name": "Name",
       "email": "Email",
@@ -628,15 +628,15 @@
       "label": "Pick your channel",
       "telegram": {
         "title": "Message on Telegram",
-        "desc": "Fastest reply"
+        "desc": "Quick questions & ideas — fastest reply"
       },
       "email": {
         "title": "Send an email",
-        "desc": "For briefs & details"
+        "desc": "Briefs, files & exact quotes"
       },
       "call": {
         "title": "Book a call",
-        "desc": "30 min · Calendly"
+        "desc": "Scope & timeline · 30 min on Calendly"
       }
     }
   },
