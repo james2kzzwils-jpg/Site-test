@@ -272,7 +272,7 @@ It should not feel like influencer lifestyle content.
 - [ ] add professional founder imagery
 - [ ] add stronger trust signals
 - [x] strengthen FAQ and project-start guidance — done (copy layer): FAQ now opens with a new default-open `How do I start a project?` item that routes channels and spells out the path (reply in 2h → exact quote in 24h → short call locking scope, timeline, start date; written brief built together at Discovery); the rates answer now cites the public starting prices from Services (Lookdev from 10 000 ₽ / $150, FX from 15 000 ₽ / $250, Full-Cycle from 25 000 ₽ / $400); the process-control answer now matches the real five-stage approach with the included revision round (EN/RU, PR #68); visual/UX qualification of the contact flow stays in `qualify contact flow more clearly`
-- [ ] qualify contact flow more clearly
+- [x] qualify contact flow more clearly — done (copy + light code): the `Send an email` CTA now opens a pre-filled draft — subject `Project inquiry — Epov Creative Labs` plus a mini-brief checklist (company/product, what's needed, timeline, optional budget range, links & references) ending with the 2h-reply reassurance — so inquiries arrive pre-qualified for the 24h exact quote; the plain address link in the coordinates column stays clean; EN/RU synced (PR #69); any visual qualification UI (e.g. inquiry-type selector) remains a designer task (§6)
 
 ### P3 — motion and spectacle layer
 - [ ] prototype premium hero motion
