@@ -16,26 +16,18 @@ const Scene3D = dynamic(() => import('./Scene3D'), {
 });
 
 export default function Hero() {
-  const { locale, t } = useLanguage();
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const [showReel, setShowReel] = useState(false);
 
-  const kicker =
-    locale === 'ru' ? 'Авторская CGI / Motion Lab' : 'Founder-Led Creative Lab';
-  const titleLine1 = 'Giving Form';
-  const titleLine2 = 'to the Invisible';
-  const subtitle =
-    locale === 'ru'
-      ? 'Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.'
-      : 'Epov Creative Labs is a founder-led creative lab by Andrey Epov, creating premium CGI, product visuals, and procedural motion for brands, products, and spatial experiences.';
-  const showreelCta =
-    locale === 'ru' ? 'Посмотреть Showreel' : 'Watch Showreel';
-  const startProjectCta =
-    locale === 'ru' ? 'Начать проект' : 'Start a Project';
-  const selectedWorkLabel =
-    locale === 'ru' ? 'Selected Work' : 'Selected Work';
-  const scrollLabel =
-    locale === 'ru' ? 'Листай к selected work' : 'Scroll to selected work';
+  const kicker = t.hero.kicker;
+  const titleLine1 = t.hero.title_line1;
+  const titleLine2 = t.hero.title_line2;
+  const subtitle = t.hero.subtitle;
+  const showreelCta = t.hero.cta_showreel;
+  const startProjectCta = t.hero.cta_contact;
+  const selectedWorkLabel = t.hero.selected_work;
+  const scrollLabel = t.hero.scroll;
 
   useEffect(() => {
     const el = containerRef.current;
