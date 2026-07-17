@@ -28,11 +28,16 @@ export default function Hero() {
   const titleLine2 =
     locale === 'ru' ? 'для брендов и продуктов' : 'to the Invisible';
   // Russian lines are longer than the English ones, so the RU headline
-  // uses a smaller clamp — both locales occupy roughly the same two
-  // lines of vertical space.
-  const titleSizeClass =
+  // uses smaller clamps. The RU second line steps down further — a
+  // clear size hierarchy: what we do (big) → for whom (smaller, dim).
+  // EN keeps both lines at the original size.
+  const titleSize1 =
     locale === 'ru'
       ? 'text-[clamp(2.4rem,6.8vw,6.8rem)]'
+      : 'text-[clamp(3rem,11vw,11rem)]';
+  const titleSize2 =
+    locale === 'ru'
+      ? 'text-[clamp(1.7rem,4.6vw,4.6rem)]'
       : 'text-[clamp(3rem,11vw,11rem)]';
   const subtitle =
     locale === 'ru'
@@ -124,12 +129,12 @@ export default function Hero() {
             style={{ lineHeight: 0.92 }}
           >
             <span
-              className={`block ${titleSizeClass} font-medium tracking-[-0.045em] text-[var(--foreground)]`}
+              className={`block ${titleSize1} font-medium tracking-[-0.045em] text-[var(--foreground)]`}
             >
               {titleLine1}
             </span>
             <span
-              className={`block ${titleSizeClass} font-medium tracking-[-0.045em] text-[var(--foreground)]/30`}
+              className={`block ${titleSize2} font-medium tracking-[-0.045em] text-[var(--foreground)]/30`}
             >
               {titleLine2}
             </span>
