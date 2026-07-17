@@ -335,6 +335,9 @@ The first strong marketing-site version is done when:
 - [ ] founder-presence integration directions
 
 ### Deliverable 4
-- [ ] designer-ready homepage brief
-- [ ] section-by-section notes
-- [ ] art-direction references
+- [x] designer-ready homepage brief
+- [x] section-by-section notes
+- [x] art-direction references
+
+Artifacts:
+- `docs/MARKETING_HOMEPAGE_BRIEF.md`
