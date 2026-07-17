@@ -27,6 +27,13 @@ export default function Hero() {
   const titleLine1 = locale === 'ru' ? 'CGI и моушн-дизайн' : 'Giving Form';
   const titleLine2 =
     locale === 'ru' ? 'для брендов и продуктов' : 'to the Invisible';
+  // Russian lines are longer than the English ones, so the RU headline
+  // uses a smaller clamp — both locales occupy roughly the same two
+  // lines of vertical space.
+  const titleSizeClass =
+    locale === 'ru'
+      ? 'text-[clamp(2.4rem,6.8vw,6.8rem)]'
+      : 'text-[clamp(3rem,11vw,11rem)]';
   const subtitle =
     locale === 'ru'
       ? 'Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.'
@@ -39,6 +46,11 @@ export default function Hero() {
     locale === 'ru' ? 'Selected Work' : 'Selected Work';
   const scrollLabel =
     locale === 'ru' ? 'Листай к selected work' : 'Scroll to selected work';
+
+  // Both hero CTAs share the exact same accent treatment — identical
+  // shape, border, glow and typography.
+  const ctaClass =
+    'group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]';
 
   useEffect(() => {
     const el = containerRef.current;
@@ -111,10 +123,14 @@ export default function Hero() {
             className="reveal mb-10 max-w-[1400px] font-display"
             style={{ lineHeight: 0.92 }}
           >
-            <span className="block text-[clamp(3rem,11vw,11rem)] font-medium tracking-[-0.045em] text-[var(--foreground)]">
+            <span
+              className={`block ${titleSizeClass} font-medium tracking-[-0.045em] text-[var(--foreground)]`}
+            >
               {titleLine1}
             </span>
-            <span className="block text-[clamp(3rem,11vw,11rem)] font-medium tracking-[-0.045em] text-[var(--foreground)]/30">
+            <span
+              className={`block ${titleSizeClass} font-medium tracking-[-0.045em] text-[var(--foreground)]/30`}
+            >
               {titleLine2}
             </span>
           </h1>
@@ -134,7 +150,7 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => setShowReel(true)}
-                className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]"
+                className={ctaClass}
                 data-cursor="hover"
               >
                 <span aria-hidden="true" className="text-[14px]">
@@ -142,13 +158,9 @@ export default function Hero() {
                 </span>
                 {showreelCta}
               </button>
-              <a
-                href="#contact"
-                className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--foreground)]/30 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-all duration-300 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]"
-                data-cursor="hover"
-              >
+              <a href="#contact" className={ctaClass} data-cursor="hover">
                 {startProjectCta}
-                <span aria-hidden="true" className="text-[var(--accent)]">
+                <span aria-hidden="true" className="text-[14px]">
                   ↗
                 </span>
               </a>
