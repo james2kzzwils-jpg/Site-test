@@ -6,7 +6,7 @@ import StageStepper from '@/app/portal/_shared/StageStepper';
 import StageThread, {
   type StageThreadLabels,
 } from '@/app/portal/_shared/StageThread';
-import { getPortalLocale, tFactory } from '@/lib/portal/i18n';
+import { getPortalLocale, tFactory, type PortalLocale } from '@/lib/portal/i18n';
 import { loadProjectThreads } from '@/lib/portal/thread-loader';
 import {
   STAGE_ORDER,
@@ -21,6 +21,22 @@ import {
 
 interface ClientProjectParams {
   projectId: string;
+}
+
+function stageStateLabel(locale: PortalLocale, state: StageRow['state']) {
+  switch (state) {
+    case 'pending':
+      return locale === 'ru' ? 'в работе' : 'in progress';
+    case 'in_review':
+      return locale === 'ru' ? 'на ревью' : 'in review';
+    case 'changes_requested':
+      return locale === 'ru' ? 'нужны правки' : 'changes requested';
+    case 'client_approved':
+      return locale === 'ru' ? 'клиент утвердил' : 'client approved';
+    case 'approved':
+    default:
+      return locale === 'ru' ? 'утверждено' : 'approved';
+  }
 }
 
 // Client view of a single project. Read-only timeline with the same
