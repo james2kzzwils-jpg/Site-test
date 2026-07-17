@@ -9,22 +9,30 @@ export default function Footer() {
 
   return (
     <footer className="relative overflow-hidden border-t border-[var(--hairline)]">
-      {/* Abstract luminous background — sits behind footer content as a
-          faint mood piece. Decorative (aria-hidden), pointer-events-none. */}
+      {/* Ambient accent glow — pure CSS, no raster asset. A faint mood piece
+          in the brand palette (black + acid accent), replacing the old
+          footer-bg.webp. Decorative (aria-hidden), pointer-events-none. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 select-none overflow-hidden"
       >
-        <img
-          src="/footer-bg.webp"
-          alt=""
-          className="absolute bottom-0 right-0 h-full w-full object-cover opacity-40"
-          style={{ objectPosition: 'right bottom' }}
-          loading="lazy"
+        {/* Primary glow anchored to the bottom-right corner */}
+        <div
+          className="absolute -bottom-1/3 -right-1/5 h-[85%] w-[70%] rounded-full"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, var(--accent-glow) 0%, rgba(212, 255, 0, 0.05) 45%, transparent 72%)',
+            filter: 'blur(70px)',
+          }}
         />
-        {/* Fade edges to match site background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-transparent" />
+        {/* Faint vertical wash so the corner glow dissolves into the page */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-1/2"
+          style={{
+            background:
+              'linear-gradient(to top, rgba(212, 255, 0, 0.035) 0%, transparent 65%)',
+          }}
+        />
       </div>
 
       {/* Big monogram + tagline */}
@@ -121,5 +129,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-
