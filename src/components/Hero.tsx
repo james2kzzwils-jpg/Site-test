@@ -16,9 +16,26 @@ const Scene3D = dynamic(() => import('./Scene3D'), {
 });
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
   const [showReel, setShowReel] = useState(false);
+
+  const kicker =
+    locale === 'ru' ? 'Авторская CGI / Motion Lab' : 'Founder-Led Creative Lab';
+  const titleLine1 = 'Giving Form';
+  const titleLine2 = 'to the Invisible';
+  const subtitle =
+    locale === 'ru'
+      ? 'Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.'
+      : 'Epov Creative Labs is a founder-led creative lab by Andrey Epov, creating premium CGI, product visuals, and procedural motion for brands, products, and spatial experiences.';
+  const showreelCta =
+    locale === 'ru' ? 'Посмотреть Showreel' : 'Watch Showreel';
+  const startProjectCta =
+    locale === 'ru' ? 'Начать проект' : 'Start a Project';
+  const selectedWorkLabel =
+    locale === 'ru' ? 'Selected Work' : 'Selected Work';
+  const scrollLabel =
+    locale === 'ru' ? 'Листай к selected work' : 'Scroll to selected work';
 
   useEffect(() => {
     const el = containerRef.current;
@@ -38,7 +55,7 @@ export default function Hero() {
       {/* Top gradient that fades the 3D toward the type */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/30 to-[#050505]" />
 
-      {/* Side meta — left vertical "Click & Hold" / right vertical "scroll" */}
+      {/* Side meta — left vertical "Click & Hold" / right vertical scroll cue */}
       <div className="pointer-events-none absolute inset-y-0 left-4 hidden items-center sm:flex">
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--foreground)]/35 [writing-mode:vertical-rl]">
           {t.hero.click_hold}
@@ -46,7 +63,7 @@ export default function Hero() {
       </div>
       <div className="pointer-events-none absolute inset-y-0 right-4 hidden items-center sm:flex">
         <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--foreground)]/35 [writing-mode:vertical-rl]">
-          {t.hero.discover}
+          {selectedWorkLabel}
         </span>
       </div>
 
@@ -64,7 +81,7 @@ export default function Hero() {
               aria-hidden="true"
               className="h-[6px] w-[6px] rounded-full bg-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)]"
             />
-            {t.hero.kicker}
+            {kicker}
           </p>
           <div
             data-reveal
@@ -89,10 +106,10 @@ export default function Hero() {
             style={{ lineHeight: 0.92 }}
           >
             <span className="block text-[clamp(3rem,11vw,11rem)] font-medium tracking-[-0.045em] text-[var(--foreground)]">
-              {t.hero.title_line1}
+              {titleLine1}
             </span>
             <span className="block text-[clamp(3rem,11vw,11rem)] font-medium tracking-[-0.045em] text-[var(--foreground)]/30">
-              {t.hero.title_line2}
+              {titleLine2}
             </span>
           </h1>
 
@@ -101,25 +118,30 @@ export default function Hero() {
               data-reveal
               className="reveal max-w-xl text-[16px] leading-[1.65] text-[var(--foreground)]/55"
             >
-              {t.hero.subtitle}
+              {subtitle}
             </p>
 
-            <div data-reveal className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-end sm:gap-6">
+            <div
+              data-reveal
+              className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-end sm:gap-6"
+            >
               <button
                 type="button"
                 onClick={() => setShowReel(true)}
                 className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/[0.08] px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] transition-all duration-300 hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]"
                 data-cursor="hover"
               >
-                <span aria-hidden="true" className="text-[14px]">▶</span>
-                {t.hero.cta_showreel}
+                <span aria-hidden="true" className="text-[14px]">
+                  ▶
+                </span>
+                {showreelCta}
               </button>
               <a
                 href="#contact"
                 className="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-[var(--foreground)]/30 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] text-[var(--foreground)]/80 transition-all duration-300 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]"
                 data-cursor="hover"
               >
-                {t.hero.cta_contact}
+                {startProjectCta}
                 <span aria-hidden="true" className="text-[var(--accent)]">
                   ↗
                 </span>
@@ -130,9 +152,9 @@ export default function Hero() {
 
         {/* Bottom row — scroll cue */}
         <div className="mt-16 flex items-center justify-between border-t border-[var(--hairline)] pt-6 font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">
-          <span>{t.hero.scroll}</span>
+          <span>{scrollLabel}</span>
           <span className="hidden sm:inline">
-            {`(06)`} <span className="text-[var(--accent)]">◆</span> Index
+            <span className="text-[var(--accent)]">◆</span> {selectedWorkLabel}
           </span>
           <span>2026</span>
         </div>
