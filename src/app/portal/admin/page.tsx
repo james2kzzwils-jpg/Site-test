@@ -179,6 +179,27 @@ export default async function AdminClientsPage() {
     if (currentStage) currentStageByProject.set(project.id, currentStage);
   }
 
+  const waitingOnClient = projects.filter((project) => {
+    const currentStage = currentStageByProject.get(project.id);
+    return currentStage?.state === 'in_review';
+  }).length;
+
+  const waitingOnStudio = projects.filter((project) => {
+    const currentStage = currentStageByProject.get(project.id);
+    return (
+      currentStage?.state === 'pending' ||
+      currentStage?.state === 'changes_requested' ||
+      currentStage?.state === 'client_approved'
+    );
+  }).length;
+
+  const overdueProjects = projects.filter(
+    (project) =>
+      project.status !== 'archived' &&
+      project.due_date != null &&
+      project.due_date < today
+  ).length;
+
   const inbox = await loadAdminInbox({ supabase, limit: 50 });
   const needsAttention = inbox.items.filter(isActionRequired).length;
   const unreadCount = inbox.items.filter((item) => item.readAt == null).length;
