@@ -424,6 +424,8 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     // gentle smoothstep drift.
     const morphing = phase.from !== phase.to;
     const eased = morphing ? easeInOutQuint(localT) : smoothstep(localT);
+    const from = state.targets[phase.from];
+    const to = state.targets[phase.to];
 
     // Follow factor breathes with the transition: relaxed at the ends,
     // tight through the middle — particles visibly accelerate mid-morph
