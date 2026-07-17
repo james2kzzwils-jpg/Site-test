@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { useMediaQuery } from './useMediaQuery';
 
 /**
- * Hero particle field. Two layers:
+ * Hero particle field. Three layers:
  *
  *  - Inner ambient shell (~4.5k pts, accent-tinted). Slow rotation +
  *    soft mouse parallax. Always present.
@@ -14,6 +14,12 @@ import { useMediaQuery } from './useMediaQuery';
  *    `shell → A → E → shell`. The shell phase is a thicker spheroid
  *    cloud, the letter phases sample each glyph drawn on an offscreen
  *    canvas and slide every particle toward its sampled pixel target.
+ *    Morph transitions use a quintic in-out ease plus a mid-transition
+ *    "rush" in the follow factor — slow gathering, fast flight,
+ *    gentle settle — for proper motion-design contrast.
+ *  - Comet layer: a handful of faint drifting particles crossing the
+ *    scene from the left, each with a fading trail — a quiet cosmic
+ *    depth cue. Deliberately sparse (~7 comets) to keep the scene calm.
  *
  * The whole field idles right of centre (BASE_FOCUS_X), so the A / E
  * letters assemble in the deliberately empty right half of the hero —
@@ -60,6 +66,11 @@ const REEL_FOCUS_X = 2.2;
 const PANEL_HALF_W = 1.15;
 const PANEL_HALF_H = 1.75;
 
+// Comet layer — kept deliberately tiny so the scene stays calm.
+const COMET_COUNT = 7;
+const TRAIL_LENGTH = 16;
+const TRAIL_SPACING = 0.09;
+
 // Phase machine (seconds). Picks an ease and a target for every frame.
 const PHASES: { duration: number; from: 'shell' | 'A' | 'E'; to: 'shell' | 'A' | 'E' }[] = [
   { duration: 3.5, from: 'shell', to: 'shell' }, // settle
@@ -86,6 +97,13 @@ function makeRng(seed: number) {
 
 function smoothstep(t: number) {
   return t * t * (3 - 2 * t);
+}
+
+// Quintic in-out — much stronger contrast than smoothstep: a slow
+// wind-up, a fast rush through the middle, and a soft landing. Used
+// for the shell → letter → shell morph transitions.
+function easeInOutQuint(t: number) {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
 }
 
 function generateShellPositions(count: number, rng: () => number): Float32Array {
@@ -205,6 +223,135 @@ function getMorphState(): MorphState {
   return cachedState;
 }
 
+// ------------------------------------------------------------------
+// Comet layer — sparse "space dust" drifting in from the left with
+// barely-visible fading trails. Rendered as one Points cloud with
+// per-vertex colors (additive blending makes darker = more
+// transparent, which is how the trails fade out).
+// ------------------------------------------------------------------
+
+type Comet = {
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  brightness: number;
+  accent: boolean;
+};
+
+type CometState = {
+  geometry: THREE.BufferGeometry;
+  positions: Float32Array;
+  colors: Float32Array;
+  comets: Comet[];
+  rng: () => number;
+};
+
+function spawnComet(rng: () => number, anywhere: boolean): Comet {
+  return {
+    // Fresh comets enter just off the left edge; the initial seeding
+    // scatters them across the whole width so the sky is never empty.
+    x: anywhere ? -7 + rng() * 14 : -7.5 - rng() * 1.5,
+    y: -2.8 + rng() * 5.6,
+    z: -1.6 + rng() * 1.4,
+    vx: 0.3 + rng() * 0.45,
+    vy: (rng() - 0.5) * 0.12,
+    brightness: 0.2 + rng() * 0.28,
+    accent: rng() < 0.25,
+  };
+}
+
+let cachedCometState: CometState | null = null;
+
+function buildCometState(): CometState {
+  const rng = makeRng(0x0c0c0c);
+  const positions = new Float32Array(COMET_COUNT * TRAIL_LENGTH * 3);
+  const colors = new Float32Array(COMET_COUNT * TRAIL_LENGTH * 3);
+  const comets: Comet[] = [];
+  for (let c = 0; c < COMET_COUNT; c++) {
+    comets.push(spawnComet(rng, true));
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  return { geometry, positions, colors, comets, rng };
+}
+
+function getCometState(): CometState {
+  if (!cachedCometState) {
+    cachedCometState = buildCometState();
+  }
+  return cachedCometState;
+}
+
+function CometField({ reelOpen }: { reelOpen: boolean }) {
+  const reelRef = useRef(0);
+  const state = getCometState();
+
+  useFrame((frame, delta) => {
+    const st = getCometState();
+    const dt = Math.min(delta, 0.05);
+    const t = frame.clock.elapsedTime;
+
+    // Comets dim to half while the showreel is open so they never
+    // compete with the video.
+    reelRef.current += ((reelOpen ? 1 : 0) - reelRef.current) * 0.045;
+    const dim = 1 - 0.5 * reelRef.current;
+
+    for (let c = 0; c < COMET_COUNT; c++) {
+      let comet = st.comets[c];
+      comet.x += comet.vx * dt;
+      comet.y += comet.vy * dt + Math.sin(t * 0.6 + c * 2.1) * 0.0015;
+      if (comet.x - TRAIL_LENGTH * TRAIL_SPACING > 7.5) {
+        comet = spawnComet(st.rng, false);
+        st.comets[c] = comet;
+      }
+
+      const dirY = comet.vy / comet.vx;
+      for (let k = 0; k < TRAIL_LENGTH; k++) {
+        const idx = (c * TRAIL_LENGTH + k) * 3;
+        const back = k * TRAIL_SPACING;
+        st.positions[idx] = comet.x - back;
+        st.positions[idx + 1] = comet.y - back * dirY;
+        st.positions[idx + 2] = comet.z;
+
+        // Quadratic falloff along the trail — the tail dissolves into
+        // the black background (additive blending: darker = invisible).
+        const fade =
+          Math.pow(1 - k / TRAIL_LENGTH, 2.2) * comet.brightness * dim;
+        if (comet.accent) {
+          st.colors[idx] = 0.83 * fade;
+          st.colors[idx + 1] = 1.0 * fade;
+          st.colors[idx + 2] = 0.0;
+        } else {
+          st.colors[idx] = 0.96 * fade;
+          st.colors[idx + 1] = 0.95 * fade;
+          st.colors[idx + 2] = 0.93 * fade;
+        }
+      }
+    }
+
+    (st.geometry.attributes.position as THREE.BufferAttribute).needsUpdate =
+      true;
+    (st.geometry.attributes.color as THREE.BufferAttribute).needsUpdate = true;
+  });
+
+  return (
+    <points geometry={state.geometry} frustumCulled={false}>
+      <pointsMaterial
+        size={0.022}
+        sizeAttenuation
+        transparent
+        opacity={0.85}
+        vertexColors
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
+
 function ParticleField({ reelOpen }: { reelOpen: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Points>(null);
@@ -272,13 +419,17 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
       acc += p.duration;
     }
 
-    const eased = smoothstep(localT);
-    const from = state.targets[phase.from];
-    const to = state.targets[phase.to];
+    // Motion-design easing: morph transitions get a quintic in-out
+    // (slow wind-up → rush → soft landing); hold phases keep the
+    // gentle smoothstep drift.
+    const morphing = phase.from !== phase.to;
+    const eased = morphing ? easeInOutQuint(localT) : smoothstep(localT);
 
-    // Lerp live buffer toward target. Hold phases ease at a lower
-    // factor so particles gently drift even when from === to.
-    const followFactor = phase.from === phase.to ? 0.06 : 0.12;
+    // Follow factor breathes with the transition: relaxed at the ends,
+    // tight through the middle — particles visibly accelerate mid-morph
+    // and decelerate into the final form.
+    const bell = 4 * localT * (1 - localT);
+    const followFactor = morphing ? 0.05 + 0.16 * bell : 0.06;
     const live = state.livePositions;
 
     // Panel repulsion — while the reel is open, particles that would
@@ -400,6 +551,7 @@ export default function Scene3D({
       >
         <Suspense fallback={null}>
           <ParticleField reelOpen={reelOpen} />
+          <CometField reelOpen={reelOpen} />
         </Suspense>
       </Canvas>
     </div>
