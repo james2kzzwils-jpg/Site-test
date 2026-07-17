@@ -27,18 +27,17 @@ export default function Hero() {
   const titleLine1 = locale === 'ru' ? 'CGI и моушн-дизайн' : 'Giving Form';
   const titleLine2 =
     locale === 'ru' ? 'для брендов и продуктов' : 'to the Invisible';
-  // Russian lines are longer than the English ones, so the RU headline
-  // uses smaller clamps than EN — but close enough that switching
-  // locales doesn't feel like a size jump. The RU second line steps
-  // down for hierarchy and gets a little breathing room above.
+  // Both locales sit close in size so the EN ↔ RU switch doesn't jump.
+  // The RU second line steps down for hierarchy and gets a little
+  // breathing room above.
   const titleSize1 =
     locale === 'ru'
       ? 'text-[clamp(2.7rem,8vw,8rem)]'
-      : 'text-[clamp(3rem,11vw,11rem)]';
+      : 'text-[clamp(2.7rem,8.5vw,8.5rem)]';
   const titleSize2 =
     locale === 'ru'
       ? 'text-[clamp(2rem,5.6vw,5.6rem)] mt-[0.25em]'
-      : 'text-[clamp(3rem,11vw,11rem)]';
+      : 'text-[clamp(2.7rem,8.5vw,8.5rem)]';
   const subtitle =
     locale === 'ru'
       ? 'Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.'

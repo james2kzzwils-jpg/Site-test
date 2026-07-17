@@ -46,7 +46,7 @@ const LETTER_SLAB = 0.4;
 // Where the ambient field idles — shifted right of centre so the A / E
 // letter morphs assemble in the empty half of the hero, next to where
 // the showreel panel is born.
-const BASE_FOCUS_X = 1.6;
+const BASE_FOCUS_X = 2.1;
 
 // Where the particle group drifts while the showreel is open — matches
 // the video panel spot (right of centre, in the empty half of the hero)
