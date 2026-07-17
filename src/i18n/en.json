@@ -632,7 +632,9 @@
       },
       "email": {
         "title": "Send an email",
-        "desc": "Briefs, files & exact quotes"
+        "desc": "Briefs, files & exact quotes",
+        "subject": "Project inquiry — Epov Creative Labs",
+        "body": "Hi Andrey,\n\nCompany / product:\nWhat we need (video, product visuals, FX, other):\nTimeline or deadline:\nBudget range (optional):\nLinks & references (site, brief, moodboard):\n\nAnything rough is fine — you'll get a reply within 2 hours."
       },
       "call": {
         "title": "Book a call",
