@@ -157,8 +157,8 @@ Tasks:
 Goal: make the strongest projects work as proof, not just gallery entries.
 
 Tasks:
-- [ ] elevate 3 flagship project directions
-- [ ] use a clearer triad such as `Scale / Luxury / Innovation`
+- [x] elevate 3 flagship project directions — done (copy layer): owner selected the flagship trio 2026-07-17 — Cosmos. Moscow (Scale), Perfume. Simulation (Luxury), ThyName (Innovation); the Works index now leads with these three in that order and a new works subtitle frames them as flagship stories in EN/RU (PR #66); visual case hierarchy remains a designer task
+- [x] use a clearer triad such as `Scale / Luxury / Innovation` — done: flagship trio mapped to the triad (Cosmos → Scale, Perfume → Luxury, ThyName → Innovation), recorded here and reflected in the flagship-first Works order (PR #66)
 - [ ] ensure each featured project communicates challenge, role, process, and result
 - [ ] support designer with clear visual hierarchy for case presentation
 - [ ] preserve the rest of the portfolio as secondary depth
@@ -257,7 +257,7 @@ It should not feel like influencer lifestyle content.
 - [x] rewrite Hero — done: founder-led hero reframe (PR #57)
 - [x] add proof / trust strip after Hero — done: TrustStrip section after the hero marquee, built only on facts already in the site copy (founder-led, full-cycle, Houdini+Blender FX, Moscow / remote worldwide + 2h response); designer can restyle per §6
 - [x] re-sequence homepage blocks — done: funnel is now Hero → proof strip → Works → Services → About → FAQ → ScheduleCalendar + Contact as one closing conversion block (FAQ moved above the booking calendar); a dedicated Process section is still a future addition per Workstream C target structure
-- [ ] define 3 flagship work stories
+- [x] define 3 flagship work stories — done: owner picked Cosmos. Moscow (Scale), Perfume. Simulation (Luxury), ThyName (Innovation) on 2026-07-17; Works index reordered flagship-first with a new subtitle framing the three stories in EN/RU (PR #66); each flagship already carries a challenge/outcome/tech case block — designer visual hierarchy per Workstream D remains open
 - [x] rewrite services around outcomes — done: outcome-led subtitle + business-facing descriptions in EN/RU, prices unchanged (PR #64)
 - [x] rewrite About with founder presence — done (copy layer): About philosophy text now names Andrey Epov, frames Epov Creative Labs as his founder-led practice, and adds the direct-access argument (`you brief the person who actually does the work`) in EN/RU (PR #65); founder imagery in About remains P2
 - [ ] strengthen final CTA
