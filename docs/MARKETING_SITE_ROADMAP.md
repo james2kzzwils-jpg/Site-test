@@ -131,7 +131,7 @@ Tasks:
 - [ ] define founder-presence visual strategy
 - [ ] add a professional portrait / controlled founder visual language
 - [ ] decide hero founder treatment: direct portrait, side profile, silhouette, or integrated background presence
-- [ ] rewrite About as a high-trust founder block
+- [x] rewrite About as a high-trust founder block — done (copy layer): About philosophy now opens founder-led — names Andrey Epov, frames the lab as his personal CGI/motion practice, and adds the `no layers between you and the artist` trust argument in EN/RU (PR #65); portrait/visual founder presence remains a designer task (§7, P2)
 - [ ] add concise trust signals: experience, education, specialism, geography, client context
 - [ ] remove low-premium trust signals if they are too tactical or too literal
 
@@ -259,7 +259,7 @@ It should not feel like influencer lifestyle content.
 - [x] re-sequence homepage blocks — done: funnel is now Hero → proof strip → Works → Services → About → FAQ → ScheduleCalendar + Contact as one closing conversion block (FAQ moved above the booking calendar); a dedicated Process section is still a future addition per Workstream C target structure
 - [ ] define 3 flagship work stories
 - [x] rewrite services around outcomes — done: outcome-led subtitle + business-facing descriptions in EN/RU, prices unchanged (PR #64)
-- [ ] rewrite About with founder presence
+- [x] rewrite About with founder presence — done (copy layer): About philosophy text now names Andrey Epov, frames Epov Creative Labs as his founder-led practice, and adds the direct-access argument (`you brief the person who actually does the work`) in EN/RU (PR #65); founder imagery in About remains P2
 - [ ] strengthen final CTA
 
 ### P1 — premium consistency fixes
