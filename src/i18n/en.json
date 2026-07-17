@@ -31,6 +31,27 @@
     "discover": "Discover",
     "cta_showreel": "Show Reel"
   },
+  "trust": {
+    "aria_label": "Proof",
+    "items": [
+      {
+        "value": "Founder-Led",
+        "label": "Every project is led personally by Andrey Epov"
+      },
+      {
+        "value": "Full-Cycle",
+        "label": "From concept and lookdev to the graded master — in one pair of hands"
+      },
+      {
+        "value": "Houdini + Blender",
+        "label": "Procedural simulations and FX that can't be filmed with a real camera"
+      },
+      {
+        "value": "Moscow / Worldwide",
+        "label": "Remote-first, EN / RU, response within 2 hours"
+      }
+    ]
+  },
   "works": {
     "section_label": "Projects",
     "title": "Projects",
