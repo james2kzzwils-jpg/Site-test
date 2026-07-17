@@ -48,6 +48,63 @@ function isPendingApproval(item: PortalInboxItem) {
   );
 }
 
+function formatDate(locale: PortalLocale, value: string) {
+  return new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
+
+function activityTitle(item: PortalInboxItem, locale: PortalLocale) {
+  const stage =
+    payloadString(item.payload, 'stage_kind') ??
+    payloadString(item.payload, 'to_stage') ??
+    payloadString(item.payload, 'from_stage');
+  const decision = payloadString(item.payload, 'decision');
+
+  switch (item.type) {
+    case 'approval_requested':
+      return locale === 'ru'
+        ? `Этап ${stage ?? 'текущий'} отправлен на ревью`
+        : `${stage ?? 'Current stage'} sent for review`;
+    case 'approval_decided':
+      if (decision === 'changes_requested') {
+        return locale === 'ru'
+          ? `Клиент запросил правки по ${stage ?? 'этапу'}`
+          : `Client requested changes on ${stage ?? 'the stage'}`;
+      }
+      return locale === 'ru'
+        ? `Клиент утвердил ${stage ?? 'этап'}`
+        : `Client approved ${stage ?? 'the stage'}`;
+    case 'comment_added':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Новый комментарий от клиента'
+          : 'New client comment'
+        : locale === 'ru'
+          ? 'Новый комментарий от студии'
+          : 'New studio comment';
+    case 'file_uploaded':
+      return item.actorRole === 'client'
+        ? locale === 'ru'
+          ? 'Клиент загрузил файл'
+          : 'Client uploaded a file'
+        : locale === 'ru'
+          ? 'Студия загрузила файл'
+          : 'Studio uploaded a file';
+    case 'project_created':
+      return locale === 'ru' ? 'Создан новый проект' : 'New project created';
+    case 'stage_changed':
+      return locale === 'ru'
+        ? `Этап переведён в ${payloadString(item.payload, 'to_stage') ?? 'новый статус'}`
+        : `Stage moved to ${payloadString(item.payload, 'to_stage') ?? 'a new status'}`;
+    case 'nda_signed':
+      return locale === 'ru' ? 'Подписан NDA' : 'NDA signed';
+    default:
+      return locale === 'ru' ? 'Новое событие в портале' : 'New portal activity';
+  }
+}
+
 function clientInboxHref(
   clientId: string,
   counts: { attention: number; unread: number; approvals: number },
