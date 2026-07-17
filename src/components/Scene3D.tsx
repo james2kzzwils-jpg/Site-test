@@ -15,19 +15,23 @@ import { useMediaQuery } from './useMediaQuery';
  *    cloud, the letter phases sample each glyph drawn on an offscreen
  *    canvas and slide every particle toward its sampled pixel target.
  *
+ * The whole field idles right of centre (BASE_FOCUS_X), so the A / E
+ * letters assemble in the deliberately empty right half of the hero —
+ * away from the left-aligned typography.
+ *
  * Everything runs on the CPU with `Float32Array` position buffers —
  * cheap on the GPU and lets us morph without writing a shader. The
  * morph state lives at module scope so the per-frame `useFrame` loop
  * is free to mutate it; React's immutability rules apply only to
  * values returned from hooks (useState / useMemo / useRef).
  *
- * When the showreel opens (`reelOpen`), the whole field gently
- * converges toward the video panel spot on the right — the empty half
- * of the hero composition — shrinks and dims. On top of that, an
- * elliptical exclusion zone around the panel displaces particles
- * outward, so they form a living halo around the video: the reel and
- * the particles share one space, and the panel visibly "pushes" the
- * field aside. Closing the reel releases everything back to ambient.
+ * When the showreel opens (`reelOpen`), the field gently converges
+ * toward the video panel spot (REEL_FOCUS_X), shrinks and dims. On top
+ * of that, an elliptical exclusion zone around the panel displaces
+ * particles outward, so they form a living halo around the video: the
+ * reel and the particles share one space, and the panel visibly
+ * "pushes" the field aside. Closing the reel releases everything back
+ * to ambient.
  */
 
 const MORPH_COUNT = 6000;
@@ -38,6 +42,11 @@ const INNER_COUNT = 4500;
 const LETTER_WIDTH = 4.4;
 const LETTER_HEIGHT = 4.4;
 const LETTER_SLAB = 0.4;
+
+// Where the ambient field idles — shifted right of centre so the A / E
+// letter morphs assemble in the empty half of the hero, next to where
+// the showreel panel is born.
+const BASE_FOCUS_X = 1.6;
 
 // Where the particle group drifts while the showreel is open — matches
 // the video panel spot (right of centre, in the empty half of the hero)
@@ -224,8 +233,12 @@ function ParticleField({ reelOpen }: { reelOpen: boolean }) {
     if (groupRef.current) {
       groupRef.current.rotation.y = t * 0.04 + reel * 0.6;
       groupRef.current.rotation.x = Math.sin(t * 0.12) * 0.14 * (1 - reel);
+      // The field idles right of centre and drifts to the reel spot
+      // while the showreel is open; mouse parallax fades out with reel.
       const targetX =
-        mouseRef.current.x * 0.4 * (1 - reel) + REEL_FOCUS_X * reel;
+        BASE_FOCUS_X * (1 - reel) +
+        REEL_FOCUS_X * reel +
+        mouseRef.current.x * 0.4 * (1 - reel);
       const targetY = -mouseRef.current.y * 0.3 * (1 - reel);
       groupRef.current.position.x +=
         (targetX - groupRef.current.position.x) * 0.04;

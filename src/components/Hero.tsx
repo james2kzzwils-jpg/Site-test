@@ -28,16 +28,16 @@ export default function Hero() {
   const titleLine2 =
     locale === 'ru' ? 'для брендов и продуктов' : 'to the Invisible';
   // Russian lines are longer than the English ones, so the RU headline
-  // uses smaller clamps. The RU second line steps down further — a
-  // clear size hierarchy: what we do (big) → for whom (smaller, dim).
-  // EN keeps both lines at the original size.
+  // uses smaller clamps than EN — but close enough that switching
+  // locales doesn't feel like a size jump. The RU second line steps
+  // down for hierarchy and gets a little breathing room above.
   const titleSize1 =
     locale === 'ru'
-      ? 'text-[clamp(2.4rem,6.8vw,6.8rem)]'
+      ? 'text-[clamp(2.7rem,8vw,8rem)]'
       : 'text-[clamp(3rem,11vw,11rem)]';
   const titleSize2 =
     locale === 'ru'
-      ? 'text-[clamp(1.7rem,4.6vw,4.6rem)]'
+      ? 'text-[clamp(2rem,5.6vw,5.6rem)] mt-[0.25em]'
       : 'text-[clamp(3rem,11vw,11rem)]';
   const subtitle =
     locale === 'ru'
@@ -71,8 +71,9 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
-      {/* Subtle 3D scene behind — reacts to the showreel opening: the
-          particle field converges toward the video panel spot. */}
+      {/* Subtle 3D scene behind — idles in the right half of the hero and
+          reacts to the showreel opening: the particle field converges
+          toward the video panel spot. */}
       <Scene3D reelOpen={showReel} />
 
       {/* Top gradient that fades the 3D toward the type */}
@@ -92,7 +93,7 @@ export default function Hero() {
 
       <div
         ref={containerRef}
-        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-between px-6 pb-14 pt-44 sm:px-10 lg:px-14 lg:pb-20 lg:pt-48"
+        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-between px-6 pb-14 pt-32 sm:px-10 lg:px-14 lg:pb-20 lg:pt-36"
       >
         {/* Top row — kicker + role chips. Chips only on xl to avoid nav collision */}
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -123,7 +124,8 @@ export default function Hero() {
 
         {/* Hero type — everything stays in the left column; the right
             half of the hero is deliberately empty. That emptiness is the
-            stage where the showreel panel is born from the particles. */}
+            stage where the particle letters live and the showreel panel
+            is born. */}
         <div className="mt-auto pt-14">
           <h1
             data-reveal
