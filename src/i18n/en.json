@@ -1,7 +1,7 @@
 {
   "brand": {
     "monogram": "A",
-    "name": "Epov Creative Lab's",
+    "name": "Epov Creative Labs",
     "roles": [
       "3D Motion Designer",
       "CG Generalist",
@@ -116,7 +116,7 @@
       },
       {
         "id": "parfume-simulation",
-        "title": "Parfume. Simulation",
+        "title": "Perfume. Simulation",
         "client": "R&D",
         "year": "2025",
         "category": "simulations",
@@ -677,7 +677,7 @@
     "show_less": "Show less"
   },
   "footer": {
-    "brand": "Epov Creative Lab's",
+    "brand": "Epov Creative Labs",
     "tagline": "3D Motion Design & CG Solutions",
     "rights": "All rights reserved.",
     "available": "Open to collaboration, 2026",
