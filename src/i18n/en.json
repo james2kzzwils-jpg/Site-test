@@ -666,16 +666,20 @@
     "subtitle": "Straight answers on cost, timelines, the process and how we'd work together — for brands, founders and studios.",
     "items": [
       {
+        "q": "How do I start a project?",
+        "a": "Send a brief or even a rough idea — Telegram for a quick chat, email if you have files. You'll get a reply within 2 hours and an exact quote within 24; a short call then locks scope, timeline and start date. No preparation needed on your side — the written brief is put together with you at the Discovery stage."
+      },
+      {
         "q": "How long does a project take?",
         "a": "Product render: 2–3 days. Short animation (up to 15s): 2–4 weeks. Large campaigns are discussed individually."
       },
       {
         "q": "What are your rates?",
-        "a": "Rates depend on simulation complexity and video duration. Send me a brief, and I will provide an exact quote within 24 hours."
+        "a": "Starting points are public: Lookdev & Art Direction from 10,000 ₽ / $150, Procedural Animation & FX from 15,000 ₽ / $250, Full-Cycle CG Production from 25,000 ₽ / $400. The final number depends on simulation complexity and video duration — send a brief, and you'll get an exact quote within 24 hours."
       },
       {
         "q": "How do I stay in control of the process if I don't know 3D?",
-        "a": "We work in transparent stages: 1. Visual References → 2. Gray animation draft (Animatic) → 3. Final Render. You approve every step, so there are no surprises at the end."
+        "a": "The work runs in five transparent stages — Discovery, moodboard, animatic, lookdev, final render — and each one ends with a concrete deliverable you approve before the next begins. One revision round is included at every stage, so there are no surprises at the end."
       },
       {
         "q": "Why use Blender/Houdini instead of Cinema 4D?",
