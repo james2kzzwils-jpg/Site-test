@@ -167,11 +167,11 @@ Tasks:
 Goal: explain what can be hired and why it matters.
 
 Tasks:
-- [ ] rewrite services around outcomes, not only tools
+- [x] rewrite services around outcomes, not only tools — done: services subtitle and all three business-facing descriptions now lead with client outcomes (scroll-stopping product reveals; one brief in → launch-ready graded film out; visual signature locked before expensive production) in EN/RU; tool-facing descriptions for producers/studios intentionally kept (PR #64)
 - [ ] decide the 3 anchor service lines
 - [ ] clarify brand-facing value and studio-facing value separately
-- [ ] review whether public minimum pricing supports premium positioning
-- [ ] decide whether to keep pricing, soften pricing, or move to estimate-based language
+- [x] review whether public minimum pricing supports premium positioning — done: reviewed with owner 2026-07-17
+- [x] decide whether to keep pricing, soften pricing, or move to estimate-based language — done: owner decision 2026-07-17 — keep the public starting prices as-is (`от 15 000 ₽ / от $250`, `от 25 000 ₽ / от $400`, `от 10 000 ₽ / от $150`)
 
 ### Workstream F — process / about / CTA refinement
 Goal: increase trust and make starting a project easier.
@@ -258,14 +258,14 @@ It should not feel like influencer lifestyle content.
 - [x] add proof / trust strip after Hero — done: TrustStrip section after the hero marquee, built only on facts already in the site copy (founder-led, full-cycle, Houdini+Blender FX, Moscow / remote worldwide + 2h response); designer can restyle per §6
 - [x] re-sequence homepage blocks — done: funnel is now Hero → proof strip → Works → Services → About → FAQ → ScheduleCalendar + Contact as one closing conversion block (FAQ moved above the booking calendar); a dedicated Process section is still a future addition per Workstream C target structure
 - [ ] define 3 flagship work stories
-- [ ] rewrite services around outcomes
+- [x] rewrite services around outcomes — done: outcome-led subtitle + business-facing descriptions in EN/RU, prices unchanged (PR #64)
 - [ ] rewrite About with founder presence
 - [ ] strengthen final CTA
 
 ### P1 — premium consistency fixes
 - [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
 - [x] fix weak English phrasing — done: unified `Showreel` spelling, US spelling consistency (program, recognizable), clearer revision-rounds note, natural FAQ wording (rates, staying in control), `neural references` → `AI-generated references`; hero i18n block untouched (live hero copy is in Hero.tsx)
-- [ ] review public prices for premium fit
+- [x] review public prices for premium fit — done: owner decision 2026-07-17 — keep the public `от 15 000 ₽ / от $250` starting prices as-is; outcome-led service copy now carries the premium framing
 - [x] remove over-literal schedule/address language if not needed — done: public street address replaced with `Moscow / Remote Worldwide` and the weekday work-schedule line replaced with a premium availability line (`Open for new projects — limited slots each month`) in EN/RU; booking-calendar UI copy kept as functional text
 
 ### P2 — design and conversion enhancement
