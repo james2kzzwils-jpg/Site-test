@@ -1,6 +1,6 @@
 # Marketing site roadmap
 
-Updated: 2026-07-17
+Updated: 2026-07-24
 Base branch: `redesignLinda`
 
 This file tracks the **marketing site only**.
@@ -118,11 +118,12 @@ Goal: explain the offer in 5 seconds.
 Tasks:
 - [ ] finalize public brand model
 - [ ] choose the primary audience priority
-- [ ] rewrite the first-screen positioning
-- [x] define one main CTA and one secondary CTA
+- [x] rewrite the first-screen positioning — done: founder-led hero reframe (PR #57)
+- [ ] define one main CTA and one secondary CTA
 - [ ] remove weak or contradictory copy
-- [x] fix naming / language consistency such as `Epov Creative Lab's`
-- [x] fix project naming issues such as `Parfume` → `Perfume`
+- [x] fix naming / language consistency such as `Epov Creative Lab's` — done: unified to `Epov Creative Labs` in EN/RU i18n (site metadata already used the correct name)
+- [x] fix project naming issues such as `Parfume` → `Perfume` — done: EN project title corrected (internal id/asset paths and the Behance URL intentionally kept as-is)
+- [ ] add a "Open for collaborations" / availability signal on the homepage near the showreel CTA (so the visitor instantly sees the status)
 
 ### Workstream B — founder presence and trust
 Goal: show the person behind the work without collapsing into a generic freelancer image.
@@ -134,6 +135,7 @@ Tasks:
 - [ ] rewrite About as a high-trust founder block
 - [ ] add concise trust signals: experience, education, specialism, geography, client context
 - [ ] remove low-premium trust signals if they are too tactical or too literal
+- [ ] review footer address: decide whether it implies "visit possible"; either remove full street address or replace with a clearer "Moscow / Remote" style line
 
 ### Workstream C — homepage architecture
 Goal: rebuild the homepage into a cleaner marketing funnel.
@@ -152,6 +154,7 @@ Tasks:
 - [ ] reduce duplicate information
 - [ ] move long secondary explanations lower
 - [ ] make each section support conversion, not only aesthetics
+- [ ] increase "movement" in the first screen by featuring a curated video strip (pull from existing case videos) — reference: https://locomotive.ca/en
 
 ### Workstream D — featured work strategy
 Goal: make the strongest projects work as proof, not just gallery entries.
@@ -162,6 +165,7 @@ Tasks:
 - [ ] ensure each featured project communicates challenge, role, process, and result
 - [ ] support designer with clear visual hierarchy for case presentation
 - [ ] preserve the rest of the portfolio as secondary depth
+- [ ] quality-pass the Motion cases: unify art direction, fix cropping, remove questionable frames, keep only the strongest proof (plus real-world application shots where possible)
 
 ### Workstream E — services repackaging
 Goal: explain what can be hired and why it matters.
@@ -183,6 +187,7 @@ Tasks:
 - [ ] turn Contact into a stronger conversion block
 - [ ] explain what happens after contact
 - [ ] clarify which channel is best for which type of inquiry
+- [ ] fix Calendly availability: past dates must not appear selectable; ensure timezone handling and slot generation is correct
 
 ### Workstream G — visual system and motion polish
 Goal: preserve premium art direction without sacrificing clarity or performance.
@@ -192,6 +197,18 @@ Tasks:
 - [ ] define still image fallback strategy
 - [ ] define mobile-safe motion strategy
 - [ ] only then prototype premium motion enhancements
+- [ ] showreel modal desktop layout: ensure the desktop view is not using the mobile layout (increase viewport usage so details read)
+
+### Workstream H — case pages (UX, media, proof)
+Goal: make case pages read like a premium editorial story with clear proof.
+
+Reference: https://www.pentagram.com/work/porsche?rel=discipline&rel-id=25
+
+Tasks:
+- [ ] move the strongest motion/video proof to the top of each case (above the fold)
+- [ ] increase image quality where it looks soft on desktop (audit Next/Image sizes, srcset, compression, and original assets)
+- [ ] remove QR codes unless they are strictly necessary; if a QR encodes a URL, add the URL as an explicit clickable link рядом с QR (or remove QR and keep the link)
+- [ ] for each case: reduce gallery noise (fewer but stronger frames), ensure crop/ratio consistency, and highlight "real-world usage" frames
 
 ---
 
@@ -209,6 +226,7 @@ This section is the cleanest handoff surface for a designer.
 - final CTA composition
 - typography and spacing rhythm for premium editorial feel
 - mobile adaptation principles for all above
+- case-page editorial layout and media rhythm (video-first / gallery reduction)
 
 ### Designer should not treat as first priority
 - complex WebGL hero systems
@@ -254,7 +272,7 @@ It should not feel like influencer lifestyle content.
 - [ ] define primary target audience priority
 
 ### P1 — homepage foundation
-- [ ] rewrite Hero
+- [x] rewrite Hero — done: founder-led hero reframe (PR #57)
 - [ ] add proof / trust strip after Hero
 - [ ] re-sequence homepage blocks
 - [ ] define 3 flagship work stories
@@ -263,10 +281,18 @@ It should not feel like influencer lifestyle content.
 - [ ] strengthen final CTA
 
 ### P1 — premium consistency fixes
-- [x] fix brand naming inconsistencies
+- [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
 - [ ] fix weak English phrasing
 - [ ] review public prices for premium fit
 - [ ] remove over-literal schedule/address language if not needed
+
+### P1.5 — media + UX fixes (from owner review, 2026-07-24)
+- [ ] motion-cases quality pass (cropping, questionable frames, consistency)
+- [ ] Metalplace: QR → remove or add a direct clickable link next to it
+- [ ] showreel desktop layout: not mobile-sized on desktop
+- [ ] image quality audit: improve desktop sharpness (srcset/sizes/compression/original assets)
+- [ ] calendly: fix past days showing as available
+- [ ] "Show all" behavior: verify it matches the label (no misleading partial expansion)
 
 ### P2 — design and conversion enhancement
 - [ ] add professional founder imagery
