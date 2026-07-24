@@ -109,6 +109,11 @@ export default function Contact() {
 
   const telegramHref = `https://t.me/${t.contact.info.telegram.replace(/^@/, '')}`;
   const emailHref = `mailto:${t.contact.info.email}`;
+  // The email CTA opens a pre-filled draft (subject + mini-brief checklist)
+  // so inquiries arrive with the facts needed for an exact quote within 24h.
+  const emailBriefHref = `mailto:${t.contact.info.email}?subject=${encodeURIComponent(
+    t.contact.actions.email.subject
+  )}&body=${encodeURIComponent(t.contact.actions.email.body)}`;
   const calendlyUrl = t.contact.info.calendly;
 
   useEffect(() => {
@@ -215,7 +220,7 @@ export default function Contact() {
               title={t.contact.actions.email.title}
               desc={t.contact.actions.email.desc}
               glyph="↗"
-              href={emailHref}
+              href={emailBriefHref}
             />
             <ContactAction
               title={t.contact.actions.call.title}
