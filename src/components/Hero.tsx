@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useLanguage } from '@/i18n/LanguageContext';
 import ShowreelModal from './ShowreelModal';
+import ScrambleText from './ScrambleText';
+import Magnetic from './Magnetic';
 
 // Three.js is heavy. Loading it via next/dynamic with ssr:false splits the
 // whole react-three-fiber + three bundle into its own async chunk so it no
@@ -56,7 +58,7 @@ export default function Hero() {
   // container stretches both to the width of the larger one, and
   // padding / border / typography are the same.
   const ctaBase =
-    'inline-flex items-center justify-center gap-3 rounded-full border-2 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] transition-all duration-300';
+    'inline-flex w-full items-center justify-center gap-3 rounded-full border-2 px-8 py-3.5 font-mono text-[12px] uppercase tracking-[0.22em] transition-all duration-300';
 
   useEffect(() => {
     const el = containerRef.current;
@@ -104,7 +106,7 @@ export default function Hero() {
               aria-hidden="true"
               className="h-[6px] w-[6px] rounded-full bg-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)]"
             />
-            {kicker}
+            <ScrambleText text={kicker} />
           </p>
           <div
             data-reveal
@@ -115,7 +117,7 @@ export default function Hero() {
                 key={r}
                 className="rounded-full border border-[var(--hairline)] px-3 py-[6px] font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--foreground)]/65"
               >
-                {r}
+                <ScrambleText text={r} />
               </span>
             ))}
           </div>
@@ -153,39 +155,44 @@ export default function Hero() {
 
             {/* Equal-width CTA pair: inline-grid stretches both buttons
                 to the width of the larger one — stacked on mobile, side
-                by side from sm up. */}
+                by side from sm up. Each CTA is wrapped in a Magnetic
+                container so it gently follows the cursor. */}
             <div
               data-reveal
               className="reveal inline-grid auto-cols-fr grid-flow-row justify-items-stretch gap-4 self-start sm:grid-flow-col sm:gap-6"
             >
-              <button
-                type="button"
-                onClick={() => setShowReel(true)}
-                className={`${ctaBase} border-[var(--accent)] bg-[var(--accent)]/[0.08] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]`}
-                data-cursor="hover"
-              >
-                <span aria-hidden="true" className="text-[14px]">
-                  ▶
-                </span>
-                {showreelCta}
-              </button>
-              <a
-                href="#contact"
-                className={`${ctaBase} group border-[var(--foreground)]/30 text-[var(--foreground)]/80 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]`}
-                data-cursor="hover"
-              >
-                {startProjectCta}
-                <span aria-hidden="true" className="text-[var(--accent)]">
-                  ↗
-                </span>
-              </a>
+              <Magnetic>
+                <button
+                  type="button"
+                  onClick={() => setShowReel(true)}
+                  className={`${ctaBase} border-[var(--accent)] bg-[var(--accent)]/[0.08] text-[var(--accent)] shadow-[0_0_24px_var(--accent-glow)] hover:bg-[var(--accent)]/[0.18] hover:shadow-[0_0_40px_var(--accent-glow)]`}
+                  data-cursor="hover"
+                >
+                  <span aria-hidden="true" className="text-[14px]">
+                    ▶
+                  </span>
+                  {showreelCta}
+                </button>
+              </Magnetic>
+              <Magnetic>
+                <a
+                  href="#contact"
+                  className={`${ctaBase} group border-[var(--foreground)]/30 text-[var(--foreground)]/80 hover:border-[var(--foreground)]/60 hover:text-[var(--foreground)]`}
+                  data-cursor="hover"
+                >
+                  {startProjectCta}
+                  <span aria-hidden="true" className="text-[var(--accent)]">
+                    ↗
+                  </span>
+                </a>
+              </Magnetic>
             </div>
           </div>
         </div>
 
         {/* Bottom row — scroll cue */}
         <div className="mt-16 flex items-center justify-between border-t border-[var(--hairline)] pt-6 font-mono text-[10px] uppercase tracking-[0.32em] text-[var(--foreground)]/40">
-          <span>{scrollLabel}</span>
+          <ScrambleText text={scrollLabel} />
           <span className="hidden sm:inline">
             <span className="text-[var(--accent)]">◆</span> {selectedWorkLabel}
           </span>

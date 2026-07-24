@@ -59,6 +59,9 @@ export default function HomePage() {
       {/* Rare decorative micro-events (comets / hopping ball / ◆ burst)
           that play while scrolling below the hero. */}
       <AmbientMoments />
+      {/* Cinematic film grain — subtle animated texture over the whole
+          site (certus-style premium finish). */}
+      <div className="grain-overlay" aria-hidden="true" />
       <ScrollToTop />
     </>
   );
