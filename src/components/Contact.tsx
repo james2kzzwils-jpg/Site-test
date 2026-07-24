@@ -107,9 +107,11 @@ export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const [shown, setShown] = useState(false);
 
-  const telegramHref = `https://t.me/${t.contact.info.telegram.replace(/^@/, '')}`;
+  const telegramUsername = t.contact.info.telegram.replace(/^@/, '');
+  const telegramHref = `https://t.me/${telegramUsername}`;
   const emailHref = `mailto:${t.contact.info.email}`;
   const calendlyUrl = t.contact.info.calendly;
+  const publicLocation = t.about.availability.location;
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -185,7 +187,7 @@ export default function Contact() {
                 Location
               </p>
               <p className="font-display text-[18px] tracking-[-0.01em] text-[var(--foreground)]/70">
-                {t.contact.info.location}
+                {publicLocation}
               </p>
             </div>
             <div className="mt-8 flex items-center gap-3 border-t border-[var(--hairline)] pt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/40">

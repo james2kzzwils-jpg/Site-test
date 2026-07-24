@@ -24,15 +24,23 @@ export const schedule = {
   extraFreeDates: [] as string[], // e.g. ['2026-07-22']
 
   /** Calendly booking URL */
-  calendlyUrl: 'https://calendly.com/aepov',
+  calendlyUrl: 'https://calendly.com/cggeneralistandrey/30min',
 
   /** How many months to show (current + next N) */
   monthsAhead: 2,
 };
 
+/** Format a date as YYYY-MM-DD in the visitor's local timezone. */
+export function toLocalISODate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /** Check if a given date is available */
 export function isDateFree(date: Date): boolean {
-  const dateStr = date.toISOString().slice(0, 10);
+  const dateStr = toLocalISODate(date);
   const day = date.getDay();
 
   // Explicit overrides take priority
@@ -46,6 +54,8 @@ export function isDateFree(date: Date): boolean {
 /** Check if a date is in the past */
 export function isPast(date: Date): boolean {
   const today = new Date();
+  const target = new Date(date);
   today.setHours(0, 0, 0, 0);
-  return date < today;
+  target.setHours(0, 0, 0, 0);
+  return target < today;
 }

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
-import { schedule, isDateFree, isPast } from '@/lib/schedule';
+import { schedule, isDateFree, isPast, toLocalISODate } from '@/lib/schedule';
 
 /**
  * Interactive availability calendar.
@@ -41,6 +41,7 @@ function MonthGrid({ year, month, isRu }: { year: number; month: number; isRu: b
   const startDow = days[0].getDay(); // 0=Sun
 
   const blanks = Array.from({ length: startDow }, (_, i) => i);
+  const todayKey = toLocalISODate(new Date());
 
   return (
     <div className="flex flex-col">
@@ -67,23 +68,22 @@ function MonthGrid({ year, month, isRu }: { year: number; month: number; isRu: b
           <span key={`blank-${i}`} />
         ))}
         {days.map((date) => {
+          const dateStr = toLocalISODate(date);
           const past = isPast(date);
           const free = !past && isDateFree(date);
-          const today =
-            date.toISOString().slice(0, 10) ===
-            new Date().toISOString().slice(0, 10);
+          const today = dateStr === todayKey;
 
           return (
             <button
-              key={date.getDate()}
+              key={dateStr}
               type="button"
               disabled={past || !free}
               onClick={() => {
                 if (free) {
-                  const dateStr = date.toISOString().slice(0, 10);
                   window.open(
                     `${schedule.calendlyUrl}?date=${dateStr}`,
                     '_blank',
+                    'noreferrer',
                   );
                 }
               }}
