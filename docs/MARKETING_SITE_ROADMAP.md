@@ -256,7 +256,7 @@ It should not feel like influencer lifestyle content.
 ### P1 — homepage foundation
 - [x] rewrite Hero — done: founder-led hero reframe (PR #57)
 - [x] add proof / trust strip after Hero — done: TrustStrip section after the hero marquee, built only on facts already in the site copy (founder-led, full-cycle, Houdini+Blender FX, Moscow / remote worldwide + 2h response); designer can restyle per §6
-- [ ] re-sequence homepage blocks
+- [x] re-sequence homepage blocks — done: funnel is now Hero → proof strip → Works → Services → About → FAQ → ScheduleCalendar + Contact as one closing conversion block (FAQ moved above the booking calendar); a dedicated Process section is still a future addition per Workstream C target structure
 - [ ] define 3 flagship work stories
 - [ ] rewrite services around outcomes
 - [ ] rewrite About with founder presence
