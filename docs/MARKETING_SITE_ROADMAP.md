@@ -180,9 +180,9 @@ Tasks:
 - [ ] simplify process if it feels too long for the homepage
 - [ ] replace abstract percentage signals with clearer deliverables if needed
 - [ ] make About shorter, stronger, and more founder-led
-- [ ] turn Contact into a stronger conversion block
-- [ ] explain what happens after contact
-- [ ] clarify which channel is best for which type of inquiry
+- [x] turn Contact into a stronger conversion block — done (copy layer): contact subtitle rewritten from a vague pleasantry into a conversion path built on existing promises (send a brief → reply within 2h → exact quote within 24h → short call locking scope, timeline, start date) in EN/RU (PR #67); visual CTA composition and founder CTA shot remain designer tasks (§6, §7)
+- [x] explain what happens after contact — done: the new contact subtitle spells out the concrete next steps — reply within 2 hours, exact quote within 24, then a short call to lock scope, timeline and start date (EN/RU, PR #67)
+- [x] clarify which channel is best for which type of inquiry — done: channel sub-lines now route inquiries — Telegram for quick questions and ideas (fastest reply), email for briefs, files and exact quotes, Calendly call for scope and timeline (EN/RU, PR #67)
 
 ### Workstream G — visual system and motion polish
 Goal: preserve premium art direction without sacrificing clarity or performance.
@@ -260,7 +260,7 @@ It should not feel like influencer lifestyle content.
 - [x] define 3 flagship work stories — done: owner picked Cosmos. Moscow (Scale), Perfume. Simulation (Luxury), ThyName (Innovation) on 2026-07-17; Works index reordered flagship-first with a new subtitle framing the three stories in EN/RU (PR #66); each flagship already carries a challenge/outcome/tech case block — designer visual hierarchy per Workstream D remains open
 - [x] rewrite services around outcomes — done: outcome-led subtitle + business-facing descriptions in EN/RU, prices unchanged (PR #64)
 - [x] rewrite About with founder presence — done (copy layer): About philosophy text now names Andrey Epov, frames Epov Creative Labs as his founder-led practice, and adds the direct-access argument (`you brief the person who actually does the work`) in EN/RU (PR #65); founder imagery in About remains P2
-- [ ] strengthen final CTA
+- [x] strengthen final CTA — done (copy layer): Contact rewritten as a conversion block — subtitle with concrete next steps (reply in 2h → exact quote in 24h → short call locking scope, timeline, start date) and inquiry-routing channel descriptions (Telegram / email / Calendly call) in EN/RU (PR #67); founder CTA imagery remains P2 (§7) and final CTA composition is a designer task (§6)
 
 ### P1 — premium consistency fixes
 - [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
