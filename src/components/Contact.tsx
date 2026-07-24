@@ -108,7 +108,7 @@ export default function Contact() {
   const [shown, setShown] = useState(false);
 
   const telegramUsername = t.contact.info.telegram.replace(/^@/, '');
-  const telegramHref = `https://t.me/${telegramUsername}`;
+  const telegramHref = 'https://t.me/' + telegramUsername;
   const emailHref = `mailto:${t.contact.info.email}`;
   const calendlyUrl = t.contact.info.calendly;
   const publicLocation = t.about.availability.location;
