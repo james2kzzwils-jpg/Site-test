@@ -264,7 +264,7 @@ It should not feel like influencer lifestyle content.
 
 ### P1 — premium consistency fixes
 - [x] fix brand naming inconsistencies — done: `Epov Creative Lab's` → `Epov Creative Labs` across EN/RU i18n
-- [ ] fix weak English phrasing
+- [x] fix weak English phrasing — done: unified `Showreel` spelling, US spelling consistency (program, recognizable), clearer revision-rounds note, natural FAQ wording (rates, staying in control), `neural references` → `AI-generated references`; hero i18n block untouched (live hero copy is in Hero.tsx)
 - [ ] review public prices for premium fit
 - [ ] remove over-literal schedule/address language if not needed
 
