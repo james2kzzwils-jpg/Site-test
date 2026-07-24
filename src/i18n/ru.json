@@ -590,8 +590,8 @@
       "title": "Текущий статус и доступность",
       "location_label": "Локация",
       "location": "Москва / Удалённо по всему миру",
-      "schedule_label": "График",
-      "schedule": "Вт, Ср, Пт (полный день) | Чт (частичная занятость / консультации)",
+      "schedule_label": "Доступность",
+      "schedule": "Открыт для новых проектов — количество слотов в месяц ограничено",
       "response_label": "Коммуникация",
       "response": "Ответ в течение 2 часов"
     }
@@ -621,7 +621,7 @@
     "info": {
       "email": "cggeneralistandrey@gmail.com",
       "telegram": "@aepov_2kzz",
-      "location": "Москва, проспект 60-летия Октября, 11",
+      "location": "Москва / Удалённо по всему миру",
       "calendly": "https://calendly.com/cggeneralistandrey/30min"
     },
     "actions": {

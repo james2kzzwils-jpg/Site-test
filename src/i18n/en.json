@@ -591,7 +591,7 @@
       "location_label": "Location",
       "location": "Moscow / Remote Worldwide",
       "schedule_label": "Project Availability",
-      "schedule": "Tue, Wed, Fri (Full-time) | Thu (Part-time / Consultations)",
+      "schedule": "Open for new projects — a limited number of slots each month",
       "response_label": "Communication",
       "response": "Response within 2 hours"
     }
@@ -621,7 +621,7 @@
     "info": {
       "email": "cggeneralistandrey@gmail.com",
       "telegram": "@aepov_2kzz",
-      "location": "Moscow, 60-letiya Oktyabrya Prospekt, 11",
+      "location": "Moscow / Remote Worldwide",
       "calendly": "https://calendly.com/cggeneralistandrey/30min"
     },
     "actions": {
