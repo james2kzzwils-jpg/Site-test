@@ -102,7 +102,7 @@ export default function ShowreelModal({
       aria-modal="true"
       aria-label="Showreel"
       onClick={handleBackdropClick}
-      className={`fixed inset-0 z-[9998] flex items-center bg-black/55 transition-all duration-500 ${
+      className={`fixed inset-0 z-[9998] flex items-center justify-center bg-black/70 px-5 transition-all duration-500 sm:justify-end sm:px-10 lg:px-14 ${
         open
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0'
@@ -125,14 +125,10 @@ export default function ShowreelModal({
         <span className="text-[var(--accent)]">◆</span> Showreel 2026
       </p>
 
-      {/* Video container — 9:16 vertical, centred on the same anchor
-          axis as the particle planet (~77% of viewport width — the
-          "CG Generalist" chip axis): margin-right ≈ 23.3vw minus half
-          the panel width. Centered on mobile. Opening is delayed 250ms
-          so the field has visibly begun gathering before the panel
-          scales in. */}
+      {/* Video container — keep the mobile 9:16 shape, but let desktop use
+          substantially more viewport height so details are readable. */}
       <div
-        className={`relative mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mx-0 sm:ml-auto sm:mr-[max(1rem,calc(23.3vw-min(22.5vh,170px)))] ${
+        className={`relative transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] sm:mr-[max(1rem,calc(23.3vw-min(33vh,260px)))] ${
           open ? 'scale-100 opacity-100' : 'scale-[0.4] opacity-0'
         }`}
         style={{
@@ -154,7 +150,8 @@ export default function ShowreelModal({
           <div
             className="relative bg-black"
             style={{
-              width: 'min(45vh, 340px)',
+              width: 'min(88vw, 520px)',
+              maxHeight: '86svh',
               aspectRatio: '9 / 16',
             }}
           >

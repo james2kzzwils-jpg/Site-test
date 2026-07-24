@@ -155,6 +155,44 @@ function BentoVisual({
   );
 }
 
+function LeadMedia({ src, title }: { src: string; title: string }) {
+  const isVideo = src.toLowerCase().endsWith('.mp4');
+
+  return (
+    <section className="relative pb-20 lg:pb-28">
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
+        <div className="relative overflow-hidden rounded-sm border border-[var(--hairline)] bg-[var(--foreground)]/[0.012]">
+          <div className="relative aspect-[16/9] w-full bg-black">
+            {isVideo ? (
+              <video
+                className="h-full w-full object-contain"
+                src={src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={src}
+                alt={title}
+                className="h-full w-full object-contain"
+                loading="eager"
+                decoding="async"
+              />
+            )}
+          </div>
+          <p className="absolute bottom-4 left-5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--foreground)]/70">
+            <span className="accent-diamond">◆</span> Lead motion
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // Bento layout pattern for the gallery. Cells cycle through a small
 // rotating set of (col-span, row-span, aspect) tuples so a long list
 // of frames doesn't read as one flat scroll. Each tuple lands on a
@@ -203,7 +241,7 @@ function BentoGallery({
               >
                 {isVideo ? (
                   <video
-                    className="block h-full w-full object-cover"
+                    className="block h-full w-full object-contain"
                     src={src}
                     autoPlay
                     loop
@@ -216,7 +254,7 @@ function BentoGallery({
                   <img
                     src={src}
                     alt={`${title} — ${label} ${i + 1}`}
-                    className="block h-full w-full object-cover"
+                    className="block h-full w-full object-contain"
                     loading="lazy"
                     decoding="async"
                   />
@@ -351,6 +389,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
       frame02?: string;
       frame03?: string;
     };
+    links?: Record<string, string>;
     caseStudy?: {
       role: string;
       caseTools: string;
@@ -366,6 +405,11 @@ export default function ProjectDetail({ slug }: { slug: string }) {
 
   const idx = String(index + 1).padStart(2, '0');
   const tot = String(projects.length).padStart(2, '0');
+  const leadMedia = project.gallery?.find((src) => src.toLowerCase().endsWith('.mp4'));
+  const galleryItems = leadMedia
+    ? project.gallery?.filter((src) => src !== leadMedia)
+    : project.gallery;
+  const extraLinks = Object.entries(project.links ?? {}).filter(([key]) => key !== 'behance');
 
   return (
     <>
@@ -424,19 +468,29 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                     </span>
                   ))}
                 </div>
-                {project.links.behance ? (
-                  <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {project.links?.behance ? (
                     <PlatformBadge
                       href={project.links.behance}
                       label="Behance"
                       monogram="Be"
                     />
-                  </div>
-                ) : null}
+                  ) : null}
+                  {extraLinks.map(([key, href]) => (
+                    <PlatformBadge
+                      key={key}
+                      href={href}
+                      label={key}
+                      monogram="↗"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
+
+        {leadMedia ? <LeadMedia src={leadMedia} title={project.title} /> : null}
 
         {/* Cover frame — shows the imported Behance cover if the project
             has one; otherwise falls back to the grid placeholder. */}
@@ -450,7 +504,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                     src={project.cover}
                     alt={project.title}
                     className="absolute inset-0 h-full w-full object-cover"
-                    loading="eager"
+                    loading={leadMedia ? 'lazy' : 'eager'}
                   />
                   <div
                     aria-hidden="true"
@@ -643,18 +697,18 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           )
         ) : null}
 
-        {project.gallery && project.gallery.length > 0 ? (
+        {galleryItems && galleryItems.length > 0 ? (
           project.bentoGallery ? (
             <BentoGallery
               label={t.project.gallery_label}
-              items={project.gallery}
+              items={galleryItems}
               title={project.title}
               kind="gallery"
             />
           ) : (
             <ProjectGallery
               label={t.project.gallery_label}
-              items={project.gallery}
+              items={galleryItems}
               title={project.title}
               kind="gallery"
             />

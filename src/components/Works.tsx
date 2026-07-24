@@ -58,7 +58,7 @@ return (
 }
 
 export default function Works() {
-const { t, locale } = useLanguage();
+const { t } = useLanguage();
 const [activeFilter, setActiveFilter] = useState<string>('all');
 const [highlight, setHighlight] = useState<HighlightRect | null>(null);
 const [showAll, setShowAll] = useState(false);
@@ -100,10 +100,6 @@ const handleCardLeave = () => setHighlight(null);
 
 const visibleProjects = showAll ? filtered : filtered.slice(0, 5);
 const hiddenCount = Math.max(filtered.length - visibleProjects.length, 0);
-const showMoreLabel =
-  locale === 'ru'
-    ? `Показать ещё ${String(hiddenCount).padStart(2, '0')}`
-    : `Show ${String(hiddenCount).padStart(2, '0')} more`;
 
 return (
   <section
@@ -265,7 +261,9 @@ return (
           <span className="accent-diamond transition-transform duration-300 group-hover:rotate-90">
             ✦
           </span>
-          {showAll ? (locale === 'ru' ? 'Свернуть' : 'Show less') : showMoreLabel}
+          {showAll
+            ? t.faq.show_less
+            : `${t.faq.show_all} (${String(hiddenCount).padStart(2, '0')})`}
         </button>
       )}
 
