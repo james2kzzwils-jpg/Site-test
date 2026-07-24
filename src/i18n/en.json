@@ -55,7 +55,7 @@
   "works": {
     "section_label": "Projects",
     "title": "Projects",
-    "subtitle": "",
+    "subtitle": "Three flagship stories open the index — city-scale visuals for Moscow, luxury product physics, and a modular live-stage system. Each case walks through challenge, solution, and outcome.",
     "filters": {
       "all": "All",
       "animation": "Animation",
@@ -199,6 +199,66 @@
         }
       },
       {
+        "id": "thyname-animation",
+        "title": "ThyName",
+        "client": "ThyName",
+        "year": "2024",
+        "category": "animation",
+        "cover": "/works/thyname-animation/cover.png",
+        "gallery": [
+          "/works/thyname-animation/start.mp4",
+          "/works/thyname-animation/dary.mp4",
+          "/works/thyname-animation/direct.mp4",
+          "/works/thyname-animation/speaking.mp4",
+          "/works/thyname-animation/pray.mp4",
+          "/works/thyname-animation/end.mp4",
+          "/works/thyname-animation/final.mp4"
+        ],
+        "tags": [
+          "Houdini",
+          "Blender",
+          "After Effects"
+        ],
+        "outputs": [
+          "Stage visuals",
+          "Procedural animation",
+          "Modular system",
+          "Seasonal adaptation"
+        ],
+        "description": "End-to-end stage visuals for church worship services and recurring Bible marathons — a single dynamic visual system that seamlessly bridges transitions between speakers, carries the mission, and scales with ease. Event motto: 'Praising Thy Name — we find our own names.'",
+        "assignment": "Hold the room's attention and cut the cost of constantly refreshing content. Speaker changes created technical pauses that broke the emotional rhythm and scattered attention; events run year-round, so the visuals had to adapt by season without rebuilding the scene from scratch.",
+        "solution": "The concept centers on a faceless figure running through life: interacting with the space it slows, rises, and finally takes form — a direct translation of the mission, 'every runner finds their name.' The pipeline splits into four modular blocks (Prologue, Intro, Thematic inserts, Finale) that flex in length to match the live timing and seamlessly fill any pause. Animation splines and the character stay fixed; atmosphere and season change only through light, particle systems and procedural environment — updates at minimal cost.",
+        "context": "Visual and technical pauses between speakers were fully removed; the graphics hold attention through scene changes and became part of the overall narrative. The result is a scalable base that adapts content to any season or format quickly and with minimal render.",
+        "collaborators": [
+          {
+            "role": "Direction & 3D",
+            "name": "Epov"
+          }
+        ],
+        "links": {
+          "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
+        },
+        "bentoGallery": true,
+        "bento": {
+          "moodboard": "/works/thyname-animation/start.mp4",
+          "breakdown": "/works/thyname-animation/pray.mp4",
+          "frame02": "/works/thyname-animation/speaking.mp4",
+          "frame03": "/works/thyname-animation/end.mp4"
+        },
+        "published_at": "2024-09",
+        "caseStudy": {
+          "role": "3D Motion Designer & Art Director",
+          "caseTools": "Houdini, Blender, After Effects",
+          "challenge": "Hold the room's attention during speaker changes and cut the cost of constantly refreshing event visuals for year-round conferences.",
+          "outcome": "Technical pauses between speakers fully removed. A scalable modular base that adapts to seasons and new topics with minimal rework.",
+          "techBreakdown": [
+            "Procedural animation system with modular scene composition.",
+            "Faceless figure concept as a direct translation of the brand mission.",
+            "Seasonal adaptation pipeline for rapid content refreshes."
+          ]
+        }
+      },
+      {
         "id": "hoodi-cloth",
         "title": "Hoodi",
         "client": "R&D",
@@ -258,66 +318,6 @@
             "Base pattern built in Marvelous Designer, groomed in Blender.",
             "Layered simulation: clean silhouette with tangible micro-folds and seams.",
             "Physically-based fabric maps for authentic material response."
-          ]
-        }
-      },
-      {
-        "id": "thyname-animation",
-        "title": "ThyName",
-        "client": "ThyName",
-        "year": "2024",
-        "category": "animation",
-        "cover": "/works/thyname-animation/cover.png",
-        "gallery": [
-          "/works/thyname-animation/start.mp4",
-          "/works/thyname-animation/dary.mp4",
-          "/works/thyname-animation/direct.mp4",
-          "/works/thyname-animation/speaking.mp4",
-          "/works/thyname-animation/pray.mp4",
-          "/works/thyname-animation/end.mp4",
-          "/works/thyname-animation/final.mp4"
-        ],
-        "tags": [
-          "Houdini",
-          "Blender",
-          "After Effects"
-        ],
-        "outputs": [
-          "Stage visuals",
-          "Procedural animation",
-          "Modular system",
-          "Seasonal adaptation"
-        ],
-        "description": "End-to-end stage visuals for church worship services and recurring Bible marathons — a single dynamic visual system that seamlessly bridges transitions between speakers, carries the mission, and scales with ease. Event motto: 'Praising Thy Name — we find our own names.'",
-        "assignment": "Hold the room's attention and cut the cost of constantly refreshing content. Speaker changes created technical pauses that broke the emotional rhythm and scattered attention; events run year-round, so the visuals had to adapt by season without rebuilding the scene from scratch.",
-        "solution": "The concept centers on a faceless figure running through life: interacting with the space it slows, rises, and finally takes form — a direct translation of the mission, 'every runner finds their name.' The pipeline splits into four modular blocks (Prologue, Intro, Thematic inserts, Finale) that flex in length to match the live timing and seamlessly fill any pause. Animation splines and the character stay fixed; atmosphere and season change only through light, particle systems and procedural environment — updates at minimal cost.",
-        "context": "Visual and technical pauses between speakers were fully removed; the graphics hold attention through scene changes and became part of the overall narrative. The result is a scalable base that adapts content to any season or format quickly and with minimal render.",
-        "collaborators": [
-          {
-            "role": "Direction & 3D",
-            "name": "Epov"
-          }
-        ],
-        "links": {
-          "behance": "https://www.behance.net/gallery/204162221/ThyName-Animation"
-        },
-        "bentoGallery": true,
-        "bento": {
-          "moodboard": "/works/thyname-animation/start.mp4",
-          "breakdown": "/works/thyname-animation/pray.mp4",
-          "frame02": "/works/thyname-animation/speaking.mp4",
-          "frame03": "/works/thyname-animation/end.mp4"
-        },
-        "published_at": "2024-09",
-        "caseStudy": {
-          "role": "3D Motion Designer & Art Director",
-          "caseTools": "Houdini, Blender, After Effects",
-          "challenge": "Hold the room's attention during speaker changes and cut the cost of constantly refreshing event visuals for year-round conferences.",
-          "outcome": "Technical pauses between speakers fully removed. A scalable modular base that adapts to seasons and new topics with minimal rework.",
-          "techBreakdown": [
-            "Procedural animation system with modular scene composition.",
-            "Faceless figure concept as a direct translation of the brand mission.",
-            "Seasonal adaptation pipeline for rapid content refreshes."
           ]
         }
       },
