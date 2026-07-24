@@ -20,16 +20,17 @@
     "label": "Looooading"
   },
   "hero": {
-    "kicker": "Портфолио — 2026",
-    "title_line1": "Motion Design",
-    "title_line2": "& CG Solutions",
-    "subtitle": "Специализация — сложная процедурная анимация, Vellum-симуляции и полный цикл CG-пайплайна в Blender и Houdini. От концепта и lookdev до финального композитинга.",
+    "kicker": "Авторская CGI / Motion Lab",
+    "title_line1": "Giving Form",
+    "title_line2": "to the Invisible",
+    "subtitle": "Epov Creative Labs — founder-led creative lab Андрея Эпова: премиальный CGI, product visuals и procedural motion для брендов, продуктов и пространственных проектов.",
     "cta_works": "Проекты",
     "cta_contact": "Начать проект",
-    "scroll": "Листай ниже",
+    "scroll": "Листай к selected work",
     "click_hold": "Click & Hold",
     "discover": "Посмотреть",
-    "cta_showreel": "Showreel"
+    "cta_showreel": "Посмотреть Showreel",
+    "selected_work": "Selected Work"
   },
   "trust": {
     "aria_label": "Факты",

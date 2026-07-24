@@ -20,16 +20,17 @@
     "label": "Looooading"
   },
   "hero": {
-    "kicker": "Portfolio — 2026",
-    "title_line1": "Motion Design",
-    "title_line2": "& CG Solutions",
-    "subtitle": "Specializing in complex procedural animations, Vellum simulations, and full-cycle CG pipelines in Blender and Houdini. From concept and lookdev to final compositing.",
+    "kicker": "Founder-Led Creative Lab",
+    "title_line1": "Giving Form",
+    "title_line2": "to the Invisible",
+    "subtitle": "Epov Creative Labs is a founder-led creative lab by Andrey Epov, creating premium CGI, product visuals, and procedural motion for brands, products, and spatial experiences.",
     "cta_works": "Projects",
     "cta_contact": "Start a Project",
-    "scroll": "Keep Scrolling",
+    "scroll": "Scroll to selected work",
     "click_hold": "Click & Hold",
     "discover": "Discover",
-    "cta_showreel": "Showreel"
+    "cta_showreel": "Watch Showreel",
+    "selected_work": "Selected Work"
   },
   "trust": {
     "aria_label": "Proof",

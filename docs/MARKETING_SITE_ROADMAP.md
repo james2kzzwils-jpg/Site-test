@@ -120,7 +120,7 @@ Tasks:
 - [ ] choose the primary audience priority
 - [x] rewrite the first-screen positioning — done: founder-led hero reframe (PR #57)
 - [ ] define one main CTA and one secondary CTA
-- [ ] remove weak or contradictory copy
+- [x] remove weak or contradictory copy — done: the last known contradiction removed — the i18n `hero` block still carried the pre-redesign tool-led copy (`Portfolio — 2026`, `Motion Design & CG Solutions`, Vellum-specialization subtitle, `Keep Scrolling`) while the live founder-led hero copy was hardcoded in Hero.tsx locale ternaries; the founder-led copy now lives in en/ru i18n and Hero.tsx reads it via `t.hero.*` (PR #72); earlier weak-copy passes: PR #61 (weak English), PR #62 (over-literal details)
 - [x] fix naming / language consistency such as `Epov Creative Lab's` — done: unified to `Epov Creative Labs` in EN/RU i18n (site metadata already used the correct name)
 - [x] fix project naming issues such as `Parfume` → `Perfume` — done: EN project title corrected (internal id/asset paths and the Behance URL intentionally kept as-is)
 
